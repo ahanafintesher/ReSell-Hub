@@ -35,9 +35,9 @@ function Logo() {
 function AuthButtons() {
   return (
     <div className="flex items-center gap-2">
+     <Link href={'/auth/login'}>
       <Button
-        as={Link}
-        href="/login"
+       
         variant="flat"
         size="sm"
         radius="full"
@@ -45,9 +45,10 @@ function AuthButtons() {
       >
         Login
       </Button>
+     </Link>
+     <Link href={'/auth/register'}>
       <Button
-        as={Link}
-        href="/register"
+        
         color="primary"
         size="sm"
         radius="full"
@@ -55,6 +56,7 @@ function AuthButtons() {
       >
         Register
       </Button>
+     </Link>
     </div>
   );
 }
