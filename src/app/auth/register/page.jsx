@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+import { Radio, RadioGroup } from "@heroui/react";
 
 import {
   Button,
@@ -26,6 +27,7 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [role, setRole] = useState("buyer");
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -41,6 +43,7 @@ const RegisterPage = () => {
       name: user.name,
       // image: user.image,
       location: user.location,
+      role,
     });
 
     if (error) {
@@ -68,7 +71,7 @@ const RegisterPage = () => {
     <div className="w-full px-4 py-6 sm:max-w-7xl sm:mx-auto flex justify-center">
       <Card className="p-4 sm:p-6 w-full max-w-md">
         <Form onSubmit={onSubmit} className="flex w-full flex-col gap-4">
-          <h2 className="text-2xl font-bold text-center">Register</h2>
+          <h2 className="text-2xl font-bold text-center">Create an Account</h2>
 
           {errorMessage && (
             <p className="text-sm text-red-500">{errorMessage}</p>
@@ -151,9 +154,12 @@ const RegisterPage = () => {
             name="password"
             type={showPassword ? "text" : "password"}
             validate={(value) => {
-              if (value.length < 6) return "Password must be at least 6 characters";
-              if (!/[A-Z]/.test(value)) return "Password must contain at least one uppercase letter";
-              if (!/[a-z]/.test(value)) return "Password must contain at least one lowercase letter";
+              if (value.length < 6)
+                return "Password must be at least 6 characters";
+              if (!/[A-Z]/.test(value))
+                return "Password must contain at least one uppercase letter";
+              if (!/[a-z]/.test(value))
+                return "Password must contain at least one lowercase letter";
               return null;
             }}
           >
@@ -175,6 +181,34 @@ const RegisterPage = () => {
             </Description>
             <FieldError />
           </TextField>
+
+          {/* role */}
+          <div className="flex flex-col gap-4">
+            <Label>Create an account as:</Label>
+            <RadioGroup
+              defaultValue="buyer"
+              name="role"
+              orientation="horizontal"
+              onChange={value => setRole(value)}
+            >
+              <Radio value="buyer">
+                <Radio.Content>
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  Buyer
+                </Radio.Content>
+              </Radio>
+              <Radio value="seller">
+                <Radio.Content>
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  Seller
+                </Radio.Content>
+              </Radio>
+            </RadioGroup>
+          </div>
 
           <div className="flex justify-center gap-2 w-full">
             <Button
@@ -204,7 +238,10 @@ const RegisterPage = () => {
 
           <p className="text-sm text-center">
             Already have an account?{" "}
-            <Link href="/login" className="text-blue-600 font-medium hover:underline">
+            <Link
+              href="/login"
+              className="text-blue-600 font-medium hover:underline"
+            >
               Login
             </Link>
           </p>
