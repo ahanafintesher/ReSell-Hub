@@ -13,19 +13,20 @@ import {
 } from "@gravity-ui/icons";
 import Link from "next/link";
 import NavLinks from "./Navlinks";
+import { authClient } from "@/lib/auth-client";
 
 // ── Logo ──────────────────────────────────────────────────────────────────────
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2.5 select-none shrink-0">
       <div className="flex h-8 w-8 items-center justify-center rounded-md bg-foreground text-background font-black text-xs tracking-tight">
-       RH
+        RH
       </div>
+
       <span className="hidden sm:block leading-tight">
         <span className="block font-bold text-sm text-foreground tracking-wide">
-         ReSell Hub
+          ReSell Hub
         </span>
-       
       </span>
     </Link>
   );
@@ -35,34 +36,39 @@ function Logo() {
 function AuthButtons() {
   return (
     <div className="flex items-center gap-2">
-     <Link href={'/auth/login'}>
-      <Button
-       
-        variant="flat"
-        size="sm"
-        radius="full"
-        className="font-semibold"
-      >
-        Login
-      </Button>
-     </Link>
-     <Link href={'/auth/register'}>
-      <Button
-        
-        color="primary"
-        size="sm"
-        radius="full"
-        className="font-semibold"
-      >
-        Register
-      </Button>
-     </Link>
+      <Link href="/auth/login">
+        <Button
+          variant="flat"
+          size="sm"
+          radius="full"
+          className="font-semibold"
+        >
+          Login
+        </Button>
+      </Link>
+
+      <Link href="/auth/register">
+        <Button
+          color="primary"
+          size="sm"
+          radius="full"
+          className="font-semibold"
+        >
+          Register
+        </Button>
+      </Link>
     </div>
   );
 }
 
 // ── User dropdown ─────────────────────────────────────────────────────────────
 function UserMenu({ user }) {
+  const handleAction = async (key) => {
+    if (key === "logout") {
+      await authClient.signOut();
+    }
+  };
+
   return (
     <Dropdown>
       <Dropdown.Trigger>
@@ -70,32 +76,23 @@ function UserMenu({ user }) {
           className="flex items-center gap-2 rounded-full border-2 border-primary pl-1 pr-2.5 py-1 hover:bg-default-100 transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary"
           aria-label="User menu"
         >
-          <Avatar
-            src={user.avatar}
-            name={user.name}
-            showFallback
-            size="sm"
-            color="primary"
-            classNames={{
-              base: "w-7 h-7 shrink-0",
-              name: "text-xs font-semibold",
-            }}
-          />
+          <Avatar className="w-7 h-7 shrink-0">
+            <Avatar.Image alt={user?.name || "User"} src={user?.image || ""} />
+            <Avatar.Fallback className="text-xs font-semibold bg-primary text-primary-foreground">
+              {user?.name?.charAt(0)?.toUpperCase() || "U"}
+            </Avatar.Fallback>
+          </Avatar>
+
           <span className="hidden sm:block text-sm font-medium text-foreground max-w-[90px] truncate">
-            {user.name}
+            {user?.name || "User"}
           </span>
+
           <ChevronDown className="w-3 h-3 text-foreground/40 shrink-0" />
         </button>
       </Dropdown.Trigger>
 
       <Dropdown.Popover placement="bottom end" className="min-w-44">
-        <Dropdown.Menu
-          onAction={(key) => {
-            if (key === "logout") {
-              console.log("logout");
-            }
-          }}
-        >
+        <Dropdown.Menu onAction={handleAction}>
           <Dropdown.Item id="profile" textValue="My Profile">
             <Link href="/profile" className="flex items-center gap-3 w-full">
               <Person className="w-4 h-4 text-foreground/60 shrink-0" />
@@ -133,19 +130,30 @@ function UserMenu({ user }) {
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const user = null; // set to user object when logged in
+  const { data: session, isPending } = authClient.useSession();
+
+  const user = session?.user;
   const isLoggedIn = !!user;
 
   const closeMobile = () => setMobileOpen(false);
 
+  if (isPending) {
+    return (
+      <nav className="sticky top-0 z-40 w-full border-b border-divider bg-background/80 backdrop-blur-md backdrop-saturate-150">
+        <header className="flex h-14 items-center justify-between px-4 sm:px-6 max-w-screen-xl mx-auto">
+          <Logo />
+        </header>
+      </nav>
+    );
+  }
+
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-divider bg-background/80 backdrop-blur-md backdrop-saturate-150">
       <header className="flex h-14 items-center justify-between px-4 sm:px-6 max-w-screen-xl mx-auto gap-4">
-
         {/* Left — Logo */}
         <Logo />
 
-        {/* Center — Nav links (desktop) */}
+        {/* Center — Nav links */}
         <div className="hidden md:flex flex-1 justify-center">
           <NavLinks />
         </div>
@@ -177,7 +185,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile nav drawer */}
+      {/* Mobile Drawer */}
       {mobileOpen && (
         <div
           id="mobile-nav"
@@ -185,12 +193,11 @@ export default function Navbar() {
         >
           <NavLinks mobile onNavigate={closeMobile} />
 
-          {/* Auth buttons in mobile drawer when logged out */}
           {!isLoggedIn && (
             <div className="mt-3 pt-3 border-t border-divider flex flex-col gap-2">
               <Button
                 as={Link}
-                href="/login"
+                href="/auth/login"
                 variant="flat"
                 size="sm"
                 radius="full"
@@ -199,9 +206,10 @@ export default function Navbar() {
               >
                 Login
               </Button>
+
               <Button
                 as={Link}
-                href="/register"
+                href="/auth/register"
                 color="primary"
                 size="sm"
                 radius="full"
