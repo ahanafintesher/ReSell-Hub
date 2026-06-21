@@ -14,47 +14,125 @@ import {
   Button,
 } from "@heroui/react";
 import { useSession } from "@/lib/auth-client";
+import { createProduct } from "@/lib/actions/product";
 
-export default function AddProductPage() {
+export default  function AddProductPage() {
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [image, setImage] = useState(null);
   const {data,error} = useSession();
 //   console.log("Session data:", data);
   const sellerInfo = data?.user?.email || "seller";
 //   console.log("Seller Info:", sellerInfo);
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const uploadImageToImgbb = async (imageFile) => {
+  const formData = new FormData();
 
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+  formData.append("image", imageFile);
 
-    const newErrors = {};
-
-    if (!data.title) newErrors.title = "Product title is required";
-    if (!data.description)
-      newErrors.description = "Description is required";
-    if (!data.category)
-      newErrors.category = "Category is required";
-    if (!data.condition)
-      newErrors.condition = "Condition is required";
-    if (!data.price) newErrors.price = "Price is required";
-    if (!data.stock) newErrors.stock = "Stock quantity is required";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+  const res = await fetch(
+    `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+    {
+      method: "POST",
+      body: formData,
     }
+  );
 
-    setErrors({});
-       const payload = {
-            ...data,
-            // isRemote,
-            // companyId: mockCompany.id,
-            status: "active",
-            isPubliclyVisible: true,
-            sellerInfo,
-        };
-    console.log(payload);
-  };
+  const result = await res.json();
+
+  if (!result.success) {
+    throw new Error("Image upload failed");
+  }
+
+  return result.data.display_url;
+};
+
+
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.currentTarget);
+  const data = Object.fromEntries(formData.entries());
+
+  const newErrors = {};
+
+  if (!image) {
+    newErrors.image = "Product image is required";
+  }
+
+  if (!data.title) {
+    newErrors.title = "Product title is required";
+  }
+
+  if (!data.description) {
+    newErrors.description = "Description is required";
+  }
+
+  if (!data.category) {
+    newErrors.category = "Category is required";
+  }
+
+  if (!data.condition) {
+    newErrors.condition = "Condition is required";
+  }
+
+  if (!data.price) {
+    newErrors.price = "Price is required";
+  }
+
+  if (!data.stock) {
+    newErrors.stock = "Stock quantity is required";
+  }
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+  setErrors({});
+  setIsLoading(true);
+  console.log("Form Data:", data);
+console.log("Selected Image:", image);
+
+  try {
+    // Upload image to imgbb
+    const imageUrl = await uploadImageToImgbb(image);
+    console.log("Image URL:", imageUrl);
+
+    // Create product object
+    const productData = {
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      condition: data.condition,
+      price: Number(data.price),
+      stock: Number(data.stock),
+      image: imageUrl,
+      sellerInfo,
+      status: "available",
+      isPubliclyVisible: true,
+      createdAt: new Date(),
+    };
+
+    const res = await createProduct(productData);
+
+    if (res.insertedId) {
+      console.log("Product created:", res.insertedId);
+
+      e.target.reset();
+      setImage(null);
+
+      alert("Product added successfully!");
+    } else {
+      console.error("Failed to create product:", res);
+      alert("Failed to create product");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const inputClass =
     "w-full bg-white border border-gray-300 hover:border-gray-400 focus:border-black rounded-lg h-12 px-3 text-sm text-gray-900 outline-none transition-all";
@@ -109,6 +187,7 @@ export default function AddProductPage() {
                 type="file"
                 accept="image/*"
                 className={inputClass}
+                onChange={(e) => setImage(e.target.files[0])}
               />
             </TextField>
 
