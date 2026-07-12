@@ -81,7 +81,7 @@ export default function ManageMyProducts() {
 
   if (error) {
     return <div className="text-center text-red-500 py-10">{error}</div>;
-  }
+  } 
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10">
