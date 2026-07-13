@@ -58,21 +58,7 @@ const Page = async ({ params }) => {
                 </span>
               </div>
 
-              {data.rating && (
-                <div className="flex items-center gap-3">
-                  <span className="font-semibold">
-                    Rating:
-                  </span>
-
-                  <Chip color="warning" variant="flat">
-                    ⭐ {data.rating.rate}
-                  </Chip>
-
-                  <span className="text-default-500">
-                    ({data.rating.count} Reviews)
-                  </span>
-                </div>
-              )}
+              
             </div>
 
             
@@ -101,6 +87,8 @@ const Page = async ({ params }) => {
       </Card>
     </div>
   );
+
+  
 };
 
 export default Page;
