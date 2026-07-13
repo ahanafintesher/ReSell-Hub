@@ -8,6 +8,8 @@ const Page = async ({ params }) => {
 
   const data = await getSingleProduct(id);
 
+  
+
   return (
     <div className="max-w-7xl mx-auto px-5 py-10">
       <Card className="shadow-xl">
@@ -76,7 +78,12 @@ const Page = async ({ params }) => {
             
 
             <div className="flex gap-4 flex-wrap">
-             <Button
+             <form action={'/api/payments'} method="POST">
+              <input type="hidden" name="price" value={data.price}/>
+              <input type="hidden" name="title" value={data.title}/>
+              <input type="hidden" name="productId" value={data._id}/>
+              <Button
+                type="submit"
                 className={'bg-green-400 text-white'}
                 color="secondary"
                 variant="bordered"
@@ -84,6 +91,7 @@ const Page = async ({ params }) => {
               >
                 Buy Now
               </Button>
+             </form>
 
               <WishlistButton></WishlistButton>
             </div>
