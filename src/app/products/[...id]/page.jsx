@@ -3,7 +3,9 @@ import Image from "next/image";
 import { Card, Button, Chip } from "@heroui/react";
 import WishlistButton from "@/components/wishlist/WishlistButon";
 import ReviewSection from "@/components/ReviewSection/ReviewSection";
-import { Rating } from "react-simple-star-rating";
+import Rating from "@/components/ReviewSection/Rating";
+import AvgRating from "@/components/ReviewSection/Rating";
+
 
 const Page = async ({ params }) => {
   const { id } = await params;
@@ -38,6 +40,10 @@ const Page = async ({ params }) => {
               <p className="text-default-500 mt-4 leading-7">
                 {data.description}
               </p>
+            </div>
+
+            <div>
+              <AvgRating data={data}></AvgRating>
             </div>
 
             <div className="space-y-4">
