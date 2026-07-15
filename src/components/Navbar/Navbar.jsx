@@ -17,6 +17,9 @@ import { authClient } from "@/lib/auth-client";
 
 // ── Logo ──────────────────────────────────────────────────────────────────────
 function Logo() {
+
+
+  
   return (
     <Link href="/" className="flex items-center gap-2.5 select-none shrink-0">
       <div className="flex h-8 w-8 items-center justify-center rounded-md bg-foreground text-background font-black text-xs tracking-tight">
@@ -34,6 +37,9 @@ function Logo() {
 
 // ── Auth buttons ──────────────────────────────────────────────────────────────
 function AuthButtons() {
+
+
+
   return (
     <div className="flex items-center gap-2">
       <Link href="/auth/login">

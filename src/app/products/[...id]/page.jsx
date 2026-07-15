@@ -3,8 +3,9 @@ import Image from "next/image";
 import { Card, Button, Chip } from "@heroui/react";
 import WishlistButton from "@/components/wishlist/WishlistButon";
 import ReviewSection from "@/components/ReviewSection/ReviewSection";
-import Rating from "@/components/ReviewSection/Rating";
-import AvgRating from "@/components/ReviewSection/Rating";
+import AvgRating from "@/components/ReviewSection/AvgRating";
+import UserReviewSection from "@/components/ReviewSection/UserReviewSection";
+
 
 
 const Page = async ({ params }) => {
@@ -79,6 +80,7 @@ const Page = async ({ params }) => {
       </Card>
 
       <ReviewSection data={data}></ReviewSection>
+      <UserReviewSection data={data}></UserReviewSection>
     </div>
   );
 };
