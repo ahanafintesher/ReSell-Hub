@@ -14,12 +14,16 @@ import {
 import Link from "next/link";
 import NavLinks from "./Navlinks";
 import { authClient } from "@/lib/auth-client";
+import { div } from "motion/react-client";
+import { usePathname } from "next/navigation";
 
 // ── Logo ──────────────────────────────────────────────────────────────────────
 function Logo() {
+  const pathname = usePathname();
+  if (pathname.includes("dashboard")) {
+    return null;
+  }
 
-
-  
   return (
     <Link href="/" className="flex items-center gap-2.5 select-none shrink-0">
       <div className="flex h-8 w-8 items-center justify-center rounded-md bg-foreground text-background font-black text-xs tracking-tight">
@@ -37,8 +41,10 @@ function Logo() {
 
 // ── Auth buttons ──────────────────────────────────────────────────────────────
 function AuthButtons() {
-
-
+  const pathname = usePathname();
+  if (pathname.includes("dashboard")) {
+    return null;
+  }
 
   return (
     <div className="flex items-center gap-2">
@@ -69,6 +75,11 @@ function AuthButtons() {
 
 // ── User dropdown ─────────────────────────────────────────────────────────────
 function UserMenu({ user }) {
+  const pathname = usePathname();
+  if (pathname.includes("dashboard")) {
+    return null;
+  }
+
   const handleAction = async (key) => {
     if (key === "logout") {
       await authClient.signOut();
@@ -134,6 +145,7 @@ function UserMenu({ user }) {
 
 // ── Navbar ────────────────────────────────────────────────────────────────────
 export default function Navbar() {
+  
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const { data: session, isPending } = authClient.useSession();
@@ -142,7 +154,10 @@ export default function Navbar() {
   const isLoggedIn = !!user;
 
   const closeMobile = () => setMobileOpen(false);
-
+  const pathname = usePathname();
+  if (pathname.includes("dashboard")) {
+    return null;
+  }
   if (isPending) {
     return (
       <nav className="sticky top-0 z-40 w-full border-b border-divider bg-background/80 backdrop-blur-md backdrop-saturate-150">

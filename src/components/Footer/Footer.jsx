@@ -1,5 +1,7 @@
 // components/Footer.jsx
+'use client'
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
   FaFacebookF, 
   FaTwitter, 
@@ -11,6 +13,11 @@ import {
 } from 'react-icons/fa';
 
 const Footer = () => {
+const pathname = usePathname();
+if(pathname.includes('dashboard')){
+  return null;
+}
+
   const currentYear = new Date().getFullYear();
 
   return (
