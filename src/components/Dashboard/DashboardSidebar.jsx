@@ -1,54 +1,137 @@
 "use client";
 import { Bars } from "@gravity-ui/icons";
-import { ChartBar } from "@gravity-ui/icons";
+
 import { CirclePlus } from "@gravity-ui/icons";
-import { House } from "@gravity-ui/icons";
-import { ListCheck } from "@gravity-ui/icons";
-import { Person } from "@gravity-ui/icons";
-import { GoPackage } from "react-icons/go";
-import { useState } from "react";
+
+import { usePathname } from "next/navigation";
 
 import { Badge, Button, Drawer } from "@heroui/react";
-import { div } from "motion/react-client";
-import { LayoutDashboard } from "lucide-react";
+
 import { authClient } from "@/lib/auth-client";
 import { Avatar } from "@heroui/react";
+import Link from "next/link";
+import {
+  ChartSpline,
+  DollarSign,
+  Heart,
+  Package,
+  ShoppingBag,
+  ShoppingCart,
+  Summary,
+  UserRound,
+  UserRoundPen,
+} from "lucide-react";
 
-const navItems = [
-  { icon: House, label: "Dashboard", href: "#" },
-  { icon: CirclePlus, label: "Add Products", href: "#add" },
-  { icon: GoPackage, label: "My Products", href: "#products", badge: 12 },
-  { icon: ListCheck, label: "Manage Orders", href: "#orders", badge: 3 },
-  { icon: ChartBar, label: "Analytics", href: "#analytics" },
-  { icon: Person, label: "Profile", href: "#profile" },
-];
+const navMenu = {
+  seller: [
+    {
+      icon: Summary,
+      label: "Overview",
+      href: "/dashboard/seller/overview",
+    },
+    {
+      icon: CirclePlus,
+      label: "Add Product",
+      href: "/dashboard/seller/products/add-products",
+    },
+    {
+      icon: Package,
+      label: "My Products",
+      href: "/dashboard/seller/products/my-products",
+    },
+    {
+      icon: ShoppingBag,
+      label: "Manage Orders",
+      href: "/dashboard/seller/orders",
+    },
+    {
+      icon: ChartSpline,
+      label: "Analytics",
+      href: "/dashboard/seller/analytics",
+    },
+  ],
 
-function NavContent({ activePath, onNavigate }) {
+  buyer: [
+    {
+      icon: Summary,
+      label: "Overview",
+      href: "/dashboard/buyer",
+    },
+    {
+      icon: ShoppingCart,
+      label: "My Orders",
+      href: "/dashboard/buyer/orders",
+    },
+    {
+      icon: Heart,
+      label: "Wishlist",
+      href: "/dashboard/buyer/orders",
+    },
+    {
+      icon: DollarSign,
+      label: "Payment History",
+      href: "/dashboard/buyer/orders",
+    },
+    {
+      icon: UserRound,
+      label: "Profile",
+      href: "/dashboard/buyer/orders",
+    },
+  ],
+
+  admin: [
+    {
+      icon: Summary,
+      label: "Overview",
+      href: "/dashboard/admin",
+    },
+    {
+      icon: UserRoundPen,
+      label: "Manage Users",
+      href: "/dashboard/admin/users",
+    },
+    {
+      icon: Package,
+      label: "Manage Products",
+      href: "/dashboard/admin/users",
+    },
+    {
+      icon: ShoppingBag,
+      label: "Manage Orders",
+      href: "/dashboard/seller/products/add_products",
+    },
+    {
+      icon: ChartSpline,
+      label: "Analytics",
+      href: "/dashboard/seller/products/add_products",
+    },
+  ],
+};
+
+function NavContent({ navItems }) {
+  const pathname = usePathname();
+
   return (
     <nav className="flex flex-col gap-0.5 px-2 py-2.5">
       {navItems.map((item) => {
-        const isActive = activePath === item.href;
+        const isActive = pathname === item.href;
 
         return (
-          <a
+          <Link
             key={item.label}
             href={item.href}
             aria-current={isActive ? "page" : undefined}
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate?.(item.href);
-            }}
             className={[
-              "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors",
+              "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-semibold transition-colors",
               isActive
-                ? "bg-primary/10 text-primary font-medium"
-                : "text-default-600 hover:bg-default-100 hover:text-foreground",
+                ? "bg-green-300 text-white"
+                : "text-default-600 hover:bg-green-300 hover:text-white",
             ].join(" ")}
           >
             <item.icon
               className={[
                 "size-[18px] shrink-0",
-                isActive ? "text-primary" : "text-default-500",
+                isActive ? "text-white" : "text-default-500",
               ].join(" ")}
             />
 
@@ -59,7 +142,7 @@ function NavContent({ activePath, onNavigate }) {
                 {item.badge}
               </Badge>
             )}
-          </a>
+          </Link>
         );
       })}
     </nav>
@@ -68,7 +151,8 @@ function NavContent({ activePath, onNavigate }) {
 
 export default function DashboardSidebar() {
   const { data: session, error } = authClient.useSession();
-  const [activePath, setActivePath] = useState("#");
+  const role = session?.user?.role;
+  const menu = navMenu[role] || [];
 
   return (
     <>
@@ -87,7 +171,7 @@ export default function DashboardSidebar() {
                 src={session?.user?.image}
                 alt={session?.user?.name}
               />
-              <Avatar.Fallback className='bg-green-300 text-white'>
+              <Avatar.Fallback className="bg-green-300 text-white">
                 {session?.user?.name?.charAt(0).toUpperCase()}
               </Avatar.Fallback>
             </Avatar>
@@ -107,7 +191,7 @@ export default function DashboardSidebar() {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          <NavContent activePath={activePath} onNavigate={setActivePath} />
+          <NavContent navItems={menu} />
         </div>
       </aside>
 
@@ -134,10 +218,7 @@ export default function DashboardSidebar() {
               </Drawer.Header>
 
               <Drawer.Body className="flex-1 overflow-y-auto p-0">
-                <NavContent
-                  activePath={activePath}
-                  onNavigate={setActivePath}
-                />
+                <NavContent navItems={menu} />
               </Drawer.Body>
             </Drawer.Dialog>
           </Drawer.Content>

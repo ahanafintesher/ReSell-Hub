@@ -9,7 +9,7 @@ import {
 } from "@heroui/react";
 
 import { Pencil, Plus, TrashBin } from "@gravity-ui/icons";
-import { getMyProducts } from "@/lib/actions/getMyProducts";
+import { getMyProducts } from "@/lib/actions/myProducts";
 import { useSession } from "@/lib/auth-client";
 
 const categoryColorMap = {

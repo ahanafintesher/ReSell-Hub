@@ -4,3 +4,6 @@ export const getMyProducts = async (sellerInfo) =>{
     const res = await fetch(`${baseUrl}/api/my-products?sellerInfo=${sellerInfo}`);
    return res.json();
 }
+
+// edit a product
+
