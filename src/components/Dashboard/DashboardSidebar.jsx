@@ -1,6 +1,6 @@
 "use client";
 import { Bars } from "@gravity-ui/icons";
-
+import { Playfair_Display } from "next/font/google";
 import { CirclePlus } from "@gravity-ui/icons";
 
 import { usePathname } from "next/navigation";
@@ -21,6 +21,11 @@ import {
   UserRound,
   UserRoundPen,
 } from "lucide-react";
+
+const play = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
 
 const navMenu = {
   seller: [
@@ -55,7 +60,7 @@ const navMenu = {
     {
       icon: Summary,
       label: "Overview",
-      href: "/dashboard/buyer",
+      href: "/dashboard/buyer/overview",
     },
     {
       icon: ShoppingCart,
@@ -159,7 +164,11 @@ export default function DashboardSidebar() {
       {/* Desktop Sidebar */}
       <aside className="hidden w-60 shrink-0 flex-col border-r lg:flex">
         <div className="mb-4 rounded-xl border border-slate-200 bg-white p-5">
-          <h2 className="text-xl font-bold text-slate-800">ReSell Hub</h2>
+          <h2
+            className={`${play.className} text-green-600 text-2xl font-extrabold`}
+          >
+            ReSell Hub
+          </h2>
 
           <p className="mt-1 text-sm font-semibold text-slate-500 capitalize">
             {session?.user?.role} Dashboard

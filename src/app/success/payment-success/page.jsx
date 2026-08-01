@@ -1,9 +1,12 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, ShoppingBag, Home } from "lucide-react";
+import { getSingleProduct } from "@/lib/actions/getSingleProduct";
+
 
 import { stripe } from "@/lib/stripe";
 import { postPaymentHistory } from "@/lib/actions/postPaymentHistory";
+import { postOrder } from "@/lib/actions/orders";
 
 export default async function Success({ searchParams }) {
   const { session_id } = await searchParams;
@@ -25,6 +28,26 @@ export default async function Success({ searchParams }) {
 
   if (status === "complete") {
     await postPaymentHistory(metadata, session_id, new Date().toISOString());
+    const product =   await getSingleProduct(metadata.productId);
+    const sellerInfo = product?.sellerInfo || "not found";
+    const sellerName = product?.sellerName || "N/A";
+
+    const orderData = {
+      paymentId: session_id,
+      productId: metadata.productId,
+      productTitle: metadata.title,
+      price: Number(metadata.price),
+      sellerName,
+      sellerInfo: sellerInfo,
+      buyerName: metadata.buyerName,
+      buyerInfo: metadata.userEmail,
+      paymentStatus:"paid",
+      orderStatus:"pending"
+
+    }
+
+    await postOrder(orderData);
+
 
     return (
       <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-green-50 via-white to-emerald-50 px-4 py-10">

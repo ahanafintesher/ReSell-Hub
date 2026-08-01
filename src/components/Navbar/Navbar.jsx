@@ -1,4 +1,5 @@
 "use client";
+import { Playfair_Display } from "next/font/google";
 
 import { useState } from "react";
 import { Button, Avatar, Dropdown, Label } from "@heroui/react";
@@ -16,7 +17,10 @@ import NavLinks from "./Navlinks";
 import { authClient } from "@/lib/auth-client";
 import { div } from "motion/react-client";
 import { usePathname } from "next/navigation";
-
+const play = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
 // ── Logo ──────────────────────────────────────────────────────────────────────
 function Logo() {
   const pathname = usePathname();
@@ -26,14 +30,15 @@ function Logo() {
 
   return (
     <Link href="/" className="flex items-center gap-2.5 select-none shrink-0">
-      <div className="flex h-8 w-8 items-center justify-center rounded-md bg-foreground text-background font-black text-xs tracking-tight">
-        RH
-      </div>
+     
 
       <span className="hidden sm:block leading-tight">
-        <span className="block font-bold text-sm text-foreground tracking-wide">
-          ReSell Hub
-        </span>
+        <h2
+            className={`${play.className} text-green-600 text-2xl font-extrabold`}
+          >
+            ReSell Hub
+          </h2>
+
       </span>
     </Link>
   );

@@ -20,6 +20,7 @@ export async function POST(request) {
     const price = formData.get('price');
     const title = formData.get('title');
     const productId = formData.get('productId');
+   
 
     // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create({
@@ -39,6 +40,7 @@ export async function POST(request) {
       ],
       metadata:{
         price: Number(price),
+        buyerName: user?.name,
         userId: user?.id,
         userEmail: user?.email,
         productId: productId,

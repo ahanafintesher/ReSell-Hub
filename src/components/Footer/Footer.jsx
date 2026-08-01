@@ -1,5 +1,7 @@
 // components/Footer.jsx
 'use client'
+import { Playfair_Display } from "next/font/google";
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -11,7 +13,10 @@ import {
   FaPhone, 
   FaMapMarkerAlt 
 } from 'react-icons/fa';
-
+const play = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
 const Footer = () => {
 const pathname = usePathname();
 if(pathname.includes('dashboard')){
@@ -28,7 +33,12 @@ if(pathname.includes('dashboard')){
           
           {/* Brand Information */}
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-white">ReSell Hub</h2>
+            <h2
+            className={`${play.className} text-green-600 text-2xl font-extrabold`}
+          >
+            ReSell Hub
+          </h2>
+
             <p className="text-sm leading-relaxed">
               Your trusted marketplace for buying and selling quality pre-owned items. 
               Find great deals and give items a second life.

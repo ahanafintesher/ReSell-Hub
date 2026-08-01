@@ -1,4 +1,5 @@
 "use client";
+import { Playfair_Display } from "next/font/google";
 
 import {
     Avatar,
@@ -26,7 +27,10 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-
+const play = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
 export default function Navbar() {
     const router = useRouter();
     const { data: session, isPending } = authClient.useSession();
@@ -61,7 +65,7 @@ export default function Navbar() {
                 <div className="flex items-center gap-3">
                     
                     <div>
-                        <h1 className="text-xl font-bold tracking-tight text-gray-900">
+                        <h1 className={`${play.className}text-xl   text-gray-900`}>
                             ReSell Hub
                         </h1>
                         

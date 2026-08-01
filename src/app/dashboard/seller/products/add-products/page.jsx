@@ -23,6 +23,7 @@ export default  function AddProductPage() {
   const {data,error} = useSession();
 //   console.log("Session data:", data);
   const sellerInfo = data?.user?.email || "seller";
+  const sellerName = data?.user?.name || "N/A";
 //   console.log("Seller Info:", sellerInfo);
 const uploadImageToImgbb = async (imageFile) => {
   const formData = new FormData();
@@ -108,6 +109,7 @@ console.log("Selected Image:", image);
       stock: Number(data.stock),
       image: imageUrl,
       sellerInfo,
+      sellerName,
       status: "available",
       isPubliclyVisible: true,
       createdAt: new Date(),
