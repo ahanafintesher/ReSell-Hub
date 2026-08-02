@@ -24,7 +24,7 @@ const STATUS_COLORS = {
   rejected: "bg-red-100 text-red-700",
 };
 
-const OrderCard = ({ order }) => {
+const SellerOrderCard = ({ order }) => {
   const [status, setStatus] = useState(order.orderStatus);
   const [isPending, startTransition] = useTransition();
 
@@ -139,4 +139,4 @@ const OrderCard = ({ order }) => {
   );
 };
 
-export default OrderCard;
+export default SellerOrderCard;

@@ -65,7 +65,7 @@ export default function Navbar() {
                 <div className="flex items-center gap-3">
                     
                     <div>
-                        <h1 className={`${play.className}text-xl   text-gray-900`}>
+                        <h1 className={`${play.className} font-extrabold text-xl text-gray-900`}>
                             ReSell Hub
                         </h1>
                         
@@ -83,22 +83,22 @@ export default function Navbar() {
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button
-                                    variant="light"
-                                    className="flex items-center gap-2 rounded-full px-2 py-1 text-gray-700 hover:bg-gray-100"
+                                    variant="outline"
+                                    className="flex items-center gap-2 rounded-full px-2 py-1 text-gray-700 bg-green-300"
                                 >
                                     <Avatar
                                         size="sm"
-                                        className="h-8 w-8 border-2 border-gray-200"
+                                        className="h-8 w-8 border-2  border-gray-200"
                                     >
                                         <AvatarImage src={avatarSrc} alt={displayName} />
                                         <AvatarFallback>
                                             {initials || <User className="h-4 w-4" />}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <span className="hidden text-sm font-medium text-gray-900 sm:inline">
+                                    <span className="hidden text-sm font-medium text-white capitalize sm:inline">
                                         {displayName}
                                     </span>
-                                    <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
+                                    <ChevronDown className="h-3.5 w-3.5 text-white" />
                                 </Button>
                             </DropdownTrigger>
 

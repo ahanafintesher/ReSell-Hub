@@ -70,17 +70,17 @@ const navMenu = {
     {
       icon: Heart,
       label: "Wishlist",
-      href: "/dashboard/buyer/orders",
+      href: "/dashboard/buyer/wishlist",
     },
     {
       icon: DollarSign,
       label: "Payment History",
-      href: "/dashboard/buyer/orders",
+      href: "/dashboard/buyer/payment-history",
     },
     {
       icon: UserRound,
       label: "Profile",
-      href: "/dashboard/buyer/orders",
+      href: "/dashboard/buyer/profile",
     },
   ],
 
@@ -186,7 +186,7 @@ export default function DashboardSidebar() {
             </Avatar>
 
             <div>
-              <p className="font-semibold text-slate-800">
+              <p className="font-semibold capitalize text-slate-800">
                 {session?.user?.name}
               </p>
               <p className="font-semibold text-sm text-slate-600">

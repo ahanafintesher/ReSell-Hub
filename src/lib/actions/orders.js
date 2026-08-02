@@ -33,7 +33,7 @@ export const getOrdersBySellerInfo = async (sellerInfo) => {
 
 export const getOrdersByBuyerInfo = async (buyerInfo) => {
   const res = await fetch(
-    `${baseUrl}/api/buyer/orders?sellerInfo=${buyerInfo}`,
+    `${baseUrl}/api/buyer/orders?buyerInfo=${buyerInfo}`,
   );
   return res.json();
 };

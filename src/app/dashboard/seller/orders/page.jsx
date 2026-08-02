@@ -1,4 +1,5 @@
-import OrderCard from '@/components/Order/OrderCard';
+import SellerOrderCard from '@/components/Order/SellerOrderCard';
+import OrderCard from '@/components/Order/SellerOrderCard';
 import { getOrdersBySellerInfo } from '@/lib/actions/orders';
 import { auth } from '@/lib/auth';
 import { headers } from "next/headers";
@@ -22,7 +23,7 @@ const OrdersPage = async () => {
       {orders?.length ? (
         <div className="flex flex-col gap-4">
           {orders.map((order) => (
-            <OrderCard key={order._id} order={JSON.parse(JSON.stringify(order))} />
+            <SellerOrderCard key={order._id} order={JSON.parse(JSON.stringify(order))} />
           ))}
         </div>
       ) : (
