@@ -1,4 +1,5 @@
 import React from "react";
+import { BuyerDeleteOrderModal } from "../Modals/BuyerDeleteOrderModal";
 
 const STATUS_LABELS = {
   pending: "Pending",
@@ -18,6 +19,8 @@ const STATUS_COLORS = {
   rejected: "bg-red-100 text-red-700",
 };
 
+
+const canDelete = ["accepted", "pending", "rejected", "processing"]
 const BuyerOrderCard = ({ order }) => {
   return (
     <div className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm">
@@ -75,6 +78,13 @@ const BuyerOrderCard = ({ order }) => {
           This product has been delivered.
         </p>
       )}
+    {
+      canDelete.includes(order.orderStatus) && (
+        <div className="mt-4">
+          <BuyerDeleteOrderModal order={order}></BuyerDeleteOrderModal>
+        </div>
+      )
+    }
     </div>
   );
 };

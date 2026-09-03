@@ -32,12 +32,22 @@ export const getOrdersBySellerInfo = async (sellerInfo) => {
 // get orders by buyerInfo
 
 export const getOrdersByBuyerInfo = async (buyerInfo) => {
-  const res = await fetch(
-    `${baseUrl}/api/buyer/orders?buyerInfo=${buyerInfo}`,
-  );
+  const res = await fetch(`${baseUrl}/api/buyer/orders?buyerInfo=${buyerInfo}`);
   return res.json();
 };
 
+// delete an order
+
+export const deleteOrder = async (orderId) => {
+  const res = await fetch(`${baseUrl}/api/orders/${orderId}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to delete order");
+  }
+  return res.json();
+};
 
 // update order status
 

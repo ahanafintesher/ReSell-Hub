@@ -15,6 +15,7 @@ import {
 } from "@heroui/react";
 import { useSession } from "@/lib/auth-client";
 import { createProduct } from "@/lib/actions/product";
+import toast from "react-hot-toast";
 
 export default  function AddProductPage() {
   const [errors, setErrors] = useState({});
@@ -123,14 +124,14 @@ console.log("Selected Image:", image);
       e.target.reset();
       setImage(null);
 
-      alert("Product added successfully!");
+      toast.success("Product Added Successfully")
     } else {
       console.error("Failed to create product:", res);
-      alert("Failed to create product");
+      toast.error("Failed to create product");
     }
   } catch (error) {
     console.error(error);
-    alert("Something went wrong");
+    toast.error("Something went wrong");
   } finally {
     setIsLoading(false);
   }

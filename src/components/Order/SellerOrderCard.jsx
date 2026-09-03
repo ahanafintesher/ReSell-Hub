@@ -135,6 +135,7 @@ const SellerOrderCard = ({ order }) => {
           <p className="text-sm text-green-600">This product is delivered.</p>
         )}
       </div>
+      
     </div>
   );
 };
