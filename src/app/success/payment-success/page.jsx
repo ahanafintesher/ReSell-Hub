@@ -5,7 +5,7 @@ import { getSingleProduct } from "@/lib/actions/getSingleProduct";
 
 
 import { stripe } from "@/lib/stripe";
-import { postPaymentHistory } from "@/lib/actions/postPaymentHistory";
+import { postPaymentHistory } from "@/lib/actions/paymentHistory";
 import { postOrder } from "@/lib/actions/orders";
 
 export default async function Success({ searchParams }) {
