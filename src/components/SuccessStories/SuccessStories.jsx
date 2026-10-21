@@ -240,7 +240,7 @@ function SuccessStories() {
 
                 {/* Story Text */}
                 <p className="text-[#4B5563] leading-relaxed mb-6 text-[15px]">
-                  "{story.story}"
+                  &quot;{story.story}&quot;
                 </p>
 
                 {/* Purchase Details */}

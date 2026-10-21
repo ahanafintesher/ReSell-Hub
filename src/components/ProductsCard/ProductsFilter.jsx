@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useRef, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Input, Select, Label, ListBox, Button } from "@heroui/react";
 import ProductsCard from "./ProductsCard";
@@ -14,6 +14,15 @@ export default function ProductsFilters({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const searchTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // URL update করার function
   const updateFilters = (key, value) => {
@@ -31,15 +40,17 @@ export default function ProductsFilters({
   };
 
   // Search handler (debounced)
-  let searchTimeout;
   const handleSearchChange = (e) => {
     const value = e.target.value;
-    clearTimeout(searchTimeout);
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
 
-    searchTimeout = setTimeout(() => {
+    searchTimeoutRef.current = setTimeout(() => {
       updateFilters("search", value);
     }, 400); // 400ms debounce
   };
+
 
   // Category handler
   const handleCategoryChange = (keys) => {

@@ -1,68 +1,76 @@
 "use server";
 
-const baseUrl = process.env.NEXT_RESELL_SERVER_URL || "http://localhost:5000";
+import { serverFetch } from "@/lib/api-client";
 
-// post a order
-
+// post an order
 export const postOrder = async (orderData) => {
-  const res = await fetch(`${baseUrl}/api/orders`, {
+  const res = await serverFetch("/api/orders", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(orderData),
   });
 
+  const data = await res.json();
   if (!res.ok) {
-    throw new Error("Failed to create order");
+    throw new Error(data.message || "Failed to create order");
   }
 
-  return res.json();
+  return data;
 };
 
 // get orders by sellerInfo
-
 export const getOrdersBySellerInfo = async (sellerInfo) => {
-  const res = await fetch(
-    `${baseUrl}/api/seller/orders?sellerInfo=${sellerInfo}`,
-  );
+  const query = sellerInfo ? `?sellerInfo=${encodeURIComponent(sellerInfo)}` : "";
+  const res = await serverFetch(`/api/seller/orders${query}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch seller orders");
+  }
+
   return res.json();
 };
 
 // get orders by buyerInfo
-
 export const getOrdersByBuyerInfo = async (buyerInfo) => {
-  const res = await fetch(`${baseUrl}/api/buyer/orders?buyerInfo=${buyerInfo}`);
+  const query = buyerInfo ? `?buyerInfo=${encodeURIComponent(buyerInfo)}` : "";
+  const res = await serverFetch(`/api/buyer/orders${query}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch buyer orders");
+  }
+
   return res.json();
 };
 
-// delete an order
-
+// delete/cancel an order
 export const deleteOrder = async (orderId) => {
-  const res = await fetch(`${baseUrl}/api/orders/${orderId}`, {
+  const res = await serverFetch(`/api/orders/${orderId}`, {
     method: "DELETE",
   });
 
+  const data = await res.json();
   if (!res.ok) {
-    throw new Error("Failed to delete order");
+    throw new Error(data.message || "Failed to delete order");
   }
-  return res.json();
+
+  return data;
 };
 
 // update order status
-
 export const updateOrderStatus = async (orderId, status) => {
-  const res = await fetch(`${baseUrl}/api/orders/${orderId}/status`, {
+  const res = await serverFetch(`/api/orders/${orderId}/status`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ status }),
   });
 
+  const data = await res.json();
   if (!res.ok) {
-    throw new Error("Failed to update order status");
+    throw new Error(data.message || "Failed to update order status");
   }
 
-  return res.json();
+  return data;
 };
+

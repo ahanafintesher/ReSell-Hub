@@ -27,7 +27,7 @@ const MyOrdersPage = async () => {
         </div>
       ) : (
         <div className="text-center py-16 text-gray-500 border border-dashed rounded-xl">
-          You haven't placed any orders yet.
+          You haven&apos;t placed any orders yet.
         </div>
       )}
     </div>

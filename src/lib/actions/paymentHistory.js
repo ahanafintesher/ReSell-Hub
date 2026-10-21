@@ -1,26 +1,30 @@
 "use server";
-const baseurl = process.env.NEXT_PUBLIC_RESELL_SERVER_URL;
-export const postPaymentHistory = async (metadata, session_id, date) =>{
-    const res =  await fetch(`${baseurl}/api/payments`,{
-        method:"POST",
-        headers:{
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({metadata, session_id, date})
-    })
-}
+
+import { serverFetch } from "@/lib/api-client";
+
+export const postPaymentHistory = async (metadata, session_id, date) => {
+  const res = await serverFetch("/api/payments", {
+    method: "POST",
+    body: JSON.stringify({ metadata, session_id, date }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to record payment history");
+  }
+
+  return data;
+};
 
 export const getPaymentHistory = async (userEmail) => {
-  const res = await fetch(
-    `${baseurl}/api/payments?userEmail=${encodeURIComponent(userEmail)}`,
-    {
-      cache: "no-store",
-    }
-  );
+  const query = userEmail ? `?userEmail=${encodeURIComponent(userEmail)}` : "";
+  const res = await serverFetch(`/api/payments${query}`, {
+    cache: "no-store",
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch payment history");
   }
 
   return res.json();
-};
+};

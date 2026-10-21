@@ -1,11 +1,20 @@
 "use server";
-const baseUrl = process.env.NEXT_RESELL_SERVER_URL || "http://localhost:5000";
+
+import { serverFetch } from "@/lib/api-client";
+
 export const getMyProducts = async (sellerInfo) => {
-  const res = await fetch(
-    `${baseUrl}/api/my-products?sellerInfo=${sellerInfo}`,
-  );
+  const query = sellerInfo ? `?sellerInfo=${encodeURIComponent(sellerInfo)}` : "";
+  const res = await serverFetch(`/api/my-products${query}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch seller products");
+  }
+
   return res.json();
 };
+
 
 
 

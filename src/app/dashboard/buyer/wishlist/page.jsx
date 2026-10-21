@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "@/lib/auth-client";
 import WishlistCard from "@/components/wishlist/WishlistCard";
-import { getWishlist } from "@/lib/actions/wishlist";
+import { getWishlist, deleteWishlistItem } from "@/lib/actions/wishlist";
 const WishlistPage = () => {
   const { data } = useSession();
 
@@ -35,13 +35,7 @@ const WishlistPage = () => {
 
   const handleRemove = async (wishlistId) => {
     try {
-      const res = await fetch(`/api/wishlist/${wishlistId}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to remove wishlist item");
-      }
+      await deleteWishlistItem(wishlistId);
 
       setWishlist((prev) =>
         prev.filter((item) => item._id !== wishlistId)
@@ -84,9 +78,10 @@ const WishlistPage = () => {
           </h2>
 
           <p className="mt-2 text-sm text-gray-500">
-            You haven't added any products to your wishlist yet.
+            You haven&apos;t added any products to your wishlist yet.
           </p>
         </div>
+
       ) : (
         <div className="space-y-4">
           {wishlist.map((item) => (

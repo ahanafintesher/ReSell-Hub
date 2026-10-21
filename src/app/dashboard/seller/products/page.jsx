@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Table,
   Button,
@@ -10,6 +10,7 @@ import {
 
 import { Pencil, Plus, TrashBin } from "@gravity-ui/icons";
 import { getMyProducts } from "@/lib/actions/myProducts";
+import { deleteProducts } from "@/lib/actions/product";
 import { useSession } from "@/lib/auth-client";
 
 const categoryColorMap = {
@@ -31,7 +32,8 @@ export default function ManageMyProducts() {
 
   const sellerInfo = session?.user?.email;
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
+    if (!sellerInfo) return;
     try {
       setLoading(true);
       setError("");
@@ -43,10 +45,28 @@ export default function ManageMyProducts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sellerInfo]);
 
   useEffect(() => {
-    if (sellerInfo) fetchProducts();
+    let ignore = false;
+    if (sellerInfo) {
+      getMyProducts(sellerInfo)
+        .then((data) => {
+          if (!ignore) {
+            setProducts(data);
+            setLoading(false);
+          }
+        })
+        .catch(() => {
+          if (!ignore) {
+            setError("Failed to load products");
+            setLoading(false);
+          }
+        });
+    }
+    return () => {
+      ignore = true;
+    };
   }, [sellerInfo]);
 
   const handleDelete = async (id) => {
@@ -55,14 +75,7 @@ export default function ManageMyProducts() {
 
     try {
       setDeletingId(id);
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/my-products?id=${id}`,
-        { method: "DELETE" }
-      );
-
-      if (!res.ok) throw new Error();
-
+      await deleteProducts(id);
       await fetchProducts();
     } catch (err) {
       alert("Delete failed");
@@ -70,6 +83,7 @@ export default function ManageMyProducts() {
       setDeletingId(null);
     }
   };
+
 
   if (loading) {
     return (

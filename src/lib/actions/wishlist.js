@@ -1,34 +1,44 @@
 "use server";
 
-const baseurl = process.env.NEXT_PUBLIC_RESELL_SERVER_URL;
+import { serverFetch } from "@/lib/api-client";
 
 export const postWishlist = async (product, userInfo) => {
-const res = await fetch(`${baseurl}/api/wishlist`, {
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-},
-body: JSON.stringify({ product, userInfo }),
-});
+  const res = await serverFetch("/api/wishlist", {
+    method: "POST",
+    body: JSON.stringify({ product, userInfo }),
+  });
 
-return res.json();
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to add to wishlist");
+  }
+
+  return data;
 };
-
-
-
-
 
 export const getWishlist = async (userInfo) => {
-const res = await fetch(
-`${baseurl}/api/wishlist?userInfo=${encodeURIComponent(userInfo)}`,
-{
-cache: "no-store",
-},
-);
+  const query = userInfo ? `?userInfo=${encodeURIComponent(userInfo)}` : "";
+  const res = await serverFetch(`/api/wishlist${query}`, {
+    cache: "no-store",
+  });
 
-if (!res.ok) {
-throw new Error("Failed to fetch wishlist");
-}
+  if (!res.ok) {
+    throw new Error("Failed to fetch wishlist");
+  }
 
-return res.json();
+  return res.json();
 };
+
+export const deleteWishlistItem = async (wishlistId) => {
+  const res = await serverFetch(`/api/wishlist/${wishlistId}`, {
+    method: "DELETE",
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to remove wishlist item");
+  }
+
+  return data;
+};
+

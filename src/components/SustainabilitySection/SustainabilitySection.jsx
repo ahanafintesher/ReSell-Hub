@@ -210,7 +210,7 @@ function SustainabilitySection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            By choosing pre-owned products, you're part of a sustainable movement reducing waste and protecting the environment
+            By choosing pre-owned products, you&apos;re part of a sustainable movement reducing waste and protecting the environment
           </motion.p>
         </motion.div>
 
@@ -250,10 +250,10 @@ function SustainabilitySection() {
                 </motion.div>
 
                 <h3 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
-                  Together, We've Saved the Environment
+                  Together, We&apos;ve Saved the Environment
                 </h3>
                 <p className="text-white/90 text-lg mb-6 leading-relaxed">
-                  Every item you buy or sell on our platform contributes to a more sustainable future. Here's what our community has achieved together.
+                  Every item you buy or sell on our platform contributes to a more sustainable future. Here&apos;s what our community has achieved together.
                 </p>
 
                 <div className="space-y-3">
