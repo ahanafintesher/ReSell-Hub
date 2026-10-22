@@ -138,7 +138,7 @@ export default function Navbar() {
                                     {/* Profile */}
                                     <DropdownItem
                                         key="profile"
-                                        onAction={() => router.push("/profile")}
+                                        onAction={() => router.push("/dashboard/buyer/profile")}
                                     >
                                         <div className="flex items-center gap-3">
                                             <User className="h-4 w-4 text-default-500" />

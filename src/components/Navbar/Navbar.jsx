@@ -116,21 +116,24 @@ function UserMenu({ user }) {
       <Dropdown.Popover placement="bottom end" className="min-w-44">
         <Dropdown.Menu onAction={handleAction}>
           <Dropdown.Item id="profile" textValue="My Profile">
-            <Link href="/profile" className="flex items-center gap-3 w-full">
+            <Link href="/dashboard/buyer/profile" className="flex items-center gap-3 w-full">
               <Person className="w-4 h-4 text-foreground/60 shrink-0" />
               <Label>My Profile</Label>
             </Link>
           </Dropdown.Item>
 
           <Dropdown.Item id="settings" textValue="Settings">
-            <Link href="/settings" className="flex items-center gap-3 w-full">
+            <Link href="/dashboard/buyer/profile" className="flex items-center gap-3 w-full">
               <Gear className="w-4 h-4 text-foreground/60 shrink-0" />
               <Label>Settings</Label>
             </Link>
           </Dropdown.Item>
 
           <Dropdown.Item id="orders" textValue="Orders">
-            <Link href="/orders" className="flex items-center gap-3 w-full">
+            <Link
+              href={user?.role === "seller" ? "/dashboard/seller/orders" : "/dashboard/buyer/orders"}
+              className="flex items-center gap-3 w-full"
+            >
               <Box className="w-4 h-4 text-foreground/60 shrink-0" />
               <Label>Orders</Label>
             </Link>

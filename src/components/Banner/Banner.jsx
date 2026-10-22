@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { FaShoppingBag, FaStore, FaUsers, FaThumbsUp, FaArrowRight } from "react-icons/fa";
 import { motion } from "framer-motion";
 
@@ -203,39 +204,43 @@ function HeroBanner() {
             className="mt-6 lg:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4"
             variants={itemVariants}
           >
-            <motion.button
-              className="group relative inline-flex items-center justify-center gap-2.5 px-7 py-3.5 sm:px-8 sm:py-4 rounded-[0.875rem] bg-[#10B981] text-white font-semibold text-base sm:text-lg shadow-[0_4px_20px_rgba(16,185,129,0.25)] transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)] cursor-pointer"
-              aria-label="Browse Products"
-              whileHover={{
-                scale: 1.02,
-                y: -2,
-                boxShadow: "0 8px 30px rgba(16,185,129,0.35)",
-              }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FaShoppingBag size={18} />
-              Browse Products
-              <FaArrowRight
-                size={14}
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              />
-            </motion.button>
+            <Link href="/products" className="w-full sm:w-auto">
+              <motion.button
+                className="w-full group relative inline-flex items-center justify-center gap-2.5 px-7 py-3.5 sm:px-8 sm:py-4 rounded-[0.875rem] bg-[#10B981] text-white font-semibold text-base sm:text-lg shadow-[0_4px_20px_rgba(16,185,129,0.25)] transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)] cursor-pointer"
+                aria-label="Browse Products"
+                whileHover={{
+                  scale: 1.02,
+                  y: -2,
+                  boxShadow: "0 8px 30px rgba(16,185,129,0.35)",
+                }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <FaShoppingBag size={18} />
+                Browse Products
+                <FaArrowRight
+                  size={14}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </motion.button>
+            </Link>
 
-            <motion.button
-              className="group inline-flex items-center justify-center gap-2.5 px-7 py-3.5 sm:px-8 sm:py-4 rounded-[0.875rem] border-2 border-[#E5E7EB] text-[#111827] font-semibold text-base sm:text-lg bg-white/60 transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)] cursor-pointer"
-              aria-label="Start Selling"
-              whileHover={{
-                scale: 1.02,
-                y: -2,
-                backgroundColor: "rgba(255,255,255,1)",
-                borderColor: "rgba(16,185,129,0.3)",
-                boxShadow: "0 8px 30px rgba(15,23,42,0.08)",
-              }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FaStore size={18} />
-              Start Selling
-            </motion.button>
+            <Link href="/dashboard/seller/products/add-products" className="w-full sm:w-auto">
+              <motion.button
+                className="w-full group inline-flex items-center justify-center gap-2.5 px-7 py-3.5 sm:px-8 sm:py-4 rounded-[0.875rem] border-2 border-[#E5E7EB] text-[#111827] font-semibold text-base sm:text-lg bg-white/60 transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)] cursor-pointer"
+                aria-label="Start Selling"
+                whileHover={{
+                  scale: 1.02,
+                  y: -2,
+                  backgroundColor: "rgba(255,255,255,1)",
+                  borderColor: "rgba(16,185,129,0.3)",
+                  boxShadow: "0 8px 30px rgba(15,23,42,0.08)",
+                }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <FaStore size={18} />
+                Start Selling
+              </motion.button>
+            </Link>
           </motion.div>
 
           {/* Stats Cards */}

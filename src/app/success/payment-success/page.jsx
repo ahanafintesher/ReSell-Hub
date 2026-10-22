@@ -27,27 +27,30 @@ export default async function Success({ searchParams }) {
   }
 
   if (status === "complete") {
-    await postPaymentHistory(metadata, session_id, new Date().toISOString());
-    const product =   await getSingleProduct(metadata.productId);
-    const sellerInfo = product?.sellerInfo || "not found";
-    const sellerName = product?.sellerName || "N/A";
+    try {
+      await postPaymentHistory(metadata, session_id, new Date().toISOString());
+      const product = await getSingleProduct(metadata?.productId);
+      const sellerInfo = product?.sellerInfo || "not found";
+      const sellerName = product?.sellerName || "N/A";
 
-    const orderData = {
-      paymentId: session_id,
-      productId: metadata.productId,
-      productTitle: metadata.title,
-      price: Number(metadata.price),
-      sellerName,
-      sellerInfo: sellerInfo,
-      buyerName: metadata.buyerName,
-      buyerInfo: metadata.userEmail,
-      paymentStatus:"paid",
-      orderStatus:"pending"
+      const orderData = {
+        paymentId: session_id,
+        productId: metadata?.productId,
+        productTitle: metadata?.title,
+        price: Number(metadata?.price || 0),
+        sellerName,
+        sellerInfo: sellerInfo,
+        buyerName: metadata?.buyerName,
+        buyerInfo: metadata?.userEmail,
+        paymentStatus: "paid",
+        orderStatus: "pending",
+      };
 
+      await postOrder(orderData);
+    } catch (postErr) {
+      // If already recorded via webhook or session unavailable, log and proceed
+      console.warn("Payment success recording note:", postErr.message);
     }
-
-    await postOrder(orderData);
-
 
     return (
       <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-green-50 via-white to-emerald-50 px-4 py-10">
@@ -98,21 +101,28 @@ export default async function Success({ searchParams }) {
           </div>
 
           {/* Action Buttons */}
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               href="/"
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-black px-6 py-3 font-medium text-white transition hover:bg-gray-800"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-black px-4 py-3 font-medium text-white transition hover:bg-gray-800 text-sm"
             >
-              <Home className="h-5 w-5" />
-              Back to Home
+              <Home className="h-4 w-4" />
+              Home
             </Link>
 
             <Link
-              href="/orders"
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 px-6 py-3 font-medium transition hover:bg-gray-100"
+              href="/dashboard/buyer/orders"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 px-4 py-3 font-medium text-gray-700 transition hover:bg-gray-100 text-sm"
             >
-              <ShoppingBag className="h-5 w-5" />
-              View Orders
+              <ShoppingBag className="h-4 w-4" />
+              My Orders
+            </Link>
+
+            <Link
+              href="/products"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 font-medium text-white transition hover:bg-green-700 text-sm"
+            >
+              Continue Shopping
             </Link>
           </div>
 

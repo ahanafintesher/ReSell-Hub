@@ -1,11 +1,5 @@
-import React from 'react';
+import { redirect } from "next/navigation";
 
-const page = () => {
-    return (
-        <div>
-            
-        </div>
-    );
-};
-
-export default page;
+export default function BuyerDashboardRoot() {
+  redirect("/dashboard/buyer/overview");
+}

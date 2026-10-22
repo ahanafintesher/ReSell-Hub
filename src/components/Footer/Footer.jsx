@@ -99,17 +99,17 @@ if(pathname.includes('dashboard')){
                 </Link>
               </li>
               <li>
-                <Link href="/sell" className="hover:text-white transition-colors duration-300">
+                <Link href="/dashboard/seller/products/add-products" className="hover:text-white transition-colors duration-300">
                   Sell Your Items
                 </Link>
               </li>
               <li>
-                <Link href="/how-it-works" className="hover:text-white transition-colors duration-300">
+                <Link href="/about#how-it-works" className="hover:text-white transition-colors duration-300">
                   How It Works
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="hover:text-white transition-colors duration-300">
+                <Link href="/about#faq" className="hover:text-white transition-colors duration-300">
                   FAQ
                 </Link>
               </li>
@@ -126,22 +126,22 @@ if(pathname.includes('dashboard')){
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="hover:text-white transition-colors duration-300">
+                <Link href="/about#shipping" className="hover:text-white transition-colors duration-300">
                   Shipping Info
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="hover:text-white transition-colors duration-300">
+                <Link href="/about#returns" className="hover:text-white transition-colors duration-300">
                   Returns & Refunds
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors duration-300">
+                <Link href="/about#privacy" className="hover:text-white transition-colors duration-300">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-white transition-colors duration-300">
+                <Link href="/about#terms" className="hover:text-white transition-colors duration-300">
                   Terms of Service
                 </Link>
               </li>
@@ -156,14 +156,13 @@ if(pathname.includes('dashboard')){
                 <FaMapMarkerAlt className="w-5 h-5 mt-1 flex-shrink-0 text-blue-500" />
                 <span className="text-sm">
                   123 Market Street<br />
-                  New York, NY 10001<br />
-                  United States
+                  Dhaka, Bangladesh
                 </span>
               </li>
               <li className="flex items-center space-x-3">
                 <FaPhone className="w-5 h-5 flex-shrink-0 text-blue-500" />
-                <a href="tel:+1234567890" className="text-sm hover:text-white transition-colors">
-                  +1 (234) 567-890
+                <a href="tel:+8801700000000" className="text-sm hover:text-white transition-colors">
+                  +880 (17) 000-0000
                 </a>
               </li>
               <li className="flex items-center space-x-3">
@@ -187,23 +186,23 @@ if(pathname.includes('dashboard')){
             <div className="mt-4 md:mt-0">
               <ul className="flex flex-wrap space-x-6 text-sm text-gray-400">
                 <li>
-                  <Link href="/privacy" className="hover:text-white transition-colors">
+                  <Link href="/about#privacy" className="hover:text-white transition-colors">
                     Privacy
                   </Link>
                 </li>
                 <li>
-                  <Link href="/terms" className="hover:text-white transition-colors">
+                  <Link href="/about#terms" className="hover:text-white transition-colors">
                     Terms
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cookies" className="hover:text-white transition-colors">
+                  <Link href="/about#privacy" className="hover:text-white transition-colors">
                     Cookies
                   </Link>
                 </li>
                 <li>
-                  <Link href="/sitemap" className="hover:text-white transition-colors">
-                    Sitemap
+                  <Link href="/categories" className="hover:text-white transition-colors">
+                    Categories
                   </Link>
                 </li>
               </ul>

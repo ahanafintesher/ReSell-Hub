@@ -239,7 +239,7 @@ const RegisterPage = () => {
           <p className="text-sm text-center">
             Already have an account?{" "}
             <Link
-              href="/login"
+              href="/auth/login"
               className="text-blue-600 font-medium hover:underline"
             >
               Login

@@ -8,10 +8,37 @@ import UserReviewSection from "@/components/ReviewSection/UserReviewSection";
 
 
 
-const Page = async ({ params }) => {
-  const { id } = await params;
+import Link from "next/link";
 
-  const data = await getSingleProduct(id);
+const Page = async ({ params }) => {
+  const resolvedParams = await params;
+  const rawId = resolvedParams?.id;
+  const productId = Array.isArray(rawId) ? rawId[0] : rawId;
+
+  let data = null;
+  try {
+    if (productId) {
+      data = await getSingleProduct(productId);
+    }
+  } catch (err) {
+    console.error("Failed to load product:", err);
+  }
+
+  if (!data || !data._id || data.message) {
+    return (
+      <div className="max-w-4xl mx-auto px-5 py-20 text-center">
+        <h1 className="text-3xl font-bold text-gray-800 mb-3">Product Not Found</h1>
+        <p className="text-gray-500 mb-6">
+          The item you are looking for does not exist or may have been removed.
+        </p>
+        <Link href="/products">
+          <Button color="primary" className="bg-green-600 text-white font-medium px-6 py-2">
+            Browse All Products
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-5 py-10">
@@ -20,8 +47,8 @@ const Page = async ({ params }) => {
           {/* Product Image */}
           <div className="flex items-center justify-center bg-gray-100 rounded-2xl p-8">
             <Image
-              src={data.image}
-              alt={data.title}
+              src={data.image || "/placeholder.png"}
+              alt={data.title || "Product"}
               width={500}
               height={500}
               className="object-contain max-h-[500px]"
@@ -73,7 +100,7 @@ const Page = async ({ params }) => {
                 </Button>
               </form>
 
-              <WishlistButton></WishlistButton>
+              <WishlistButton product={data}></WishlistButton>
             </div>
           </div>
         </Card.Header>

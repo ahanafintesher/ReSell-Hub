@@ -5,6 +5,7 @@ import { Button, Tooltip } from "@heroui/react";
 import { Heart } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { postWishlist } from "@/lib/actions/wishlist";
+import toast from "react-hot-toast";
 
 export default function WishlistButton({
   product,
@@ -18,7 +19,17 @@ export default function WishlistButton({
   const userInfo = data?.user?.email || null;
 
   const handlePress = async () => {
-    if (!userInfo || isLoading || isWishlisted) {
+    if (!product || !product._id) {
+      toast.error("Product information is not available");
+      return;
+    }
+
+    if (!userInfo) {
+      toast.error("Please log in to save items to your wishlist");
+      return;
+    }
+
+    if (isLoading || isWishlisted) {
       return;
     }
 
@@ -28,9 +39,11 @@ export default function WishlistButton({
       await postWishlist(product, userInfo);
 
       setIsWishlisted(true);
+      toast.success("Added to wishlist!");
       onToggle?.(true);
     } catch (error) {
       console.error("Wishlist error:", error);
+      toast.error(error.message || "Failed to add to wishlist");
     } finally {
       setIsLoading(false);
     }
