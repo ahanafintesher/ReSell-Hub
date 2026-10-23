@@ -192,10 +192,10 @@ const ProfilePage = () => {
       {/* Header */}
       <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 md:text-3xl">
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white md:text-3xl">
             My Profile
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Manage your personal account credentials and profile display information.
           </p>
         </div>
@@ -213,7 +213,7 @@ const ProfilePage = () => {
         )}
       </div>
 
-      <Card className="overflow-hidden border border-slate-200 shadow-sm">
+      <Card className="overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
         {/* Profile Header Banner */}
         <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-8 md:px-8">
           <div className="flex flex-col items-center gap-4 sm:flex-row">
@@ -286,17 +286,17 @@ const ProfilePage = () => {
           {/* Inline Edit Form */}
           {isEditing ? (
             <form onSubmit={handleSaveProfile} className="space-y-6">
-              <div className="border-b border-slate-200 pb-4">
-                <h3 className="text-lg font-bold text-slate-800">
+              <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-white">
                   Edit Personal Information
                 </h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   Update your display name and location. Changes persist immediately to your account.
                 </p>
               </div>
 
               {validationError && (
-                <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+                <div className="flex items-center gap-2 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-400">
                   <AlertCircle size={16} className="shrink-0" />
                   <span>{validationError}</span>
                 </div>
@@ -305,7 +305,7 @@ const ProfilePage = () => {
               <div className="grid gap-5 md:grid-cols-2">
                 {/* Full Name Input */}
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Full Name *
                   </label>
                   <input
@@ -316,16 +316,16 @@ const ProfilePage = () => {
                     placeholder="e.g. Md. Rakib Hasan"
                     disabled={isSaving}
                     maxLength={50}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 disabled:opacity-60"
+                    className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 disabled:opacity-60"
                   />
-                  <span className="mt-1 block text-xs text-slate-400">
+                  <span className="mt-1 block text-xs text-slate-400 dark:text-slate-500">
                     Between 2 and 50 characters
                   </span>
                 </div>
 
                 {/* Location Input */}
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Location
                   </label>
                   <input
@@ -335,48 +335,48 @@ const ProfilePage = () => {
                     placeholder="e.g. Dhaka, Bangladesh"
                     disabled={isSaving}
                     maxLength={100}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 disabled:opacity-60"
+                    className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 disabled:opacity-60"
                   />
-                  <span className="mt-1 block text-xs text-slate-400">
+                  <span className="mt-1 block text-xs text-slate-400 dark:text-slate-500">
                     City, Country (max 100 characters)
                   </span>
                 </div>
 
                 {/* Email (Read Only) */}
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Email Address (Immutable)
                   </label>
                   <input
                     type="text"
                     value={user.email}
                     disabled
-                    className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3.5 py-2.5 text-sm text-slate-500 cursor-not-allowed"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/60 px-3.5 py-2.5 text-sm text-slate-500 dark:text-slate-400 cursor-not-allowed"
                   />
-                  <span className="mt-1 block text-xs text-slate-400">
+                  <span className="mt-1 block text-xs text-slate-400 dark:text-slate-500">
                     Email cannot be modified directly
                   </span>
                 </div>
 
                 {/* Account Role (Read Only) */}
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Account Role (Fixed)
                   </label>
                   <input
                     type="text"
                     value={user.role || "buyer"}
                     disabled
-                    className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3.5 py-2.5 text-sm capitalize text-slate-500 cursor-not-allowed"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/60 px-3.5 py-2.5 text-sm capitalize text-slate-500 dark:text-slate-400 cursor-not-allowed"
                   />
-                  <span className="mt-1 block text-xs text-slate-400">
+                  <span className="mt-1 block text-xs text-slate-400 dark:text-slate-500">
                     Assigned upon registration
                   </span>
                 </div>
               </div>
 
               {/* Form Action Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <Button
                   type="button"
                   variant="tertiary"
@@ -409,10 +409,10 @@ const ProfilePage = () => {
             <>
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-800">
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-white">
                     Account Information
                   </h3>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     Your current verified account details.
                   </p>
                 </div>
@@ -430,45 +430,45 @@ const ProfilePage = () => {
 
               <div className="grid gap-5 md:grid-cols-2">
                 {/* Name */}
-                <div className="rounded-xl border border-slate-200 p-4">
-                  <div className="mb-2 flex items-center gap-2 text-slate-500">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-800/40 p-4">
+                  <div className="mb-2 flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <User size={18} />
                     <span className="text-sm font-medium">Full Name</span>
                   </div>
-                  <p className="font-semibold text-slate-800">
+                  <p className="font-semibold text-slate-800 dark:text-white">
                     {user.name || "Not specified"}
                   </p>
                 </div>
 
                 {/* Email */}
-                <div className="rounded-xl border border-slate-200 p-4">
-                  <div className="mb-2 flex items-center gap-2 text-slate-500">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-800/40 p-4">
+                  <div className="mb-2 flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <Mail size={18} />
                     <span className="text-sm font-medium">Email Address</span>
                   </div>
-                  <p className="break-all font-semibold text-slate-800">
+                  <p className="break-all font-semibold text-slate-800 dark:text-white">
                     {user.email || "Not specified"}
                   </p>
                 </div>
 
                 {/* Location */}
-                <div className="rounded-xl border border-slate-200 p-4">
-                  <div className="mb-2 flex items-center gap-2 text-slate-500">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-800/40 p-4">
+                  <div className="mb-2 flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <MapPin size={18} />
                     <span className="text-sm font-medium">Location</span>
                   </div>
-                  <p className="font-semibold text-slate-800">
+                  <p className="font-semibold text-slate-800 dark:text-white">
                     {user.location || "Not added yet"}
                   </p>
                 </div>
 
                 {/* Role */}
-                <div className="rounded-xl border border-slate-200 p-4">
-                  <div className="mb-2 flex items-center gap-2 text-slate-500">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-800/40 p-4">
+                  <div className="mb-2 flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <ShieldCheck size={18} />
                     <span className="text-sm font-medium">Account Role</span>
                   </div>
-                  <p className="font-semibold capitalize text-slate-800">
+                  <p className="font-semibold capitalize text-slate-800 dark:text-white">
                     {user.role || "buyer"}
                   </p>
                 </div>

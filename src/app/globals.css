@@ -1,3 +1,33 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --bg-app: #ffffff;
+  --fg-app: #0f172a;
+  --card-bg: #ffffff;
+  --card-muted: #f8fafc;
+  --card-border: #e2e8f0;
+  --chart-grid: #f1f5f9;
+  --chart-axis: #94a3b8;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg-app: #0b0f19;
+  --fg-app: #f8fafc;
+  --card-bg: #131b2e;
+  --card-muted: #1e293b;
+  --card-border: #223049;
+  --chart-grid: #1e293b;
+  --chart-axis: #64748b;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--fg-app);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+

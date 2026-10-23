@@ -27,21 +27,21 @@ export default function ChartCard({
 
   return (
     <div
-      className={`rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm transition flex flex-col justify-between w-full min-w-0 ${minHeight} ${className}`}
+      className={`rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-[#131b2e] p-5 sm:p-6 shadow-xs transition flex flex-col justify-between w-full min-w-0 ${minHeight} ${className}`}
     >
       {/* Header */}
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-bold text-gray-900 truncate">{title}</h3>
+            <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 truncate">{title}</h3>
             {badge && (
-              <span className="shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700 border border-green-200/50">
+              <span className="shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/40">
                 {badge}
               </span>
             )}
           </div>
           {subtitle && (
-            <p className="mt-0.5 text-xs text-gray-500 leading-relaxed">
+            <p className="mt-0.5 text-xs text-gray-500 dark:text-slate-400 leading-relaxed">
               {subtitle}
             </p>
           )}
@@ -53,19 +53,19 @@ export default function ChartCard({
       {/* Chart Body */}
       <div className="relative flex-1 w-full min-w-0 flex items-center justify-center">
         {loading || !isMounted ? (
-          <div className="w-full h-full min-h-[260px] flex flex-col items-center justify-center space-y-3 bg-gray-50/50 rounded-xl animate-pulse">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-400">
+          <div className="w-full h-full min-h-[260px] flex flex-col items-center justify-center space-y-3 bg-gray-50/50 dark:bg-slate-900/40 rounded-xl animate-pulse">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-slate-800 text-gray-400 dark:text-slate-500">
               <RefreshCw className="h-5 w-5 animate-spin" />
             </div>
-            <p className="text-xs text-gray-400 font-medium">Preparing interactive visualization...</p>
+            <p className="text-xs text-gray-400 dark:text-slate-500 font-medium">Preparing interactive visualization...</p>
           </div>
         ) : isEmpty ? (
-          <div className="w-full h-full min-h-[260px] flex flex-col items-center justify-center text-center p-6 bg-gray-50/40 rounded-xl border border-dashed border-gray-200">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-400 mb-3">
+          <div className="w-full h-full min-h-[260px] flex flex-col items-center justify-center text-center p-6 bg-gray-50/40 dark:bg-slate-900/40 rounded-xl border border-dashed border-gray-200 dark:border-slate-800">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 mb-3">
               <EmptyIcon className="h-6 w-6" />
             </div>
-            <p className="text-sm font-semibold text-gray-800">{emptyTitle}</p>
-            <p className="mt-1 max-w-xs text-xs text-gray-500 leading-normal">
+            <p className="text-sm font-semibold text-gray-800 dark:text-slate-200">{emptyTitle}</p>
+            <p className="mt-1 max-w-xs text-xs text-gray-500 dark:text-slate-400 leading-normal">
               {emptyDescription}
             </p>
           </div>

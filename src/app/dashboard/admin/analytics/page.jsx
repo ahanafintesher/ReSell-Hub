@@ -46,8 +46,15 @@ import {
   aggregateCategoryDistribution,
   aggregateUserRoleDistribution,
 } from "@/lib/analyticsUtils";
+import { useTheme } from "@/components/Theme/ThemeProvider";
 
 export default function AdminAnalyticsPage() {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+  const gridStroke = isDark ? "#223049" : "#f1f5f9";
+  const axisStroke = isDark ? "#64748b" : "#94a3b8";
+  const lineStroke = isDark ? "#334155" : "#e2e8f0";
+
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -344,16 +351,16 @@ export default function AdminAnalyticsPage() {
                   <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
               <XAxis
                 dataKey="formattedDate"
-                stroke="#94a3b8"
+                stroke={axisStroke}
                 fontSize={11}
                 tickLine={false}
-                axisLine={{ stroke: "#e2e8f0" }}
+                axisLine={{ stroke: lineStroke }}
               />
               <YAxis
-                stroke="#94a3b8"
+                stroke={axisStroke}
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
@@ -399,16 +406,16 @@ export default function AdminAnalyticsPage() {
               data={metrics.revenueTimeline}
               margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
               <XAxis
                 dataKey="formattedDate"
-                stroke="#94a3b8"
+                stroke={axisStroke}
                 fontSize={11}
                 tickLine={false}
-                axisLine={{ stroke: "#e2e8f0" }}
+                axisLine={{ stroke: lineStroke }}
               />
               <YAxis
-                stroke="#94a3b8"
+                stroke={axisStroke}
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
@@ -485,18 +492,18 @@ export default function AdminAnalyticsPage() {
               {metrics.orderStatusDist.map((st) => (
                 <div
                   key={st.status}
-                  className="flex items-center justify-between py-1 border-b border-gray-50 last:border-0"
+                  className="flex items-center justify-between py-1 border-b border-gray-100 dark:border-slate-800 last:border-0"
                 >
                   <div className="flex items-center gap-2">
                     <span
                       className="h-2.5 w-2.5 rounded-full shrink-0"
                       style={{ backgroundColor: st.color }}
                     />
-                    <span className="font-medium text-gray-700">{st.name}</span>
+                    <span className="font-medium text-gray-700 dark:text-slate-300">{st.name}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 font-bold text-gray-900">
+                  <div className="flex items-center gap-1.5 font-bold text-gray-900 dark:text-slate-100">
                     <span>{st.value}</span>
-                    <span className="text-gray-400 font-normal">
+                    <span className="text-gray-400 dark:text-slate-500 font-normal">
                       ({st.percentage}%)
                     </span>
                   </div>
@@ -546,14 +553,14 @@ export default function AdminAnalyticsPage() {
 
             {/* User Moderation Status Box */}
             <div className="w-full sm:w-2/5 space-y-2.5 text-xs pr-2">
-              <div className="rounded-xl border border-gray-100 bg-gray-50/70 p-2.5">
+              <div className="rounded-xl border border-gray-100 dark:border-slate-800 bg-gray-50/70 dark:bg-slate-900/60 p-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-600">Active Accounts</span>
-                  <span className="font-bold text-emerald-700">
+                  <span className="font-medium text-gray-600 dark:text-slate-400">Active Accounts</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400">
                     {metrics.activeUsers}
                   </span>
                 </div>
-                <p className="mt-0.5 text-[11px] text-gray-400">
+                <p className="mt-0.5 text-[11px] text-gray-400 dark:text-slate-500">
                   {metrics.totalUsers > 0
                     ? Math.round((metrics.activeUsers / metrics.totalUsers) * 100)
                     : 100}
@@ -561,14 +568,14 @@ export default function AdminAnalyticsPage() {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-gray-100 bg-gray-50/70 p-2.5">
+              <div className="rounded-xl border border-gray-100 dark:border-slate-800 bg-gray-50/70 dark:bg-slate-900/60 p-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-600">Restricted / Blocked</span>
-                  <span className="font-bold text-rose-700">
+                  <span className="font-medium text-gray-600 dark:text-slate-400">Restricted / Blocked</span>
+                  <span className="font-bold text-rose-700 dark:text-rose-400">
                     {metrics.blockedUsers}
                   </span>
                 </div>
-                <p className="mt-0.5 text-[11px] text-gray-400">
+                <p className="mt-0.5 text-[11px] text-gray-400 dark:text-slate-500">
                   {metrics.totalUsers > 0
                     ? Math.round((metrics.blockedUsers / metrics.totalUsers) * 100)
                     : 0}
@@ -587,9 +594,9 @@ export default function AdminAnalyticsPage() {
                         className="h-2 w-2 rounded-full"
                         style={{ backgroundColor: r.color }}
                       />
-                      <span className="text-gray-600">{r.name}</span>
+                      <span className="text-gray-600 dark:text-slate-400">{r.name}</span>
                     </div>
-                    <span className="font-semibold text-gray-800">
+                    <span className="font-semibold text-gray-800 dark:text-slate-200">
                       {r.value} ({r.percentage}%)
                     </span>
                   </div>
@@ -617,19 +624,19 @@ export default function AdminAnalyticsPage() {
             data={metrics.categoriesDist.slice(0, 8)}
             margin={{ top: 5, right: 30, left: 15, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} horizontal={false} />
             <XAxis
               type="number"
-              stroke="#94a3b8"
+              stroke={axisStroke}
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: "#e2e8f0" }}
+              axisLine={{ stroke: lineStroke }}
               allowDecimals={false}
             />
             <YAxis
               dataKey="category"
               type="category"
-              stroke="#64748b"
+              stroke={isDark ? "#94a3b8" : "#64748b"}
               fontSize={11}
               tickLine={false}
               axisLine={false}
@@ -652,29 +659,29 @@ export default function AdminAnalyticsPage() {
       </ChartCard>
 
       {/* Detailed Category Inventory Table */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs">
+      <div className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-[#131b2e] p-6 shadow-xs">
         <div className="mb-5 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-base font-bold text-gray-900">
+            <h2 className="text-base font-bold text-gray-900 dark:text-slate-100">
               Inventory Valuation by Category
             </h2>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-slate-400">
               Breakdown of product volume, cumulative asking valuation, and market share
             </p>
           </div>
-          <span className="text-xs font-semibold text-gray-500">
+          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400">
             {metrics.categoriesDist.length} active categories
           </span>
         </div>
 
         {metrics.categoriesDist.length === 0 ? (
-          <div className="py-12 text-center text-sm text-gray-400">
+          <div className="py-12 text-center text-sm text-gray-400 dark:text-slate-500">
             No categorized products available in the database.
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-600">
-              <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-700">
+            <table className="w-full text-left text-sm text-gray-600 dark:text-slate-300">
+              <thead className="border-b border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/60 text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-slate-300">
                 <tr>
                   <th className="px-4 py-3">Category</th>
                   <th className="px-4 py-3">Listed Items</th>
@@ -682,26 +689,26 @@ export default function AdminAnalyticsPage() {
                   <th className="px-4 py-3">Catalog Share</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
                 {metrics.categoriesDist.map((cat) => {
                   return (
-                    <tr key={cat.category} className="hover:bg-gray-50/70">
-                      <td className="px-4 py-3 font-semibold text-gray-900">
+                    <tr key={cat.category} className="hover:bg-gray-50/70 dark:hover:bg-slate-800/40">
+                      <td className="px-4 py-3 font-semibold text-gray-900 dark:text-slate-100">
                         {cat.category}
                       </td>
                       <td className="px-4 py-3">{cat.count} items</td>
-                      <td className="px-4 py-3 font-medium text-gray-900">
+                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-slate-100">
                         {formatBDT(cat.value)}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <div className="h-2 w-24 rounded-full bg-gray-100 overflow-hidden">
+                          <div className="h-2 w-24 rounded-full bg-gray-100 dark:bg-slate-800 overflow-hidden">
                             <div
                               className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                               style={{ width: `${cat.percentage}%` }}
                             />
                           </div>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-slate-400">
                             {cat.percentage}%
                           </span>
                         </div>
@@ -716,9 +723,9 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {/* Analytics Methodology Documentation */}
-      <div className="rounded-2xl border border-gray-200 bg-gray-50/90 p-5 text-xs text-gray-600 space-y-2 shadow-xs">
-        <div className="flex items-center gap-2 font-bold text-gray-900">
-          <Info className="h-4 w-4 text-blue-600" />
+      <div className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-gray-50/90 dark:bg-slate-900/60 p-5 text-xs text-gray-600 dark:text-slate-300 space-y-2 shadow-xs">
+        <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-slate-100">
+          <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           Analytics Methodology & Data Governance
         </div>
         <p>

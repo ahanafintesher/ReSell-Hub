@@ -39,10 +39,10 @@ export default async function ProductsPage({ searchParams }) {
     <main className="container mx-auto max-w-7xl px-4 sm:px-6 py-10">
       {/* Page Header */}
       <div className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Marketplace Catalog
         </h1>
-        <p className="mt-2 text-slate-500 text-sm sm:text-base">
+        <p className="mt-2 text-slate-500 dark:text-slate-400 text-sm sm:text-base">
           Browse verified pre-owned items from trusted community sellers.
         </p>
       </div>

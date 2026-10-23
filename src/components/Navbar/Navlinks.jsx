@@ -56,7 +56,7 @@ export default function NavLinks({ mobile = false, onNavigate }) {
             >
               {label}
               {isActive && (
-                <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-foreground" />
+                <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-emerald-600 dark:bg-emerald-400" />
               )}
             </Link>
           </li>

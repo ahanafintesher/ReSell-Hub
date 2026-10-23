@@ -15,9 +15,9 @@ export default function CustomChartTooltip({
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white/95 p-3 shadow-lg backdrop-blur-sm text-xs">
+    <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 p-3 shadow-lg backdrop-blur-sm text-xs">
       {label && (
-        <p className="font-semibold text-gray-900 border-b border-gray-100 pb-1.5 mb-2">
+        <p className="font-semibold text-gray-900 dark:text-slate-100 border-b border-gray-100 dark:border-slate-800 pb-1.5 mb-2">
           {label}
         </p>
       )}
@@ -37,11 +37,11 @@ export default function CustomChartTooltip({
                   className="h-2.5 w-2.5 rounded-full shrink-0"
                   style={{ backgroundColor: item.color || item.fill || "#10b981" }}
                 />
-                <span className="text-gray-600 font-medium capitalize">
+                <span className="text-gray-600 dark:text-slate-300 font-medium capitalize">
                   {item.name || item.dataKey}:
                 </span>
               </div>
-              <span className="font-bold text-gray-900">{formattedVal}</span>
+              <span className="font-bold text-gray-900 dark:text-slate-100">{formattedVal}</span>
             </div>
           );
         })}

@@ -260,3 +260,32 @@ export const aggregateSellerTopProducts = (orders = []) => {
     (a, b) => b.revenue - a.revenue || b.ordersCount - a.ordersCount
   );
 };
+
+/**
+ * Aggregates seller products into available vs sold listings
+ */
+export const aggregateSellerInventoryDistribution = (products = []) => {
+  if (!Array.isArray(products) || products.length === 0) return [];
+  const available = products.filter(
+    (p) => (p?.status || "available") === "available"
+  ).length;
+  const sold = products.filter((p) => p?.status === "sold").length;
+  const total = products.length;
+
+  return [
+    {
+      name: "Available Listings",
+      status: "available",
+      value: available,
+      color: "#10b981",
+      percentage: total > 0 ? Math.round((available / total) * 100) : 0,
+    },
+    {
+      name: "Sold Items",
+      status: "sold",
+      value: sold,
+      color: "#3b82f6",
+      percentage: total > 0 ? Math.round((sold / total) * 100) : 0,
+    },
+  ];
+};

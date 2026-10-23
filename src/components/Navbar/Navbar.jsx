@@ -16,6 +16,7 @@ import Link from "next/link";
 import NavLinks from "./Navlinks";
 import { authClient } from "@/lib/auth-client";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "@/components/Theme/ThemeToggle";
 const play = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -122,7 +123,7 @@ function UserMenu({ user }) {
           </Dropdown.Item>
 
           <Dropdown.Item id="settings" textValue="Settings">
-            <Link href="/dashboard/buyer/profile" className="flex items-center gap-3 w-full">
+            <Link href="/dashboard/settings" className="flex items-center gap-3 w-full">
               <Gear className="w-4 h-4 text-foreground/60 shrink-0" />
               <Label>Settings</Label>
             </Link>
@@ -167,7 +168,7 @@ export default function Navbar() {
   }
   if (isPending) {
     return (
-      <nav className="sticky top-0 z-40 w-full border-b border-divider bg-background/80 backdrop-blur-md backdrop-saturate-150">
+      <nav className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-[#0b0f19]/80 backdrop-blur-md backdrop-saturate-150">
         <header className="flex h-14 items-center justify-between px-4 sm:px-6 max-w-screen-xl mx-auto">
           <Logo />
         </header>
@@ -176,7 +177,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b border-divider bg-background/80 backdrop-blur-md backdrop-saturate-150">
+    <nav className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-[#0b0f19]/80 backdrop-blur-md backdrop-saturate-150">
       <header className="flex h-14 items-center justify-between px-4 sm:px-6 max-w-screen-xl mx-auto gap-4">
         {/* Left — Logo */}
         <Logo />
@@ -186,8 +187,10 @@ export default function Navbar() {
           <NavLinks />
         </div>
 
-        {/* Right — Auth / User */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Right — Theme Toggle, Auth / User */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <ThemeToggle variant="compact" />
+
           {isLoggedIn ? (
             <UserMenu user={user} />
           ) : (

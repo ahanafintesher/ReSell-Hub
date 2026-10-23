@@ -45,9 +45,17 @@ import {
   aggregateOrdersTimeline,
   aggregateOrderStatusDistribution,
   aggregateSellerTopProducts,
+  aggregateSellerInventoryDistribution,
 } from "@/lib/analyticsUtils";
+import { useTheme } from "@/components/Theme/ThemeProvider";
 
 export default function SellerAnalyticsPage() {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+  const gridStroke = isDark ? "#223049" : "#f1f5f9";
+  const axisStroke = isDark ? "#64748b" : "#94a3b8";
+  const lineStroke = isDark ? "#334155" : "#e2e8f0";
+
   const { data: session, isPending: sessionLoading } = authClient.useSession();
   const sellerEmail = session?.user?.email;
 
@@ -216,10 +224,12 @@ export default function SellerAnalyticsPage() {
     const revenueTimeline = aggregateOrdersTimeline(orders);
     const orderStatusDist = aggregateOrderStatusDistribution(orders);
     const topProducts = aggregateSellerTopProducts(orders);
+    const inventoryDist = aggregateSellerInventoryDistribution(products);
 
     const hasRevenueData = revenueTimeline.some((p) => p.revenue > 0);
     const hasStatusData = orderStatusDist.some((s) => s.value > 0);
     const hasProductData = topProducts.length > 0;
+    const hasInventoryData = inventoryDist.some((i) => i.value > 0);
 
     return {
       totalProducts,
@@ -233,9 +243,11 @@ export default function SellerAnalyticsPage() {
       revenueTimeline,
       orderStatusDist,
       topProducts,
+      inventoryDist,
       hasRevenueData,
       hasStatusData,
       hasProductData,
+      hasInventoryData,
     };
   }, [orders, products]);
 
@@ -369,14 +381,14 @@ export default function SellerAnalyticsPage() {
 
       {/* Overall Empty State if no products and no orders */}
       {!loading && products.length === 0 && orders.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-12 text-center shadow-xs">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 mb-4">
+        <div className="rounded-3xl border border-dashed border-gray-300 dark:border-slate-800 bg-white dark:bg-[#131b2e] p-12 text-center shadow-xs">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 mb-4">
             <Store className="h-7 w-7" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             No listings yet in your store
           </h2>
-          <p className="mx-auto mt-2 max-w-md text-sm text-gray-500 leading-relaxed">
+          <p className="mx-auto mt-2 max-w-md text-sm text-gray-500 dark:text-slate-400 leading-relaxed">
             Start listing pre-owned electronics, furniture, or accessories to generate sales and unlock interactive performance analytics.
           </p>
           <div className="mt-6 flex justify-center">
@@ -416,16 +428,16 @@ export default function SellerAnalyticsPage() {
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
                   <XAxis
                     dataKey="formattedDate"
-                    stroke="#94a3b8"
+                    stroke={axisStroke}
                     fontSize={11}
                     tickLine={false}
-                    axisLine={{ stroke: "#e2e8f0" }}
+                    axisLine={{ stroke: lineStroke }}
                   />
                   <YAxis
-                    stroke="#94a3b8"
+                    stroke={axisStroke}
                     fontSize={11}
                     tickLine={false}
                     axisLine={false}
@@ -501,18 +513,18 @@ export default function SellerAnalyticsPage() {
                   {metrics.orderStatusDist.map((st) => (
                     <div
                       key={st.status}
-                      className="flex items-center justify-between py-1 border-b border-gray-50 last:border-0"
+                      className="flex items-center justify-between py-1 border-b border-gray-100 dark:border-slate-800 last:border-0"
                     >
                       <div className="flex items-center gap-2">
                         <span
                           className="h-2.5 w-2.5 rounded-full shrink-0"
                           style={{ backgroundColor: st.color }}
                         />
-                        <span className="font-medium text-gray-700">{st.name}</span>
+                        <span className="font-medium text-gray-700 dark:text-slate-300">{st.name}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 font-bold text-gray-900">
+                      <div className="flex items-center gap-1.5 font-bold text-gray-900 dark:text-slate-100">
                         <span>{st.value}</span>
-                        <span className="text-gray-400 font-normal">
+                        <span className="text-gray-400 dark:text-slate-500 font-normal">
                           ({st.percentage}%)
                         </span>
                       </div>
@@ -523,76 +535,155 @@ export default function SellerAnalyticsPage() {
             </ChartCard>
           </div>
 
-          {/* Row 2: Top Products Ranked by Settled Revenue (Horizontal Bar Chart) */}
-          <ChartCard
-            title="Top Products by Settled Revenue"
-            subtitle="Best-selling items in your catalog ranked by confirmed earned revenue (BDT)"
-            badge={`${metrics.topProducts.length} Items Ordered`}
-            loading={loading}
-            isEmpty={!metrics.hasProductData}
-            emptyIcon={BarChart3}
-            emptyTitle="No Sales by Product"
-            emptyDescription="Product ranking will display once buyers purchase your listed items."
-          >
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                layout="vertical"
-                data={metrics.topProducts.slice(0, 6)}
-                margin={{ top: 5, right: 30, left: 15, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
-                <XAxis
-                  type="number"
-                  stroke="#94a3b8"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={{ stroke: "#e2e8f0" }}
-                  tickFormatter={(val) =>
-                    val >= 1000 ? `৳${(val / 1000).toFixed(0)}k` : `৳${val}`
-                  }
-                />
-                <YAxis
-                  dataKey="shortTitle"
-                  type="category"
-                  stroke="#64748b"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  width={120}
-                />
-                <Tooltip
-                  content={
-                    <CustomChartTooltip
-                      isCurrency={true}
-                      labelPrefix="Product: "
-                    />
-                  }
-                />
-                <Bar
-                  dataKey="revenue"
-                  name="Settled Revenue"
-                  fill="#10b981"
-                  radius={[0, 6, 6, 0]}
-                  maxBarSize={22}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard>
+          {/* Row 2: Top Products Ranked by Settled Revenue & Available vs. Sold Inventory */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* Chart 3: Top Products by Settled Revenue (Horizontal Bar Chart) */}
+            <ChartCard
+              title="Top Products by Settled Revenue"
+              subtitle="Best-selling items in your catalog ranked by confirmed earned revenue (BDT)"
+              badge={`${metrics.topProducts.length} Items Ordered`}
+              loading={loading}
+              isEmpty={!metrics.hasProductData}
+              emptyIcon={BarChart3}
+              emptyTitle="No Sales by Product"
+              emptyDescription="Product ranking will display once buyers purchase your listed items."
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  layout="vertical"
+                  data={metrics.topProducts.slice(0, 6)}
+                  margin={{ top: 5, right: 30, left: 15, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} horizontal={false} />
+                  <XAxis
+                    type="number"
+                    stroke={axisStroke}
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={{ stroke: lineStroke }}
+                    tickFormatter={(val) =>
+                      val >= 1000 ? `৳${(val / 1000).toFixed(0)}k` : `৳${val}`
+                    }
+                  />
+                  <YAxis
+                    dataKey="shortTitle"
+                    type="category"
+                    stroke={isDark ? "#94a3b8" : "#64748b"}
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                    width={120}
+                  />
+                  <Tooltip
+                    content={
+                      <CustomChartTooltip
+                        isCurrency={true}
+                        labelPrefix="Product: "
+                      />
+                    }
+                  />
+                  <Bar
+                    dataKey="revenue"
+                    name="Settled Revenue"
+                    fill="#10b981"
+                    radius={[0, 6, 6, 0]}
+                    maxBarSize={22}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartCard>
+
+            {/* Chart 4: Inventory Status & Listing Liquidity (Donut PieChart) */}
+            <ChartCard
+              title="Inventory Status & Liquidity"
+              subtitle="Proportion of active catalog listings vs. successfully purchased & sold items"
+              badge={`${metrics.totalProducts} Total Listings`}
+              loading={loading}
+              isEmpty={!metrics.hasInventoryData}
+              emptyIcon={Package}
+              emptyTitle="No Inventory Records"
+              emptyDescription="Add products to your catalog to track available listings and inventory velocity."
+            >
+              <div className="flex flex-col sm:flex-row items-center justify-between h-full w-full gap-4">
+                <div className="w-full sm:w-3/5 h-[230px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={metrics.inventoryDist}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={55}
+                        outerRadius={80}
+                        paddingAngle={4}
+                      >
+                        {metrics.inventoryDist.map((entry) => (
+                          <Cell
+                            key={`inventory-cell-${entry.status}`}
+                            fill={entry.color}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip content={<CustomChartTooltip valueSuffix=" items" />} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Inventory Breakdown Details */}
+                <div className="w-full sm:w-2/5 space-y-3 text-xs pr-2">
+                  <div className="rounded-xl border border-gray-100 dark:border-slate-800 bg-gray-50/70 dark:bg-slate-900/60 p-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-600 dark:text-slate-400">Available to Buy</span>
+                      <span className="font-bold text-emerald-700 dark:text-emerald-400">
+                        {metrics.availableProducts}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 text-[11px] text-gray-400 dark:text-slate-500">
+                      {metrics.totalProducts > 0
+                        ? Math.round((metrics.availableProducts / metrics.totalProducts) * 100)
+                        : 0}
+                      % of total inventory
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-gray-100 dark:border-slate-800 bg-gray-50/70 dark:bg-slate-900/60 p-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-600 dark:text-slate-400">Sold Listings</span>
+                      <span className="font-bold text-blue-700 dark:text-blue-400">
+                        {metrics.totalProducts - metrics.availableProducts}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 text-[11px] text-gray-400 dark:text-slate-500">
+                      {metrics.totalProducts > 0
+                        ? Math.round(
+                            ((metrics.totalProducts - metrics.availableProducts) /
+                              metrics.totalProducts) *
+                              100
+                          )
+                        : 0}
+                      % liquidation rate
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </ChartCard>
+          </div>
 
           {/* Row 3: Product Performance Breakdown Table */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs">
+          <div className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-[#131b2e] p-6 shadow-xs">
             <div className="mb-5 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-base font-bold text-gray-900">
+                <h2 className="text-base font-bold text-gray-900 dark:text-slate-100">
                   Product Sales Performance Breakdown
                 </h2>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-slate-400">
                   Order counts, paid sales conversion, and settled earnings per listing
                 </p>
               </div>
               <Link
                 href="/dashboard/seller/products/my-products"
-                className="text-xs font-semibold text-emerald-600 hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
               >
                 View all inventory
                 <ArrowRight className="h-3 w-3" />
@@ -600,13 +691,13 @@ export default function SellerAnalyticsPage() {
             </div>
 
             {metrics.topProducts.length === 0 ? (
-              <div className="py-12 text-center text-sm text-gray-400">
+              <div className="py-12 text-center text-sm text-gray-400 dark:text-slate-500">
                 No orders recorded yet. As customers buy items, detailed item performance will appear here.
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-gray-600">
-                  <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-700">
+                <table className="w-full text-left text-sm text-gray-600 dark:text-slate-300">
+                  <thead className="border-b border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/60 text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-slate-300">
                     <tr>
                       <th className="px-4 py-3">Rank & Product</th>
                       <th className="px-4 py-3">Total Orders</th>
@@ -615,7 +706,7 @@ export default function SellerAnalyticsPage() {
                       <th className="px-4 py-3 text-right">Avg Item Price</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
                     {metrics.topProducts.slice(0, 8).map((item, index) => {
                       const avgPrice =
                         item.paidOrdersCount > 0
@@ -623,10 +714,10 @@ export default function SellerAnalyticsPage() {
                           : 0;
 
                       return (
-                        <tr key={item.id + index} className="hover:bg-gray-50/70">
-                          <td className="px-4 py-3 font-semibold text-gray-900">
+                        <tr key={item.id + index} className="hover:bg-gray-50/70 dark:hover:bg-slate-800/40">
+                          <td className="px-4 py-3 font-semibold text-gray-900 dark:text-slate-100">
                             <div className="flex items-center gap-2.5">
-                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-xs font-bold text-emerald-700 border border-emerald-100">
+                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/60">
                                 {index + 1}
                               </span>
                               <span className="truncate max-w-xs">{item.title}</span>
@@ -634,14 +725,14 @@ export default function SellerAnalyticsPage() {
                           </td>
                           <td className="px-4 py-3">{item.ordersCount} orders</td>
                           <td className="px-4 py-3">
-                            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                            <span className="inline-flex items-center rounded-md bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/40">
                               {item.paidOrdersCount} paid
                             </span>
                           </td>
-                          <td className="px-4 py-3 font-bold text-gray-900">
+                          <td className="px-4 py-3 font-bold text-gray-900 dark:text-slate-100">
                             {formatBDT(item.revenue)}
                           </td>
-                          <td className="px-4 py-3 text-right font-medium text-gray-700">
+                          <td className="px-4 py-3 text-right font-medium text-gray-700 dark:text-slate-300">
                             {formatBDT(avgPrice)}
                           </td>
                         </tr>
@@ -656,19 +747,19 @@ export default function SellerAnalyticsPage() {
       )}
 
       {/* Quick Action Navigation */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-[#131b2e] p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
-          <h3 className="font-bold text-gray-900 text-base">
+          <h3 className="font-bold text-gray-900 dark:text-slate-100 text-base">
             Ready to fulfill pending orders?
           </h3>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
             Advance fulfillment steps (Accept, Process, Ship, Deliver) directly on the manage orders dashboard.
           </p>
         </div>
         <Link href="/dashboard/seller/orders">
           <Button
             color="primary"
-            className="bg-black text-white font-medium hover:bg-gray-800 transition"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition"
           >
             Manage Customer Orders
           </Button>
