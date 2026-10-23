@@ -2,27 +2,50 @@
 
 import { useEffect, useState, useMemo } from "react";
 import {
-  TrendingUp,
   DollarSign,
   ShoppingBag,
   Users,
   Package,
-  Layers,
-  RefreshCw,
   AlertCircle,
-  Shield,
-  UserCheck,
-  CheckCircle2,
-  PieChart,
   BarChart3,
-  Calendar,
+  PieChart as PieIcon,
+  Layers,
+  ShieldCheck,
+  TrendingUp,
   Info,
 } from "lucide-react";
 import { Button } from "@heroui/react";
 import toast from "react-hot-toast";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+} from "recharts";
+
 import { getAdminUsers } from "@/lib/actions/user";
 import { getProducts } from "@/lib/actions/getProducts";
 import { getAdminOrders } from "@/lib/actions/orders";
+import AnalyticsPageHeader from "@/components/Dashboard/AnalyticsPageHeader";
+import AnalyticsKpiCard from "@/components/Dashboard/AnalyticsKpiCard";
+import ChartCard from "@/components/Dashboard/ChartCard";
+import CustomChartTooltip from "@/components/Dashboard/CustomChartTooltip";
+import {
+  formatBDT,
+  aggregateOrdersTimeline,
+  aggregateOrderStatusDistribution,
+  aggregateCategoryDistribution,
+  aggregateUserRoleDistribution,
+} from "@/lib/analyticsUtils";
 
 export default function AdminAnalyticsPage() {
   const [users, setUsers] = useState([]);
@@ -31,30 +54,54 @@ export default function AdminAnalyticsPage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   const loadData = async () => {
     try {
-      const [usersData, productsData, ordersData] = await Promise.all([
-        getAdminUsers().catch((err) => {
-          console.warn("Analytics users error:", err);
-          return [];
-        }),
-        getProducts().catch((err) => {
-          console.warn("Analytics products error:", err);
-          return [];
-        }),
-        getAdminOrders().catch((err) => {
-          console.warn("Analytics orders error:", err);
-          return [];
-        }),
+      const results = await Promise.allSettled([
+        getAdminUsers(),
+        getProducts(),
+        getAdminOrders(),
       ]);
 
-      setUsers(Array.isArray(usersData) ? usersData : []);
-      setProducts(Array.isArray(productsData) ? productsData : []);
-      setOrders(Array.isArray(ordersData) ? ordersData : []);
-      setError(null);
+      const [usersRes, productsRes, ordersRes] = results;
+      const failures = [];
+
+      if (usersRes.status === "fulfilled") {
+        setUsers(Array.isArray(usersRes.value) ? usersRes.value : []);
+      } else {
+        failures.push("Users directory");
+        console.warn("Analytics users error:", usersRes.reason);
+      }
+
+      if (productsRes.status === "fulfilled") {
+        setProducts(Array.isArray(productsRes.value) ? productsRes.value : []);
+      } else {
+        failures.push("Product inventory");
+        console.warn("Analytics products error:", productsRes.reason);
+      }
+
+      if (ordersRes.status === "fulfilled") {
+        setOrders(Array.isArray(ordersRes.value) ? ordersRes.value : []);
+      } else {
+        failures.push("Platform orders");
+        console.warn("Analytics orders error:", ordersRes.reason);
+      }
+
+      if (failures.length > 0) {
+        setError(`Unable to fully retrieve: ${failures.join(", ")}. Verify your admin authorization.`);
+      } else {
+        setError(null);
+      }
+
+      setLastUpdated(
+        new Date().toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
     } catch (err) {
-      console.error("Failed to load analytics:", err);
+      console.error("Failed to load platform analytics:", err);
       setError(err.message || "Failed to load platform analytics.");
       toast.error(err.message || "Failed to load analytics");
     } finally {
@@ -65,24 +112,54 @@ export default function AdminAnalyticsPage() {
   const handleRefresh = async () => {
     setLoading(true);
     await loadData();
+    toast.success("Analytics metrics refreshed");
   };
 
   useEffect(() => {
     let ignore = false;
     async function init() {
       try {
-        const [usersData, productsData, ordersData] = await Promise.all([
-          getAdminUsers().catch(() => []),
-          getProducts().catch(() => []),
-          getAdminOrders().catch(() => []),
+        const results = await Promise.allSettled([
+          getAdminUsers(),
+          getProducts(),
+          getAdminOrders(),
         ]);
 
-        if (!ignore) {
-          setUsers(Array.isArray(usersData) ? usersData : []);
-          setProducts(Array.isArray(productsData) ? productsData : []);
-          setOrders(Array.isArray(ordersData) ? ordersData : []);
+        if (ignore) return;
+
+        const [usersRes, productsRes, ordersRes] = results;
+        const failures = [];
+
+        if (usersRes.status === "fulfilled") {
+          setUsers(Array.isArray(usersRes.value) ? usersRes.value : []);
+        } else {
+          failures.push("Users directory");
+        }
+
+        if (productsRes.status === "fulfilled") {
+          setProducts(Array.isArray(productsRes.value) ? productsRes.value : []);
+        } else {
+          failures.push("Product inventory");
+        }
+
+        if (ordersRes.status === "fulfilled") {
+          setOrders(Array.isArray(ordersRes.value) ? ordersRes.value : []);
+        } else {
+          failures.push("Platform orders");
+        }
+
+        if (failures.length > 0) {
+          setError(`Unable to fully retrieve: ${failures.join(", ")}. Verify your admin permissions.`);
+        } else {
           setError(null);
         }
+
+        setLastUpdated(
+          new Date().toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        );
       } catch (err) {
         if (!ignore) {
           setError(err.message || "Failed to load platform analytics.");
@@ -130,25 +207,17 @@ export default function AdminAnalyticsPage() {
     const pendingOrders = orders.filter((o) => (o.orderStatus || "pending") === "pending").length;
     const avgOrderValue = validPaidOrders.length > 0 ? Math.round(totalRevenue / validPaidOrders.length) : 0;
 
-    // Categories Breakdown
-    const catMap = {};
-    products.forEach((p) => {
-      const cat = p.category || "Uncategorized";
-      if (!catMap[cat]) catMap[cat] = { count: 0, value: 0 };
-      catMap[cat].count += 1;
-      catMap[cat].value += Number(p.price) || 0;
-    });
+    // Aggregations for Charts
+    const revenueTimeline = aggregateOrdersTimeline(orders);
+    const orderStatusDist = aggregateOrderStatusDistribution(orders);
+    const categoriesDist = aggregateCategoryDistribution(products);
+    const userRoleDist = aggregateUserRoleDistribution(users);
 
-    const categoriesBreakdown = Object.entries(catMap)
-      .map(([name, data]) => ({ name, ...data }))
-      .sort((a, b) => b.count - a.count);
-
-    // Order Status Breakdown
-    const orderStatuses = ["pending", "accepted", "processing", "shipped", "delivered", "rejected"];
-    const statusCounts = {};
-    orderStatuses.forEach((st) => {
-      statusCounts[st] = orders.filter((o) => (o.orderStatus || "pending").toLowerCase() === st).length;
-    });
+    const hasRevenueData = revenueTimeline.some((point) => point.revenue > 0);
+    const hasOrderTimelineData = revenueTimeline.some((point) => point.totalOrders > 0);
+    const hasStatusData = orderStatusDist.some((stage) => stage.value > 0);
+    const hasCategoryData = categoriesDist.length > 0;
+    const hasUserData = userRoleDist.total > 0;
 
     return {
       totalUsers,
@@ -164,265 +233,443 @@ export default function AdminAnalyticsPage() {
       completedOrders,
       pendingOrders,
       avgOrderValue,
-      categoriesBreakdown,
-      statusCounts,
-      orderStatuses,
+      revenueTimeline,
+      orderStatusDist,
+      categoriesDist,
+      userRoleDist,
+      hasRevenueData,
+      hasOrderTimelineData,
+      hasStatusData,
+      hasCategoryData,
+      hasUserData,
     };
   }, [users, products, orders]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 mb-2">
-            <BarChart3 className="h-3.5 w-3.5" />
-            Live Marketplace Intelligence
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Platform Analytics</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Real-time business insights aggregated across live MongoDB collections.
-          </p>
-        </div>
-
-        <Button
-          color="default"
-          variant="flat"
-          startContent={<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />}
-          onPress={handleRefresh}
-          isDisabled={loading}
-          className="self-start sm:self-auto"
-        >
-          Refresh Metrics
-        </Button>
-      </div>
+      <AnalyticsPageHeader
+        badgeIcon={BarChart3}
+        badgeText="Live Marketplace Intelligence"
+        badgeVariant="blue"
+        title="Platform Analytics"
+        subtitle="Real-time business insights aggregated across live MongoDB collections."
+        onRefresh={handleRefresh}
+        refreshing={loading}
+        lastUpdated={lastUpdated}
+      />
 
       {/* Error Banner */}
       {error && (
-        <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 shadow-xs">
           <AlertCircle className="mt-0.5 h-5 w-5 text-red-600 shrink-0" />
           <div className="flex-1">
-            <p className="font-semibold">Failed to load complete analytics</p>
+            <p className="font-semibold">Analytics Sync Notice</p>
             <p className="mt-0.5 text-xs text-red-700">{error}</p>
           </div>
           <Button size="sm" color="danger" variant="flat" onPress={loadData}>
-            Retry
+            Retry Sync
           </Button>
         </div>
       )}
 
-      {/* Top Level Metric Cards */}
+      {/* Top Level KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Revenue */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Settled Volume
-            </p>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
-              <DollarSign className="h-5 w-5" />
-            </div>
-          </div>
-          <p className="mt-3 text-3xl font-extrabold text-gray-900">
-            ৳{metrics.totalRevenue.toLocaleString()}
-          </p>
-          <p className="mt-1 text-xs text-gray-400">
-            Avg Order: ৳{metrics.avgOrderValue.toLocaleString()}
-          </p>
-        </div>
+        {/* Total Settled Revenue */}
+        <AnalyticsKpiCard
+          title="Settled Volume"
+          value={formatBDT(metrics.totalRevenue)}
+          subtext={`Avg Order: ${formatBDT(metrics.avgOrderValue)}`}
+          icon={DollarSign}
+          colorScheme="green"
+          loading={loading}
+        />
 
         {/* Total Orders */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Total Orders
-            </p>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-              <ShoppingBag className="h-5 w-5" />
-            </div>
-          </div>
-          <p className="mt-3 text-3xl font-extrabold text-gray-900">
-            {metrics.totalOrders}
-          </p>
-          <p className="mt-1 text-xs text-green-600 font-medium">
-            {metrics.completedOrders} delivered ({metrics.totalOrders > 0 ? Math.round((metrics.completedOrders / metrics.totalOrders) * 100) : 0}%)
-          </p>
-        </div>
+        <AnalyticsKpiCard
+          title="Total Orders"
+          value={metrics.totalOrders.toLocaleString()}
+          subtext={`${metrics.completedOrders} delivered (${
+            metrics.totalOrders > 0
+              ? Math.round((metrics.completedOrders / metrics.totalOrders) * 100)
+              : 0
+          }%)`}
+          icon={ShoppingBag}
+          colorScheme="blue"
+          loading={loading}
+        />
 
-        {/* Total Users */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Registered Users
-            </p>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
-              <Users className="h-5 w-5" />
-            </div>
-          </div>
-          <p className="mt-3 text-3xl font-extrabold text-gray-900">
-            {metrics.totalUsers}
-          </p>
-          <p className="mt-1 text-xs text-gray-400">
-            {metrics.sellersCount} sellers · {metrics.buyersCount} buyers
-          </p>
-        </div>
+        {/* Registered Users */}
+        <AnalyticsKpiCard
+          title="Registered Users"
+          value={metrics.totalUsers.toLocaleString()}
+          subtext={`${metrics.sellersCount} sellers · ${metrics.buyersCount} buyers`}
+          icon={Users}
+          colorScheme="purple"
+          loading={loading}
+        />
 
-        {/* Total Products */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Active Listings
-            </p>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-              <Package className="h-5 w-5" />
-            </div>
-          </div>
-          <p className="mt-3 text-3xl font-extrabold text-gray-900">
-            {metrics.availableProducts}
-          </p>
-          <p className="mt-1 text-xs text-gray-400">
-            ৳{metrics.totalInventoryValue.toLocaleString()} total value
-          </p>
-        </div>
+        {/* Active Inventory */}
+        <AnalyticsKpiCard
+          title="Active Listings"
+          value={metrics.availableProducts.toLocaleString()}
+          subtext={`${formatBDT(metrics.totalInventoryValue)} total valuation`}
+          icon={Package}
+          colorScheme="amber"
+          loading={loading}
+        />
       </div>
 
-      {/* Grid: Order Funnel & User Distribution */}
+      {/* Row 1: Revenue Trend & Orders Overview Charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Order Fulfillment Distribution Chart */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="mb-5 flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-bold text-gray-900">Order Fulfillment Flow</h2>
-              <p className="text-xs text-gray-500">Distribution across active order lifecycle stages</p>
-            </div>
-            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">
-              {metrics.totalOrders} total
-            </span>
-          </div>
+        {/* Chart 1: Revenue Trend (Area Chart) */}
+        <ChartCard
+          title="Revenue Trend"
+          subtitle="Confirmed paid volume aggregated chronologically by order date (BDT)"
+          badge="Confirmed Paid"
+          loading={loading}
+          isEmpty={!metrics.hasRevenueData}
+          emptyIcon={TrendingUp}
+          emptyTitle="No Paid Revenue Yet"
+          emptyDescription="As soon as buyers complete Stripe checkout for product listings, confirmed earnings will plot here."
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={metrics.revenueTimeline}
+              margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id="adminRevenueGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <XAxis
+                dataKey="formattedDate"
+                stroke="#94a3b8"
+                fontSize={11}
+                tickLine={false}
+                axisLine={{ stroke: "#e2e8f0" }}
+              />
+              <YAxis
+                stroke="#94a3b8"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(val) =>
+                  val >= 1000 ? `৳${(val / 1000).toFixed(0)}k` : `৳${val}`
+                }
+              />
+              <Tooltip
+                content={
+                  <CustomChartTooltip
+                    isCurrency={true}
+                    labelPrefix="Date: "
+                  />
+                }
+              />
+              <Area
+                type="monotone"
+                dataKey="revenue"
+                name="Settled Revenue"
+                stroke="#10b981"
+                strokeWidth={2.5}
+                fillOpacity={1}
+                fill="url(#adminRevenueGrad)"
+                activeDot={{ r: 6, fill: "#059669", stroke: "#ffffff", strokeWidth: 2 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </ChartCard>
 
-          {metrics.totalOrders === 0 ? (
-            <div className="py-12 text-center text-sm text-gray-400">
-              No orders recorded to display funnel distribution.
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {metrics.orderStatuses.map((st) => {
-                const count = metrics.statusCounts[st] || 0;
-                const percentage =
-                  metrics.totalOrders > 0 ? Math.round((count / metrics.totalOrders) * 100) : 0;
-
-                const colorClass =
-                  st === "delivered"
-                    ? "bg-green-500"
-                    : st === "shipped"
-                      ? "bg-purple-500"
-                      : st === "processing"
-                        ? "bg-indigo-500"
-                        : st === "accepted"
-                          ? "bg-blue-500"
-                          : st === "rejected"
-                            ? "bg-red-500"
-                            : "bg-yellow-500";
-
-                return (
-                  <div key={st} className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold capitalize text-gray-700">{st}</span>
-                      <span className="text-gray-500">
-                        {count} orders ({percentage}%)
-                      </span>
-                    </div>
-                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${colorClass}`}
-                        style={{ width: `${Math.max(percentage, count > 0 ? 4 : 0)}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* User Roles & Moderation Breakdown */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="mb-5">
-            <h2 className="text-base font-bold text-gray-900">User Demographics & Security</h2>
-            <p className="text-xs text-gray-500">Breakdown of roles and account integrity status</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="rounded-xl border border-gray-100 bg-gray-50/70 p-4">
-              <p className="text-xs font-medium text-gray-500">Active Accounts</p>
-              <p className="mt-1 text-2xl font-bold text-green-700">{metrics.activeUsers}</p>
-              <p className="mt-0.5 text-xs text-gray-400">
-                {metrics.totalUsers > 0 ? Math.round((metrics.activeUsers / metrics.totalUsers) * 100) : 100}% in good standing
-              </p>
-            </div>
-            <div className="rounded-xl border border-gray-100 bg-gray-50/70 p-4">
-              <p className="text-xs font-medium text-gray-500">Restricted / Blocked</p>
-              <p className="mt-1 text-2xl font-bold text-red-700">{metrics.blockedUsers}</p>
-              <p className="mt-0.5 text-xs text-gray-400">
-                {metrics.totalUsers > 0 ? Math.round((metrics.blockedUsers / metrics.totalUsers) * 100) : 0}% moderated
-              </p>
-            </div>
-          </div>
-
-          {/* Role Proportions */}
-          <div className="space-y-3 pt-2">
-            <div>
-              <div className="flex justify-between text-xs mb-1 font-medium text-gray-700">
-                <span>Buyers ({metrics.buyersCount})</span>
-                <span>
-                  {metrics.totalUsers > 0 ? Math.round((metrics.buyersCount / metrics.totalUsers) * 100) : 0}%
-                </span>
-              </div>
-              <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
-                <div
-                  className="h-full bg-emerald-500 rounded-full"
-                  style={{
-                    width: `${metrics.totalUsers > 0 ? (metrics.buyersCount / metrics.totalUsers) * 100 : 0}%`,
-                  }}
-                ></div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between text-xs mb-1 font-medium text-gray-700">
-                <span>Sellers ({metrics.sellersCount})</span>
-                <span>
-                  {metrics.totalUsers > 0 ? Math.round((metrics.sellersCount / metrics.totalUsers) * 100) : 0}%
-                </span>
-              </div>
-              <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
-                <div
-                  className="h-full bg-blue-500 rounded-full"
-                  style={{
-                    width: `${metrics.totalUsers > 0 ? (metrics.sellersCount / metrics.totalUsers) * 100 : 0}%`,
-                  }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Chart 2: Orders Overview (Bar Chart) */}
+        <ChartCard
+          title="Orders Overview"
+          subtitle="Inbound order volume and completed deliveries grouped by date"
+          badge="Activity"
+          loading={loading}
+          isEmpty={!metrics.hasOrderTimelineData}
+          emptyIcon={ShoppingBag}
+          emptyTitle="No Inbound Orders"
+          emptyDescription="Daily order transactions placed by marketplace buyers will be charted over time here."
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={metrics.revenueTimeline}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <XAxis
+                dataKey="formattedDate"
+                stroke="#94a3b8"
+                fontSize={11}
+                tickLine={false}
+                axisLine={{ stroke: "#e2e8f0" }}
+              />
+              <YAxis
+                stroke="#94a3b8"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                allowDecimals={false}
+              />
+              <Tooltip content={<CustomChartTooltip />} />
+              <Legend
+                verticalAlign="bottom"
+                height={36}
+                iconType="circle"
+                wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
+              />
+              <Bar
+                dataKey="totalOrders"
+                name="Total Orders"
+                fill="#3b82f6"
+                radius={[4, 4, 0, 0]}
+                maxBarSize={28}
+              />
+              <Bar
+                dataKey="deliveredOrders"
+                name="Delivered"
+                fill="#10b981"
+                radius={[4, 4, 0, 0]}
+                maxBarSize={28}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartCard>
       </div>
 
-      {/* Category Inventory Breakdown */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      {/* Row 2: Order Status Distribution & User Demographics */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Chart 3: Order Status Distribution (Donut Chart) */}
+        <ChartCard
+          title="Order Fulfillment Distribution"
+          subtitle="Proportion of orders across fulfillment stages (Delivered, Shipped, Pending, etc.)"
+          badge={`${metrics.totalOrders} Total`}
+          loading={loading}
+          isEmpty={!metrics.hasStatusData}
+          emptyIcon={PieIcon}
+          emptyTitle="No Orders to Classify"
+          emptyDescription="Order lifecycle status distributions will display as soon as orders are submitted."
+        >
+          <div className="flex flex-col sm:flex-row items-center justify-between h-full w-full gap-4">
+            <div className="w-full sm:w-3/5 h-[230px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={metrics.orderStatusDist}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={80}
+                    paddingAngle={3}
+                  >
+                    {metrics.orderStatusDist.map((entry) => (
+                      <Cell key={`status-cell-${entry.status}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    content={
+                      <CustomChartTooltip valueSuffix=" orders" />
+                    }
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Quick status list */}
+            <div className="w-full sm:w-2/5 space-y-2 text-xs pr-2">
+              {metrics.orderStatusDist.map((st) => (
+                <div
+                  key={st.status}
+                  className="flex items-center justify-between py-1 border-b border-gray-50 last:border-0"
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="h-2.5 w-2.5 rounded-full shrink-0"
+                      style={{ backgroundColor: st.color }}
+                    />
+                    <span className="font-medium text-gray-700">{st.name}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 font-bold text-gray-900">
+                    <span>{st.value}</span>
+                    <span className="text-gray-400 font-normal">
+                      ({st.percentage}%)
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </ChartCard>
+
+        {/* Chart 4: User Demographics & Roles (Donut Chart) */}
+        <ChartCard
+          title="User Role Distribution"
+          subtitle="Participant mix across buyers, sellers, and administrators with account health"
+          badge={`${metrics.totalUsers} Registered`}
+          loading={loading}
+          isEmpty={!metrics.hasUserData}
+          emptyIcon={Users}
+          emptyTitle="No Users Found"
+          emptyDescription="Platform participants will be visualised here as users register on ReSell Hub."
+        >
+          <div className="flex flex-col sm:flex-row items-center justify-between h-full w-full gap-4">
+            <div className="w-full sm:w-3/5 h-[230px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={metrics.userRoleDist.roles}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={80}
+                    paddingAngle={4}
+                  >
+                    {metrics.userRoleDist.roles.map((entry) => (
+                      <Cell key={`role-cell-${entry.role}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    content={
+                      <CustomChartTooltip valueSuffix=" accounts" />
+                    }
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* User Moderation Status Box */}
+            <div className="w-full sm:w-2/5 space-y-2.5 text-xs pr-2">
+              <div className="rounded-xl border border-gray-100 bg-gray-50/70 p-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-gray-600">Active Accounts</span>
+                  <span className="font-bold text-emerald-700">
+                    {metrics.activeUsers}
+                  </span>
+                </div>
+                <p className="mt-0.5 text-[11px] text-gray-400">
+                  {metrics.totalUsers > 0
+                    ? Math.round((metrics.activeUsers / metrics.totalUsers) * 100)
+                    : 100}
+                  % in good standing
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-gray-100 bg-gray-50/70 p-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-gray-600">Restricted / Blocked</span>
+                  <span className="font-bold text-rose-700">
+                    {metrics.blockedUsers}
+                  </span>
+                </div>
+                <p className="mt-0.5 text-[11px] text-gray-400">
+                  {metrics.totalUsers > 0
+                    ? Math.round((metrics.blockedUsers / metrics.totalUsers) * 100)
+                    : 0}
+                  % moderated
+                </p>
+              </div>
+
+              <div className="pt-1 space-y-1">
+                {metrics.userRoleDist.roles.map((r) => (
+                  <div
+                    key={r.role}
+                    className="flex items-center justify-between text-xs"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className="h-2 w-2 rounded-full"
+                        style={{ backgroundColor: r.color }}
+                      />
+                      <span className="text-gray-600">{r.name}</span>
+                    </div>
+                    <span className="font-semibold text-gray-800">
+                      {r.value} ({r.percentage}%)
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </ChartCard>
+      </div>
+
+      {/* Row 3: Marketplace Categories (Horizontal Bar Chart) */}
+      <ChartCard
+        title="Marketplace Categories"
+        subtitle="Catalog depth and product volume across classified categories"
+        badge={`${metrics.categoriesDist.length} Categories`}
+        loading={loading}
+        isEmpty={!metrics.hasCategoryData}
+        emptyIcon={Layers}
+        emptyTitle="No Listed Products"
+        emptyDescription="When sellers list items in categories like Electronics, Furniture, or Fashion, counts appear here."
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            layout="vertical"
+            data={metrics.categoriesDist.slice(0, 8)}
+            margin={{ top: 5, right: 30, left: 15, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+            <XAxis
+              type="number"
+              stroke="#94a3b8"
+              fontSize={11}
+              tickLine={false}
+              axisLine={{ stroke: "#e2e8f0" }}
+              allowDecimals={false}
+            />
+            <YAxis
+              dataKey="category"
+              type="category"
+              stroke="#64748b"
+              fontSize={11}
+              tickLine={false}
+              axisLine={false}
+              width={110}
+            />
+            <Tooltip
+              content={
+                <CustomChartTooltip valueSuffix=" active items" />
+              }
+            />
+            <Bar
+              dataKey="count"
+              name="Listed Items"
+              fill="#059669"
+              radius={[0, 6, 6, 0]}
+              maxBarSize={22}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartCard>
+
+      {/* Detailed Category Inventory Table */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs">
         <div className="mb-5 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-base font-bold text-gray-900">Inventory Distribution by Category</h2>
-            <p className="text-xs text-gray-500">Item counts and total valuation across marketplace categories</p>
+            <h2 className="text-base font-bold text-gray-900">
+              Inventory Valuation by Category
+            </h2>
+            <p className="text-xs text-gray-500">
+              Breakdown of product volume, cumulative asking valuation, and market share
+            </p>
           </div>
           <span className="text-xs font-semibold text-gray-500">
-            {metrics.categoriesBreakdown.length} active categories
+            {metrics.categoriesDist.length} active categories
           </span>
         </div>
 
-        {metrics.categoriesBreakdown.length === 0 ? (
+        {metrics.categoriesDist.length === 0 ? (
           <div className="py-12 text-center text-sm text-gray-400">
-            No categorized products available.
+            No categorized products available in the database.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -436,28 +683,27 @@ export default function AdminAnalyticsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {metrics.categoriesBreakdown.map((cat) => {
-                  const share =
-                    metrics.totalProducts > 0
-                      ? Math.round((cat.count / metrics.totalProducts) * 100)
-                      : 0;
-
+                {metrics.categoriesDist.map((cat) => {
                   return (
-                    <tr key={cat.name} className="hover:bg-gray-50/70">
-                      <td className="px-4 py-3 font-semibold text-gray-900">{cat.name}</td>
+                    <tr key={cat.category} className="hover:bg-gray-50/70">
+                      <td className="px-4 py-3 font-semibold text-gray-900">
+                        {cat.category}
+                      </td>
                       <td className="px-4 py-3">{cat.count} items</td>
                       <td className="px-4 py-3 font-medium text-gray-900">
-                        ৳{cat.value.toLocaleString()}
+                        {formatBDT(cat.value)}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="h-2 w-24 rounded-full bg-gray-100 overflow-hidden">
                             <div
-                              className="h-full bg-green-500 rounded-full"
-                              style={{ width: `${share}%` }}
-                            ></div>
+                              className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                              style={{ width: `${cat.percentage}%` }}
+                            />
                           </div>
-                          <span className="text-xs text-gray-500">{share}%</span>
+                          <span className="text-xs text-gray-500">
+                            {cat.percentage}%
+                          </span>
                         </div>
                       </td>
                     </tr>
@@ -470,16 +716,16 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {/* Analytics Methodology Documentation */}
-      <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 text-xs text-gray-600 space-y-2">
+      <div className="rounded-2xl border border-gray-200 bg-gray-50/90 p-5 text-xs text-gray-600 space-y-2 shadow-xs">
         <div className="flex items-center gap-2 font-bold text-gray-900">
           <Info className="h-4 w-4 text-blue-600" />
-          Analytics Methodology & Data Contracts
+          Analytics Methodology & Data Governance
         </div>
         <p>
-          <strong>Revenue Calculation:</strong> Only orders with confirmed Stripe payment (`paymentStatus === &apos;paid&apos;`) and non-cancelled order status are counted toward total settled volume.
+          <strong>Settled Revenue Principle:</strong> Earned revenue counts only orders with confirmed Stripe payment (`paymentStatus === &apos;paid&apos;`) and excludes rejected or cancelled orders. Inventory asking valuation represents active catalog pricing, not earned proceeds.
         </p>
         <p>
-          <strong>Data Freshness:</strong> Metrics reflect real data polled from `/api/admin/users`, `/api/products`, and aggregated `/api/seller/orders` without mocked or fabricated stats.
+          <strong>Real-Time Aggregation:</strong> Metrics are derived directly from authenticated queries against `/api/admin/users`, `/api/products`, and deduplicated `/api/seller/orders` / `/api/buyer/orders` endpoints without fabricated dates or synthetic data.
         </p>
       </div>
     </div>

@@ -126,8 +126,9 @@ export const getAdminOrders = async () => {
     const orderMap = new Map();
 
     settledOrders.flat().forEach((order) => {
-      if (order && order._id) {
-        orderMap.set(String(order._id), order);
+      const key = order?._id ? String(order._id) : (order?.id ? String(order.id) : null);
+      if (key) {
+        orderMap.set(key, order);
       }
     });
 
@@ -150,8 +151,9 @@ export const getAdminOrders = async () => {
 
     const settledBuyerOrders = await Promise.all(buyerPromises);
     settledBuyerOrders.flat().forEach((order) => {
-      if (order && order._id) {
-        orderMap.set(String(order._id), order);
+      const key = order?._id ? String(order._id) : (order?.id ? String(order.id) : null);
+      if (key) {
+        orderMap.set(key, order);
       }
     });
 
