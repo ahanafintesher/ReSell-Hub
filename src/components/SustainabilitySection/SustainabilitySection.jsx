@@ -1,4 +1,5 @@
 'use client';
+import Link from "next/link";
 import { motion, useInView } from "motion/react";
 import { useRef, useState, useEffect } from "react";
 import {
@@ -88,7 +89,7 @@ function SustainabilitySection() {
   ];
 
   return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-br from-[#F0FDF4] via-white to-[#ECFDF5] py-16 sm:py-20 lg:py-24">
+    <section className="relative w-full overflow-hidden bg-gradient-to-br from-[#F0FDF4] via-white to-[#ECFDF5] dark:from-[#081017] dark:via-[#0a1420] dark:to-[#081116] py-16 sm:py-20 lg:py-24 transition-colors duration-300">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating Leaves */}
@@ -183,14 +184,14 @@ function SustainabilitySection() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-[#10B981]/10 text-[#059669] border border-[#10B981]/20">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-[#10B981]/10 text-emerald-700 dark:text-emerald-300 border border-[#10B981]/20">
               <FaLeaf className="text-[#10B981]" size={14} />
               Environmental Impact
             </span>
           </motion.div>
 
           <motion.h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#111827] leading-tight tracking-tight mb-4"
+            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight mb-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -198,13 +199,13 @@ function SustainabilitySection() {
           >
             Every Purchase Makes a
             <br />
-            <span className="bg-gradient-to-r from-[#10B981] to-[#059669] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 bg-clip-text text-transparent">
               Difference for Our Planet
             </span>
           </motion.h2>
 
           <motion.p
-            className="text-base sm:text-lg text-[#6B7280] leading-relaxed"
+            className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -348,7 +349,7 @@ function SustainabilitySection() {
           {benefits.map((benefit, index) => (
             <motion.div
               key={index}
-              className="group relative p-6 sm:p-8 rounded-2xl bg-white border-2 border-[#E5E7EB] shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all duration-300"
+              className="group relative p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900/90 border-2 border-[#E5E7EB] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all duration-300"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -370,10 +371,10 @@ function SustainabilitySection() {
                 {benefit.icon}
               </motion.div>
 
-              <h3 className="text-xl font-bold text-[#111827] mb-2">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
                 {benefit.title}
               </h3>
-              <p className="text-[#6B7280] leading-relaxed">
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                 {benefit.description}
               </p>
 
@@ -396,20 +397,22 @@ function SustainabilitySection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <p className="text-[#6B7280] mb-6 text-lg">
+          <p className="text-slate-600 dark:text-slate-400 mb-6 text-lg">
             Join thousands making a positive environmental impact
           </p>
-          <motion.button
-            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold text-lg shadow-[0_4px_20px_rgba(16,185,129,0.25)]"
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 8px 30px rgba(16,185,129,0.35)",
-            }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <FaLeaf size={18} />
-            Start Shopping Sustainably
-          </motion.button>
+          <Link href="/products">
+            <motion.button
+              className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold text-lg shadow-[0_4px_20px_rgba(16,185,129,0.25)] cursor-pointer"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 8px 30px rgba(16,185,129,0.35)",
+              }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <FaLeaf size={18} />
+              Start Shopping Sustainably
+            </motion.button>
+          </Link>
         </motion.div>
       </div>
     </section>
@@ -462,7 +465,7 @@ function ImpactStatCard({ stat, index }) {
       }}
     >
       <motion.div
-        className={`relative h-full p-6 sm:p-8 rounded-2xl bg-white border-2 border-[#E5E7EB] shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all duration-300`}
+        className={`relative h-full p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900/90 border-2 border-[#E5E7EB] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all duration-300`}
         whileHover={{
           y: -8,
           boxShadow: "0 20px 50px rgba(15,23,42,0.12)",
@@ -493,23 +496,23 @@ function ImpactStatCard({ stat, index }) {
             >
               {count.toLocaleString()}
             </h3>
-            <span className="text-xl font-bold text-[#6B7280]">
+            <span className="text-xl font-bold text-slate-500 dark:text-slate-400">
               {stat.unit}
             </span>
           </motion.div>
         </div>
 
         {/* Label */}
-        <h4 className="text-lg font-bold text-[#111827] mb-1">
+        <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
           {stat.label}
         </h4>
 
         {/* Description */}
-        <p className="text-sm text-[#6B7280]">{stat.description}</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">{stat.description}</p>
 
         {/* Animated Progress Bar */}
         <motion.div
-          className="mt-4 h-1.5 rounded-full bg-[#E5E7EB] overflow-hidden"
+          className="mt-4 h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}

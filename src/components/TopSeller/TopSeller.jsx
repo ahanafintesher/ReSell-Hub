@@ -1,6 +1,7 @@
 'use client';
 import { motion } from "motion/react";
 import { useState } from "react";
+import Image from "next/image";
 import {
   FaStar,
   FaCheckCircle,
@@ -183,7 +184,7 @@ function TrustedSellersShowcase() {
   };
 
   return (
-    <section className="relative w-full overflow-hidden bg-white py-16 sm:py-20 lg:py-24">
+    <section className="relative w-full overflow-hidden bg-white dark:bg-[#0b0f19] transition-colors py-16 sm:py-20 lg:py-24">
       {/* Decorative Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -229,14 +230,14 @@ function TrustedSellersShowcase() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-[#10B981]/10 text-[#059669] border border-[#10B981]/20">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-[#10B981]/10 text-[#059669] dark:text-emerald-400 border border-[#10B981]/20">
               <FaMedal className="text-[#10B981]" size={14} />
               Premium Marketplace Partners
             </span>
           </motion.div>
 
           <motion.h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#111827] leading-tight tracking-tight mb-4"
+            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#111827] dark:text-white leading-tight tracking-tight mb-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -250,7 +251,7 @@ function TrustedSellersShowcase() {
           </motion.h2>
 
           <motion.p
-            className="text-base sm:text-lg text-[#111827] leading-relaxed"
+            className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -275,7 +276,7 @@ function TrustedSellersShowcase() {
               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 ${
                 activeCategory === category.id
                   ? "bg-[#10B981] text-white shadow-lg shadow-[#10B981]/25"
-                  : "bg-white text-[#111827] border-2 border-[#E5E7EB] hover:border-[#10B981]/30 hover:text-[#10B981]"
+                  : "bg-white dark:bg-slate-900 text-[#111827] dark:text-slate-200 border-2 border-[#E5E7EB] dark:border-slate-800 hover:border-[#10B981]/30 hover:text-[#10B981]"
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
@@ -385,26 +386,29 @@ function SellerCard({ seller, index, getBadgeInfo }) {
       }}
       whileHover={{ y: -8 }}
     >
-      <div className="relative h-full overflow-hidden rounded-2xl bg-white border-2 border-[#E5E7EB] shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_50px_rgba(16,185,129,0.15)] hover:border-[#10B981]/30 transition-all duration-300">
+      <div className="relative h-full overflow-hidden rounded-2xl bg-white dark:bg-[#0f172a] border-2 border-[#E5E7EB] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)] hover:shadow-[0_20px_50px_rgba(16,185,129,0.15)] hover:border-[#10B981]/40 transition-all duration-300">
         {/* Cover Image */}
-        <div className="relative h-32 overflow-hidden">
-          <img
+        <div className="relative h-32 overflow-hidden bg-slate-100 dark:bg-slate-800">
+          <Image
             src={seller.coverImage}
             alt={seller.name}
+            width={800}
+            height={320}
+            unoptimized
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           
           {/* Top Rated Badge */}
           {seller.topRated && (
             <motion.div
-              className="absolute top-3 right-3 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm flex items-center gap-1.5 shadow-lg"
+              className="absolute top-3 right-3 px-3 py-1 rounded-full bg-white/95 dark:bg-slate-900/95 border border-transparent dark:border-slate-700 backdrop-blur-sm flex items-center gap-1.5 shadow-lg"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.3, type: "spring" }}
             >
               <FaStar className="text-[#10B981]" size={12} />
-              <span className="text-xs font-bold text-[#111827]">Top Rated</span>
+              <span className="text-xs font-bold text-[#111827] dark:text-white">Top Rated</span>
             </motion.div>
           )}
         </div>
@@ -418,14 +422,17 @@ function SellerCard({ seller, index, getBadgeInfo }) {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              <img
+              <Image
                 src={seller.avatar}
                 alt={seller.name}
-                className="w-24 h-24 rounded-2xl object-cover ring-4 ring-white shadow-xl"
+                width={96}
+                height={96}
+                unoptimized
+                className="w-24 h-24 rounded-2xl object-cover ring-4 ring-white dark:ring-slate-900 shadow-xl"
               />
               {seller.verified && (
                 <div
-                  className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center ring-4 ring-white shadow-lg"
+                  className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center ring-4 ring-white dark:ring-slate-900 shadow-lg"
                   style={{ backgroundColor: badgeInfo.color }}
                 >
                   <FaCheckCircle className="text-white" size={16} />
@@ -436,7 +443,7 @@ function SellerCard({ seller, index, getBadgeInfo }) {
 
           {/* Seller Info */}
           <div className="mb-4">
-            <h3 className="text-xl font-bold text-[#111827] mb-1">{seller.name}</h3>
+            <h3 className="text-xl font-bold text-[#111827] dark:text-white mb-1">{seller.name}</h3>
             
             {/* Badge */}
             <div
@@ -448,7 +455,7 @@ function SellerCard({ seller, index, getBadgeInfo }) {
             </div>
 
             {/* Description */}
-            <p className="text-sm text-[#111827] leading-relaxed mb-4">
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
               {seller.description}
             </p>
 
@@ -457,7 +464,7 @@ function SellerCard({ seller, index, getBadgeInfo }) {
               {seller.specialties.map((specialty, idx) => (
                 <span
                   key={idx}
-                  className="px-2.5 py-1 rounded-lg bg-[#F0FDF4] text-xs font-medium text-[#111827] border border-[#10B981]/20"
+                  className="px-2.5 py-1 rounded-lg bg-[#F0FDF4] dark:bg-emerald-950/40 text-xs font-medium text-emerald-800 dark:text-emerald-300 border border-[#10B981]/20"
                 >
                   {specialty}
                 </span>
@@ -466,46 +473,46 @@ function SellerCard({ seller, index, getBadgeInfo }) {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 gap-4 mb-4 p-4 rounded-xl bg-[#F0FDF4] border border-[#10B981]/20">
+          <div className="grid grid-cols-2 gap-4 mb-4 p-4 rounded-xl bg-[#F0FDF4] dark:bg-slate-850 dark:bg-slate-800/60 border border-[#10B981]/20 dark:border-slate-700/60">
             <div>
               <div className="flex items-center gap-1 mb-1">
                 <FaStar className="text-[#10B981]" size={14} />
-                <span className="text-lg font-bold text-[#111827]">{seller.rating}</span>
+                <span className="text-lg font-bold text-[#111827] dark:text-white">{seller.rating}</span>
               </div>
-              <p className="text-xs text-[#111827]">{seller.reviewCount.toLocaleString()} reviews</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">{seller.reviewCount.toLocaleString()} reviews</p>
             </div>
             <div>
               <div className="flex items-center gap-1 mb-1">
                 <FaShoppingBag className="text-[#10B981]" size={14} />
-                <span className="text-lg font-bold text-[#111827]">{seller.itemsSold.toLocaleString()}</span>
+                <span className="text-lg font-bold text-[#111827] dark:text-white">{seller.itemsSold.toLocaleString()}</span>
               </div>
-              <p className="text-xs text-[#111827]">Items sold</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Items sold</p>
             </div>
           </div>
 
           {/* Additional Info */}
           <div className="space-y-2 mb-5">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-[#111827]">Response time:</span>
+              <span className="text-slate-600 dark:text-slate-400">Response time:</span>
               <span className="font-semibold text-[#10B981]">{seller.responseTime}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-[#111827]">Member since:</span>
-              <span className="font-semibold text-[#111827]">{seller.joinedDate}</span>
+              <span className="text-slate-600 dark:text-slate-400">Member since:</span>
+              <span className="font-semibold text-[#111827] dark:text-slate-200">{seller.joinedDate}</span>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex gap-3">
             <motion.button
-              className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold text-sm shadow-lg"
+              className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold text-sm shadow-lg hover:shadow-emerald-500/20"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               View Shop
             </motion.button>
             <motion.button
-              className="px-4 py-2.5 rounded-xl border-2 border-[#E5E7EB] text-[#111827] hover:border-[#10B981]/30 hover:text-[#10B981] transition-colors duration-300"
+              className="px-4 py-2.5 rounded-xl border-2 border-[#E5E7EB] dark:border-slate-700 text-[#111827] dark:text-slate-300 hover:border-[#10B981]/30 hover:text-[#10B981] transition-colors duration-300"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -515,7 +522,7 @@ function SellerCard({ seller, index, getBadgeInfo }) {
         </div>
 
         {/* Hover Gradient Overlay */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#10B981]/0 to-[#059669]/0 group-hover:from-[#10B981]/[0.02] group-hover:to-[#059669]/[0.02] transition-all duration-300 pointer-events-none" />
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#10B981]/0 to-[#059669]/0 group-hover:from-[#10B981]/[0.04] group-hover:to-[#059669]/[0.04] transition-all duration-300 pointer-events-none" />
       </div>
     </motion.div>
   );

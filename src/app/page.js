@@ -9,7 +9,7 @@ import CallToAction from "@/components/Home/CallToAction";
 
 export default function Home() {
   return (
-    <div className="space-y-4">
+    <div className="w-full overflow-hidden">
       <HeroBanner />
       <PopularCategories />
       <FeaturedProducts />

@@ -59,12 +59,12 @@ function Stats() {
   ];
 
   return (
-    <section className="relative w-full overflow-hidden bg-white py-16 sm:py-20 lg:py-24">
+    <section className="relative w-full overflow-hidden bg-slate-50/60 dark:bg-[#0c121e]/70 border-y border-slate-200/60 dark:border-slate-800/80 py-16 sm:py-20 lg:py-24 transition-colors duration-300">
       {/* Decorative Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Grid Pattern */}
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }}
@@ -114,14 +114,14 @@ function Stats() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-[#10B981]/10 to-[#3B82F6]/10 text-[#059669] border border-[#10B981]/20">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-[#10B981]/10 to-[#3B82F6]/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
               <FaChartLine className="text-[#10B981]" size={14} />
               Our Growing Community
             </span>
           </motion.div>
 
           <motion.h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#111827] leading-tight tracking-tight mb-4"
+            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight mb-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -129,13 +129,13 @@ function Stats() {
           >
             Marketplace by the
             <br />
-            <span className="bg-gradient-to-r from-[#10B981] to-[#3B82F6] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 bg-clip-text text-transparent">
               Numbers
             </span>
           </motion.h2>
 
           <motion.p
-            className="text-base sm:text-lg text-[#6B7280] leading-relaxed"
+            className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -215,14 +215,14 @@ function Stats() {
           ].map((item, index) => (
             <motion.div
               key={index}
-              className="text-center p-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]"
+              className="text-center p-4 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-xs"
               whileHover={{ y: -4, borderColor: "#10B981" }}
               transition={{ duration: 0.2 }}
             >
-              <p className="text-2xl font-bold text-[#111827] mb-1">
+              <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
                 {item.value}
               </p>
-              <p className="text-sm text-[#6B7280]">{item.label}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{item.label}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -279,7 +279,7 @@ function StatCard({ stat, index }) {
       }}
     >
       <motion.div
-        className={`relative h-full p-6 sm:p-8 rounded-2xl bg-white border-2 ${stat.borderColor} shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all duration-300`}
+        className={`relative h-full p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900/90 border-2 ${stat.borderColor} dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all duration-300`}
         whileHover={{
           y: -8,
           boxShadow: "0 20px 50px rgba(15,23,42,0.12)",
@@ -299,7 +299,7 @@ function StatCard({ stat, index }) {
         {/* Counter */}
         <div className="mb-2">
           <motion.h3
-            className="text-4xl sm:text-5xl font-extrabold text-[#111827] tracking-tight"
+            className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight"
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -310,18 +310,18 @@ function StatCard({ stat, index }) {
         </div>
 
         {/* Label */}
-        <h4 className="text-lg font-bold text-[#111827] mb-1">
+        <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
           {stat.label}
         </h4>
 
         {/* Description */}
-        <p className="text-sm text-[#6B7280] leading-relaxed">
+        <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
           {stat.description}
         </p>
 
         {/* Progress Bar */}
         <motion.div
-          className="mt-4 h-1 rounded-full bg-[#E5E7EB] overflow-hidden"
+          className="mt-4 h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}

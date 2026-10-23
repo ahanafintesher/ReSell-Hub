@@ -6,7 +6,7 @@ import { ShoppingBag, PlusCircle, Sparkles, ShieldCheck } from "lucide-react";
 
 export default function CallToAction() {
   return (
-    <section className="py-16 sm:py-24 bg-white overflow-hidden">
+    <section className="py-16 sm:py-24 bg-white dark:bg-[#0b0f19] transition-colors overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 p-8 sm:p-14 lg:p-16 text-white shadow-2xl overflow-hidden">
           {/* Subtle decorative background circles */}
@@ -51,27 +51,25 @@ export default function CallToAction() {
               transition={{ delay: 0.3 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
             >
-              <Link href="/products" className="w-full sm:w-auto">
-                <motion.button
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-white text-emerald-800 font-bold text-sm sm:text-base shadow-lg hover:bg-emerald-50 transition cursor-pointer"
+              <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
+                <Link
+                  href="/products"
+                  className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-white text-emerald-800 font-bold text-sm sm:text-base shadow-lg hover:bg-emerald-50 transition"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   Explore Marketplace
-                </motion.button>
-              </Link>
+                </Link>
+              </motion.div>
 
-              <Link href="/dashboard/seller/products/add-products" className="w-full sm:w-auto">
-                <motion.button
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-950/60 text-white font-bold text-sm sm:text-base border border-white/20 transition cursor-pointer backdrop-blur-md"
+              <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
+                <Link
+                  href="/dashboard/seller/products/add-products"
+                  className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-950/60 text-white font-bold text-sm sm:text-base border border-white/20 transition backdrop-blur-md"
                 >
                   <PlusCircle className="w-4 h-4" />
                   List Item for Sale
-                </motion.button>
-              </Link>
+                </Link>
+              </motion.div>
             </motion.div>
 
             <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-emerald-100/80 font-medium">
