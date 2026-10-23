@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "motion/react";
+
 export default function AnalyticsKpiCard({
   title,
   value,
@@ -10,24 +12,29 @@ export default function AnalyticsKpiCard({
 }) {
   const schemeStyles = {
     green: {
-      bg: "bg-emerald-50 text-emerald-600",
+      bg: "bg-emerald-50 text-emerald-600 border border-emerald-100/60",
       accent: "text-emerald-700",
+      cardHover: "hover:border-emerald-300",
     },
     blue: {
-      bg: "bg-blue-50 text-blue-600",
+      bg: "bg-blue-50 text-blue-600 border border-blue-100/60",
       accent: "text-blue-700",
+      cardHover: "hover:border-blue-300",
     },
     purple: {
-      bg: "bg-purple-50 text-purple-600",
+      bg: "bg-purple-50 text-purple-600 border border-purple-100/60",
       accent: "text-purple-700",
+      cardHover: "hover:border-purple-300",
     },
     amber: {
-      bg: "bg-amber-50 text-amber-600",
+      bg: "bg-amber-50 text-amber-600 border border-amber-100/60",
       accent: "text-amber-700",
+      cardHover: "hover:border-amber-300",
     },
     red: {
-      bg: "bg-rose-50 text-rose-600",
+      bg: "bg-rose-50 text-rose-600 border border-rose-100/60",
       accent: "text-rose-700",
+      cardHover: "hover:border-rose-300",
     },
   };
 
@@ -47,7 +54,11 @@ export default function AnalyticsKpiCard({
   }
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs transition hover:shadow-md">
+    <motion.div
+      whileHover={{ y: -3 }}
+      transition={{ duration: 0.2 }}
+      className={`rounded-2xl border border-gray-200 bg-white p-5 shadow-xs transition-colors duration-200 ${style.cardHover}`}
+    >
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
           {title}
@@ -68,6 +79,6 @@ export default function AnalyticsKpiCard({
       {subtext && (
         <p className="mt-1 text-xs text-gray-500 leading-normal">{subtext}</p>
       )}
-    </div>
+    </motion.div>
   );
 }

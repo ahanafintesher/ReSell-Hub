@@ -4,11 +4,17 @@ import {AlertDialog, Button} from "@heroui/react";
 import { Trash2 } from "lucide-react";
 import { deleteOrder } from "@/lib/actions/orders";
 
-export function BuyerDeleteOrderModal({ order }) {
-    
-const handleDeleteOrder = async () =>{
-  await deleteOrder(order._id);
-}
+export function BuyerDeleteOrderModal({ order, onSuccess }) {
+  const handleDeleteOrder = async () => {
+    const toastId = toast.loading("Cancelling order...");
+    try {
+      await deleteOrder(order._id);
+      toast.success("Order cancelled successfully!", { id: toastId });
+      onSuccess?.(order._id);
+    } catch (err) {
+      toast.error(err.message || "Failed to cancel order", { id: toastId });
+    }
+  };
    
 
 

@@ -7,17 +7,19 @@ const Rating = dynamic(
 );
 
 const Stars = ({ rating }) => {
-  const starRating = rating.avarageRating;
+  const starRating = Number(rating?.averageRating ?? rating?.avarageRating ?? (typeof rating === "number" ? rating : 0));
   return (
-    <div>
-      <p>Overall Rating: {starRating}</p>
+    <div className="flex items-center gap-2">
       <Rating
         initialValue={starRating}
         readonly
         allowFraction
-        size={24}
+        size={20}
         SVGstyle={{ display: "inline-block" }}
       />
+      <span className="text-sm font-semibold text-gray-700">
+        {starRating > 0 ? starRating.toFixed(1) : "No ratings yet"}
+      </span>
     </div>
   );
 };

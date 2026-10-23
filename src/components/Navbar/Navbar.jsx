@@ -15,7 +15,6 @@ import {
 import Link from "next/link";
 import NavLinks from "./Navlinks";
 import { authClient } from "@/lib/auth-client";
-import { div } from "motion/react-client";
 import { usePathname } from "next/navigation";
 const play = Playfair_Display({
   subsets: ["latin"],

@@ -39,4 +39,26 @@ export const deleteUser = async (id) => {
   }
 
   return data;
+};
+
+export const getAdminStats = async () => {
+  try {
+    const response = await serverFetch("/api/admin/stats", {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch admin stats");
+    }
+
+    return await response.json();
+  } catch (err) {
+    console.error("Admin stats fetch error:", err);
+    return {
+      totalUsers: 0,
+      totalProducts: 0,
+      totalOrders: 0,
+      totalRevenue: 0,
+    };
+  }
 };

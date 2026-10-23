@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { FaShoppingBag, FaStore, FaUsers, FaThumbsUp, FaArrowRight } from "react-icons/fa";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 function HeroBanner() {
   const stats = [
