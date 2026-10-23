@@ -91,9 +91,7 @@ const Page = async ({ params }) => {
                 <input type="hidden" name="productId" value={data._id} />
                 <Button
                   type="submit"
-                  className={"bg-green-400 text-white"}
-                  color="secondary"
-                  variant="bordered"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-8 shadow-xs"
                   size="lg"
                 >
                   Buy Now

@@ -13,6 +13,7 @@ import {
 } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { postReviews } from "@/lib/actions/postReviews";
+import toast from "react-hot-toast";
 
 // Dynamic import must live at module scope, not inside the component,
 // otherwise a brand-new component gets created on every render (state loss,
@@ -26,7 +27,7 @@ const MIN_COMMENT_LENGTH = 10;
 
 // Props:
 // - data: product object (uses data._id as productId)
-// - onSubmit: async (reviewData) => void  (called with { productId, rating, title, comment, date })
+// - onSubmit: async (reviewData) => void  (called with { productId, userName, rating, title, comment, date })
 export default function ReviewSection({ data, onSubmit }) {
   const [rating, setRating] = useState(0);
   const [title, setTitle] = useState("");
@@ -79,38 +80,38 @@ export default function ReviewSection({ data, onSubmit }) {
 
     if (!validate()) return;
 
+    const reviewPayload = {
+      productId,
+      userName: userName || "Anonymous Buyer",
+      rating,
+      title: title.trim(),
+      comment: comment.trim(),
+      date: new Date().toISOString(),
+    };
+
     setIsSubmitting(true);
     try {
-      await onSubmit?.({
-        productId,
-        userName,
-        rating,
-        title: title.trim(),
-        comment: comment.trim(),
-        
-      });
+      if (onSubmit) {
+        await onSubmit(reviewPayload);
+      } else {
+        await postReviews(reviewPayload);
+      }
+      toast.success("Review submitted successfully!");
       setSubmitted(true);
       resetForm();
     } catch (err) {
       console.error("Failed to submit review:", err);
+      const errMsg =
+        err.message ||
+        "Something went wrong submitting your review. Please try again.";
+      toast.error(errMsg);
       setErrors((prev) => ({
         ...prev,
-        comment: "Something went wrong submitting your review. Please try again.",
+        comment: errMsg,
       }));
     } finally {
       setIsSubmitting(false);
     }
-
-    const review = {
-      productId,
-      userName,
-      rating,
-      title,
-      comment,
-      date: new Date().toISOString(),
-    }
-
-   await postReviews(review);
   };
 
   return (

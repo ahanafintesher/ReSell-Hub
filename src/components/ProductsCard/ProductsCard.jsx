@@ -30,13 +30,10 @@ export default function ProductsCard({ products }) {
             key={product._id || product.id}
             className="border border-default-200 bg-content1 hover:shadow-lg transition-shadow"
           >
-            {/* button-এর বদলে HeroUI Button ব্যবহার করা হলো */}
-            <Button
-              variant="light"
-              onPress={() =>
-                console.log(`View product ${product._id || product.id}`)
-              }
-              className="w-full h-auto p-0 justify-start text-left bg-transparent shadow-none flex-col items-stretch"
+            {/* Semantic Link wrapping card header and content */}
+            <Link
+              href={`/products/${product._id || product.id}`}
+              className="group block text-left focus:outline-none"
             >
               <Card.Header className="pb-0 pt-2 px-4 flex-col items-start">
                 <div className="flex justify-between w-full items-center">
@@ -48,12 +45,12 @@ export default function ProductsCard({ products }) {
                   >
                     {product.category}
                   </Chip>
-                  <p className="text-large font-bold text-primary">
+                  <p className="text-large font-bold text-emerald-700">
                     ${formattedPrice}
                   </p>
                 </div>
 
-                <Card.Title className="font-bold text-xl mt-3 text-default-800 line-clamp-1">
+                <Card.Title className="font-bold text-xl mt-3 text-default-800 group-hover:text-emerald-600 transition-colors line-clamp-1">
                   {product.name || product.title}
                 </Card.Title>
 
@@ -62,28 +59,33 @@ export default function ProductsCard({ products }) {
                 </Card.Description>
               </Card.Header>
 
-              {/* v3-এ Card.Body এর জায়গায় Card.Content */}
               <Card.Content className="overflow-visible py-3 px-4">
                 {imageSrc ? (
-                  <Image
-                    src={imageSrc}
-                    alt={product.title || "Product"}
-                    width={300}
-                    height={300}
-                    className="w-full object-cover rounded-xl aspect-square"
-                    unoptimized
-                  />
+                  <div className="overflow-hidden rounded-xl">
+                    <Image
+                      src={imageSrc}
+                      alt={product.title || "Product"}
+                      width={300}
+                      height={300}
+                      className="w-full object-cover rounded-xl aspect-square transition-transform duration-300 group-hover:scale-105"
+                      unoptimized
+                    />
+                  </div>
                 ) : (
                   <div className="w-full aspect-square rounded-xl bg-default-100 flex items-center justify-center text-default-500">
                     No Image
                   </div>
                 )}
               </Card.Content>
-            </Button>
+            </Link>
 
-            <Card.Footer className="justify-end gap-2">
-              <Link href={`/products/${product._id}`}>
-                <Button className={"bg-green-400"} radius="full" size="sm">
+            <Card.Footer className="justify-end gap-2 pt-0 px-4 pb-4">
+              <Link href={`/products/${product._id || product.id}`}>
+                <Button
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-xs"
+                  radius="full"
+                  size="sm"
+                >
                   Buy Now
                 </Button>
               </Link>

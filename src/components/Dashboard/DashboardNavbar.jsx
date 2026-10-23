@@ -16,6 +16,7 @@ import {
     Description,
     Header,
     Separator,
+    Drawer,
 } from "@heroui/react";
 import {
     User,
@@ -24,9 +25,12 @@ import {
     LayoutDashboard,
     GraduationCap,
     ChevronDown,
+    Menu,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { navMenu, NavContent } from "./DashboardSidebar";
 const play = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -47,6 +51,8 @@ export default function Navbar() {
     };
 
     const user = session?.user;
+    const role = user?.role || "buyer";
+    const menu = navMenu[role] || [];
     const displayName = user?.name || "Guest";
     const displayEmail = user?.email || "";
     const avatarSrc = user?.image || undefined;
@@ -61,19 +67,41 @@ export default function Navbar() {
     return (
         <nav className="border-b border-gray-200 bg-white px-6 py-3 shadow-sm">
             <div className="mx-auto flex px-3 items-center justify-between">
-                {/* Left: Brand */}
+                {/* Left: Mobile Drawer Trigger + Brand */}
                 <div className="flex items-center gap-3">
-                    
+                    <div className="lg:hidden">
+                        <Drawer>
+                            <Drawer.Trigger className="inline-flex items-center justify-center p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                                <Menu className="h-5 w-5" />
+                                <span className="sr-only">Open navigation menu</span>
+                            </Drawer.Trigger>
+                            <Drawer.Content>
+                                <Drawer.Header>
+                                    <Drawer.Title>
+                                        <div className="flex items-center justify-between">
+                                            <h2 className={`${play.className} text-emerald-600 text-2xl font-bold`}>
+                                                ReSell Hub
+                                            </h2>
+                                        </div>
+                                        <p className="mt-0.5 text-xs font-semibold text-slate-500 capitalize">{role} Dashboard</p>
+                                    </Drawer.Title>
+                                </Drawer.Header>
+                                <Drawer.Body>
+                                    <NavContent navItems={menu} />
+                                </Drawer.Body>
+                            </Drawer.Content>
+                        </Drawer>
+                    </div>
                     <div>
-                        <h1 className={`${play.className} font-extrabold text-xl text-gray-900`}>
-                            ReSell Hub
-                        </h1>
-                        
+                        <Link href="/" className="hover:opacity-90 transition-opacity">
+                            <h1 className={`${play.className} font-extrabold text-xl text-gray-900`}>
+                                ReSell Hub
+                            </h1>
+                        </Link>
                     </div>
                 </div>
 
                 {/* Center: Dashboard indicator */}
-                
 
                 {/* Right: User dropdown */}
                 <div className="flex items-center gap-3">
@@ -84,21 +112,21 @@ export default function Navbar() {
                             <DropdownTrigger>
                                 <Button
                                     variant="outline"
-                                    className="flex items-center gap-2 rounded-full px-2 py-1 text-gray-700 bg-green-300"
+                                    className="flex items-center gap-2 rounded-full pl-1 pr-3 py-1 text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors shadow-xs"
                                 >
                                     <Avatar
                                         size="sm"
-                                        className="h-8 w-8 border-2  border-gray-200"
+                                        className="h-8 w-8 border border-slate-200"
                                     >
                                         <AvatarImage src={avatarSrc} alt={displayName} />
-                                        <AvatarFallback>
+                                        <AvatarFallback className="bg-emerald-600 text-white font-semibold">
                                             {initials || <User className="h-4 w-4" />}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <span className="hidden text-sm font-medium text-white capitalize sm:inline">
+                                    <span className="hidden text-sm font-medium text-slate-800 capitalize sm:inline">
                                         {displayName}
                                     </span>
-                                    <ChevronDown className="h-3.5 w-3.5 text-white" />
+                                    <ChevronDown className="h-3.5 w-3.5 text-slate-500" />
                                 </Button>
                             </DropdownTrigger>
 

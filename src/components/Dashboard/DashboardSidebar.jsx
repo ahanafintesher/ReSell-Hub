@@ -24,7 +24,7 @@ const play = Playfair_Display({
   weight: ["400", "500", "700"],
 });
 
-const navMenu = {
+export const navMenu = {
   seller: [
     { icon: Summary, label: "Overview", href: "/dashboard/seller/overview" },
     { icon: CirclePlus, label: "Add Product", href: "/dashboard/seller/products/add-products" },
@@ -48,21 +48,36 @@ const navMenu = {
   ],
 };
 
-function NavContent({ navItems }) {
+export function NavContent({ navItems = [] }) {
   const pathname = usePathname();
   return (
-    <nav className="flex flex-col gap-0.5 px-2 py-2.5">
+    <nav className="flex flex-col gap-1 px-1 py-2">
       {navItems.map((item) => {
         const isActive = pathname === item.href;
         return (
-          <Link key={item.label} href={item.href} aria-current={isActive ? "page" : undefined}
+          <Link
+            key={item.label}
+            href={item.href}
+            aria-current={isActive ? "page" : undefined}
             className={[
-              "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-semibold transition-colors",
-              isActive ? "bg-green-300 text-white" : "text-default-600 hover:bg-green-300 hover:text-white",
-            ].join(" ")}>
-            <item.icon className={["size-[18px] shrink-0", isActive ? "text-white" : "text-default-500"].join(" ")} />
+              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+              isActive
+                ? "bg-emerald-50 text-emerald-800 font-semibold border-l-4 border-emerald-600"
+                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+            ].join(" ")}
+          >
+            <item.icon
+              className={[
+                "size-4 shrink-0 transition-colors",
+                isActive ? "text-emerald-700" : "text-slate-400 group-hover:text-slate-600",
+              ].join(" ")}
+            />
             <span className="flex-1">{item.label}</span>
-            {item.badge != null && <Badge size="sm" color="primary" variant="flat">{item.badge}</Badge>}
+            {item.badge != null && (
+              <Badge size="sm" color="primary" variant="flat">
+                {item.badge}
+              </Badge>
+            )}
           </Link>
         );
       })}
@@ -72,45 +87,37 @@ function NavContent({ navItems }) {
 
 export default function DashboardSidebar() {
   const { data: session } = authClient.useSession();
-  const role = session?.user?.role;
+  const role = session?.user?.role || "buyer";
   const menu = navMenu[role] || [];
 
   return (
-    <>
-      <aside className="hidden w-60 shrink-0 flex-col border-r lg:flex">
-        <div className="mb-4 rounded-xl border border-slate-200 bg-white p-5">
-          <h2 className={`${play.className} text-green-600 text-2xl font-extrabold`}>ReSell Hub</h2>
-          <p className="mt-1 text-sm font-semibold text-slate-500 capitalize">{session?.user?.role} Dashboard</p>
-          <div className="mt-5 flex items-center gap-3 border-t pt-4">
-            <Avatar color="default" className="size-10">
-              <Avatar.Image src={session?.user?.image} alt={session?.user?.name} />
-              <Avatar.Fallback className="bg-green-300 text-white">{session?.user?.name?.charAt(0).toUpperCase()}</Avatar.Fallback>
-            </Avatar>
-            <div>
-              <p className="font-semibold capitalize text-slate-800">{session?.user?.name}</p>
-              <p className="font-semibold text-sm text-slate-600">{session?.user?.email}</p>
-              <p className="text-sm text-slate-500 font-semibold capitalize">{session?.user?.role}</p>
-            </div>
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex">
+      <div className="p-5 border-b border-slate-100">
+        <h2 className={`${play.className} text-emerald-600 text-2xl font-extrabold`}>ReSell Hub</h2>
+        <p className="mt-0.5 text-xs font-semibold text-slate-500 capitalize">{role} Dashboard</p>
+        <div className="mt-4 flex items-center gap-3 border-t border-slate-100 pt-4">
+          <Avatar color="default" className="size-10 shrink-0">
+            <Avatar.Image src={session?.user?.image} alt={session?.user?.name} />
+            <Avatar.Fallback className="bg-emerald-600 text-white font-bold">
+              {session?.user?.name?.charAt(0).toUpperCase() || "U"}
+            </Avatar.Fallback>
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold text-sm capitalize text-slate-800 truncate">
+              {session?.user?.name || "User"}
+            </p>
+            <p className="text-xs text-slate-500 truncate" title={session?.user?.email}>
+              {session?.user?.email}
+            </p>
+            <span className="inline-block mt-0.5 text-[10px] uppercase font-bold tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/50">
+              {role}
+            </span>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto"><NavContent navItems={menu} /></div>
-      </aside>
-
-      <Drawer>
-        <Button className="lg:hidden" variant="flat" size="sm"><Bars />Menu</Button>
-        <Drawer.Backdrop>
-          <Drawer.Content placement="left">
-            <Drawer.Dialog className="flex w-60 flex-col p-0">
-              <Drawer.Header className="flex items-center gap-2.5 border-b px-4 py-4">
-                <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"><span className="text-sm font-semibold">M</span></div>
-                <Drawer.Heading className="text-sm font-medium">Marketplace</Drawer.Heading>
-                <Drawer.CloseTrigger className="ml-auto" />
-              </Drawer.Header>
-              <Drawer.Body className="flex-1 overflow-y-auto p-0"><NavContent navItems={menu} /></Drawer.Body>
-            </Drawer.Dialog>
-          </Drawer.Content>
-        </Drawer.Backdrop>
-      </Drawer>
-    </>
+      </div>
+      <div className="flex-1 overflow-y-auto p-2">
+        <NavContent navItems={menu} />
+      </div>
+    </aside>
   );
 }
