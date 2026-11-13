@@ -6,9 +6,6 @@ ReSell Hub is a full-stack second-hand marketplace platform where users can buy 
 The platform connects buyers and sellers, making it easier to discover affordable products, manage listings, and complete secure online transactions. It promotes sustainable consumption by giving pre-owned products a second life.
 
 
-### Description
-
-ReSell Hub is a full-stack marketplace platform where users can buy and sell pre-owned products. It provides an easy-to-use interface for browsing products, listing items for sale, and connecting buyers with sellers, making second-hand shopping more convenient and accessible.
 
 
 🚀 Project Overview
