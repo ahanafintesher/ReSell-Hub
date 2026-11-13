@@ -424,6 +424,54 @@ npm run lint
 
 -   Build responsive and reusable UI components.
 
+
+## 🧩 Challenges Faced During Development
+
+While developing ReSell Hub, I faced several technical and practical challenges:
+
+- **Authentication & Authorization:** Implementing secure authentication with Better Auth and managing role-based access for Buyers, Sellers, and Admins.
+- **Frontend-Backend Integration:** Connecting the Next.js frontend with the Express.js backend and ensuring smooth API communication.
+- **Database Management:** Designing and managing MongoDB collections for users, products, orders, reviews, and payments.
+- **Payment Integration:** Integrating Stripe and handling checkout sessions, payment verification, and transaction status.
+- **Dashboard Development:** Building separate dashboards with role-specific functionality and analytics.
+- **Responsive Design:** Ensuring a consistent user experience across mobile, tablet, and desktop devices.
+- **State & Data Management:** Managing dynamic data, loading states, error handling, and API responses.
+
+## 🛠️ Why I Chose These Technologies
+
+| Technology | Why I Used It |
+|---|---|
+| **Next.js** | For server-side rendering, routing, and building a scalable React application. |
+| **React.js** | To create reusable components and interactive user interfaces. |
+| **Tailwind CSS** | To build responsive layouts quickly with utility-first styling. |
+| **HeroUI** | To create modern and reusable UI components. |
+| **Node.js** | To run JavaScript on the server side. |
+| **Express.js** | To build RESTful APIs and handle backend operations. |
+| **MongoDB** | To store flexible marketplace data using a NoSQL database. |
+| **Better Auth** | To implement authentication and manage user sessions. |
+| **JWT** | To verify authenticated requests to protected backend APIs. |
+| **Stripe** | To provide secure online payment processing. |
+| **Motion** | To add smooth animations and improve user experience. |
+| **Recharts** | To visualize sales, orders, and marketplace analytics. |
+| **Lucide React** | To use consistent and lightweight icons throughout the application. |
+
+## 💡 Challenges Solved During Development
+
+During development, I implemented solutions to several important problems:
+
+- **Role-Based Access Control:** Implemented separate permissions and protected routes for Buyers, Sellers, and Admins.
+- **Secure API Communication:** Integrated JWT verification to protect private backend endpoints.
+- **Authentication Integration:** Connected Better Auth with the backend authentication flow.
+- **Product Management:** Implemented product creation, updating, deletion, searching, sorting, and pagination.
+- **Order Management:** Developed order processing and status management functionality for buyers and sellers.
+- **Payment Processing:** Integrated Stripe checkout and implemented payment verification and transaction tracking.
+- **Dashboard Analytics:** Used Recharts to display marketplace statistics and business performance.
+- **Frontend-Backend Communication:** Connected independent frontend and backend applications through REST APIs.
+- **Error Handling:** Implemented appropriate loading states, error messages, and user feedback for different operations.
+- **Responsive UI:** Optimized layouts and components for different screen sizes.
+
+
+
 ## 🔮 Future Improvements
 
 > 🚧 **Coming Soon!** ReSell Hub is currently under development and will be live very soon.
