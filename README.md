@@ -155,35 +155,34 @@ The application follows a separate frontend and backend architecture.
 
 -   Product reviews and ratings.
 
-🛠️ Technology Stack
---------------------
-
 ### Frontend
 
 | Technology | Purpose |
+|:---|:---|
 | Next.js 16 | React Framework |
 | React 19 | UI Development |
 | JavaScript (ES6+) | Programming Language |
-| Tailwind CSS 4 | Styling |
+| Tailwind CSS 4 | Styling and Responsive Design |
 | HeroUI 3 | UI Components |
-| Better Auth | Authentication |
+| Better Auth | Authentication and Session Management |
 | MongoDB Driver | Database Integration |
-| Motion | Animations |
-| Recharts | Data Visualization |
+| Motion | Animations and Transitions |
+| Recharts | Data Visualization and Analytics |
 | Stripe | Payment Integration |
-| Lucide React | Icons |
+| Lucide React | Icon Library |
 
 ### Backend
 
 | Technology | Purpose |
-| Node.js | Runtime Environment |
+|:---|:---|
+| Node.js | JavaScript Runtime Environment |
 | Express.js 5 | Backend Framework |
-| MongoDB | Database |
+| MongoDB | NoSQL Database |
 | MongoDB Native Driver | Database Operations |
 | jose-cjs | JWT Verification |
 | Stripe SDK | Payment Processing |
 | CORS | Cross-Origin Resource Sharing |
-| dotenv | Environment Configuration |
+| dotenv | Environment Variable Management |
 
 
 
