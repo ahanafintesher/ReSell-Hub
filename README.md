@@ -18,6 +18,17 @@ ReSell Hub provides a complete marketplace experience with three different user 
 
 The application follows a separate frontend and backend architecture.
 
+
+---
+
+## 📸 Screenshots
+
+<img width="1859" height="883" alt="image" src="https://github.com/user-attachments/assets/d0027584-5b2c-496f-85d2-1c1898e2c26e" />
+
+---
+
+
+
 🔗 Project Links
 ----------------
 
