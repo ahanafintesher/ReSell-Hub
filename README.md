@@ -185,6 +185,66 @@ The application follows a separate frontend and backend architecture.
 | CORS | Cross-Origin Resource Sharing |
 | dotenv | Environment Configuration |
 
+
+
+📦 Dependencies
+---------------
+
+### Frontend Dependencies
+
+| Package | Purpose |
+| `next` | React Framework |
+| `react` | UI Development |
+| `react-dom` | DOM Rendering |
+| `@heroui/react` | UI Components |
+| `@heroui/styles` | UI Styling |
+| `better-auth` | Authentication |
+| `@better-auth/mongo-adapter` | MongoDB Authentication Adapter |
+| `mongodb` | Database Integration |
+| `motion` | Animations |
+| `tailwindcss` | CSS Framework |
+| `@tailwindcss/postcss` | Tailwind CSS PostCSS Integration |
+| `stripe` | Payment Integration |
+| `recharts` | Data Visualization |
+| `lucide-react` | Icons |
+| `react-icons` | Icon Library |
+| `react-hot-toast` | Toast Notifications |
+| `react-simple-star-rating` | Star Ratings |
+| `three` | 3D Graphics |
+
+**Development Dependencies:**
+
+-   `eslint`
+
+-   `eslint-config-next`
+
+-   `babel-plugin-react-compiler`
+
+-   `@gravity-ui/icons`
+
+### Backend Dependencies
+
+| Package | Purpose |
+| `express` | Backend Framework |
+| `mongodb` | Database Integration |
+| `jose-cjs` | JWT Verification |
+| `stripe` | Payment Processing |
+| `cors` | Cross-Origin Resource Sharing |
+| `dotenv` | Environment Variables |
+
+### Development Tools
+
+-   `Node.js` -- JavaScript Runtime
+
+-   `npm` -- Package Manager
+
+-   `Git & GitHub` -- Version Control
+
+-   `MongoDB` -- NoSQL Database
+
+-   `Stripe` -- Payment Gateway
+
+
 📦 Installation & Setup
 -----------------------
 
