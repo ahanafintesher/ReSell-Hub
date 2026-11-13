@@ -363,18 +363,20 @@ npm run lint
 
 -   Build responsive and reusable UI components.
 
-🔮 Future Improvements
-----------------------
+## 🔮 Future Improvements
 
--   Real-time buyer-seller communication.
+> 🚧 **Coming Soon!** ReSell Hub is currently under development and will be live very soon.
 
--   Real-time notifications.
+The following features are planned for upcoming updates:
 
--   Advanced product recommendations.
+- Real-time buyer-seller communication.
+- Real-time notifications.
+- Advanced product recommendations.
+- Improved marketplace analytics.
+- Enhanced product discovery and filtering.
 
--   Improved marketplace analytics.
+**Stay tuned for the upcoming launch of ReSell Hub!**
 
--   Enhanced product discovery and filtering.
 
 👨‍💻 Developer
 ---------------
