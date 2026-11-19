@@ -37,12 +37,11 @@ const SellerOrderCard = ({ order }) => {
         await updateOrderStatus(order._id, newStatus);
       } catch (error) {
         console.error(error);
-        setStatus(prevStatus); // fail হলে revert
+        setStatus(prevStatus);
       }
     });
   };
 
-  // current status এর index বের করে সেখান থেকে বাকি options নেওয়া হচ্ছে
   const currentIndex = STATUS_FLOW.indexOf(status);
   const availableStatuses =
     currentIndex === -1 ? STATUS_FLOW : STATUS_FLOW.slice(currentIndex);

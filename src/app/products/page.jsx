@@ -19,6 +19,10 @@ export default async function ProductsPage({ searchParams }) {
 
   // Backend query with all filters & bounded pagination
   let products = [];
+  let total = 0;
+  let totalPages = 1;
+  let fetchError = null;
+
   try {
     const res = await getProducts({
       search,
@@ -30,9 +34,23 @@ export default async function ProductsPage({ searchParams }) {
       page,
       limit,
     });
-    products = Array.isArray(res) ? res : [];
+
+    if (Array.isArray(res)) {
+      products = res;
+      total = res.length;
+      totalPages = Math.ceil(total / limit) || 1;
+    } else if (res && typeof res === "object") {
+      products = Array.isArray(res.products) ? res.products : [];
+      total = typeof res.total === "number" ? res.total : products.length;
+      totalPages =
+        typeof res.totalPages === "number"
+          ? res.totalPages
+          : Math.ceil(total / limit) || 1;
+    }
   } catch (err) {
     console.error("Failed to load products:", err);
+    fetchError =
+      err.message || "Failed to load products. Please check your connection and try again.";
   }
 
   return (
@@ -50,6 +68,9 @@ export default async function ProductsPage({ searchParams }) {
       {/* Pass current filters to client component */}
       <ProductsFilters
         products={products}
+        total={total}
+        totalPages={totalPages}
+        errorMessage={fetchError}
         currentSearch={search}
         currentCategory={category}
         currentCondition={condition}

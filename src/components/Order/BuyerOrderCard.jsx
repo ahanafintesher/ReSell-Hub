@@ -8,6 +8,7 @@ const STATUS_LABELS = {
   shipped: "Shipped",
   delivered: "Delivered",
   rejected: "Rejected",
+  cancelled: "Cancelled",
 };
 
 const STATUS_COLORS = {
@@ -17,10 +18,11 @@ const STATUS_COLORS = {
   shipped: "bg-purple-100 text-purple-700",
   delivered: "bg-green-100 text-green-700",
   rejected: "bg-red-100 text-red-700",
+  cancelled: "bg-gray-100 text-gray-700",
 };
 
 
-const canDelete = ["accepted", "pending", "rejected", "processing"]
+const canCancel = ["accepted", "pending", "processing"];
 const BuyerOrderCard = ({ order }) => {
   return (
     <div className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm">
@@ -78,10 +80,18 @@ const BuyerOrderCard = ({ order }) => {
           This product has been delivered.
         </p>
       )}
+
+      {order.orderStatus === "cancelled" && (
+        <p className="mt-3 text-sm text-gray-500">
+          This order was cancelled.
+          {order.refundStatus === "refunded" && " Payment has been refunded."}
+          {order.refundStatus === "pending_refund" && " Refund is currently being processed."}
+        </p>
+      )}
     {
-      canDelete.includes(order.orderStatus) && (
+      canCancel.includes(order.orderStatus) && (
         <div className="mt-4">
-          <BuyerDeleteOrderModal order={order}></BuyerDeleteOrderModal>
+          <BuyerDeleteOrderModal order={order} />
         </div>
       )
     }

@@ -29,16 +29,20 @@ function Logo() {
   }
 
   return (
-    <Link href="/" className="flex items-center gap-2.5 select-none shrink-0">
-     
-
-      <span className="hidden sm:block leading-tight">
+    <Link
+      href="/"
+      className="flex items-center gap-2 select-none shrink-0"
+      aria-label="ReSell Hub Home"
+    >
+      <div className="w-8 h-8 rounded-lg bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center shadow-sm shrink-0">
+        <Box className="w-4 h-4 text-white" />
+      </div>
+      <span className="leading-tight">
         <h2
-            className={`${play.className} text-green-600 text-2xl font-extrabold`}
-          >
-            ReSell Hub
-          </h2>
-
+          className={`${play.className} text-emerald-600 dark:text-emerald-400 text-xl sm:text-2xl font-extrabold tracking-tight`}
+        >
+          ReSell Hub
+        </h2>
       </span>
     </Link>
   );
@@ -53,27 +57,27 @@ function AuthButtons() {
 
   return (
     <div className="flex items-center gap-2">
-      <Link href="/auth/login">
-        <Button
-          variant="flat"
-          size="sm"
-          radius="full"
-          className="font-semibold"
-        >
-          Login
-        </Button>
-      </Link>
+      <Button
+        as={Link}
+        href="/auth/login"
+        variant="flat"
+        size="sm"
+        radius="full"
+        className="font-semibold"
+      >
+        Login
+      </Button>
 
-      <Link href="/auth/register">
-        <Button
-          color="primary"
-          size="sm"
-          radius="full"
-          className="font-semibold"
-        >
-          Register
-        </Button>
-      </Link>
+      <Button
+        as={Link}
+        href="/auth/register"
+        color="primary"
+        size="sm"
+        radius="full"
+        className="font-semibold"
+      >
+        Register
+      </Button>
     </div>
   );
 }

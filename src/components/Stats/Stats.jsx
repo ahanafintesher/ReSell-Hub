@@ -1,6 +1,7 @@
 'use client'  
 import { motion, useInView } from "motion/react";
 import { useRef, useState, useEffect } from "react";
+import Link from "next/link";
 import {
   FaShoppingBag,
   FaStore,
@@ -188,13 +189,18 @@ function Stats() {
                 </div>
               </div>
 
-              <motion.button
-                className="flex-shrink-0 px-8 py-4 rounded-xl bg-white text-[#10B981] font-semibold text-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+              <motion.div
+                className="flex-shrink-0"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Join Now
-              </motion.button>
+                <Link
+                  href="/auth/register"
+                  className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white text-[#10B981] font-semibold text-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+                >
+                  Join Now
+                </Link>
+              </motion.div>
             </div>
           </div>
         </motion.div>

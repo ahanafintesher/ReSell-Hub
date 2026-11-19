@@ -122,15 +122,15 @@ export default function ProductsCard({ products }) {
                       Sold Out
                     </Button>
                   ) : (
-                    <Link href={`/products/${product._id || product.id}`}>
-                      <Button
-                        className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold shadow-xs text-xs px-3.5 py-1.5"
-                        radius="full"
-                        size="sm"
-                      >
-                        Buy Now
-                      </Button>
-                    </Link>
+                    <Button
+                      as={Link}
+                      href={`/products/${product._id || product.id}`}
+                      className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold shadow-xs text-xs px-3.5 py-1.5"
+                      radius="full"
+                      size="sm"
+                    >
+                      Buy Now
+                    </Button>
                   )}
                 </div>
               </Card.Footer>

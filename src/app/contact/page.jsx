@@ -62,18 +62,18 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50/50 py-12 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-50/50 dark:bg-[#0b0f19] py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-100 px-3 py-1 rounded-full mb-3">
+          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/50 px-3 py-1 rounded-full mb-3">
             <MessageSquare className="w-3.5 h-3.5" />
             Customer Support & Inquiries
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Contact ReSell Hub Team
           </h1>
-          <p className="mt-3 text-base sm:text-lg text-gray-600">
+          <p className="mt-3 text-base sm:text-lg text-slate-600 dark:text-slate-300">
             Have questions about buying, selling, payments, or listing a product?
             Our support team is here to assist you.
           </p>
@@ -82,27 +82,27 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Information Sidebar */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-6">
-              <h2 className="text-xl font-bold text-gray-900">Direct Support</h2>
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-6 shadow-sm space-y-6 transition-colors">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Direct Support</h2>
 
               <div className="space-y-4">
                 {/* Email */}
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-400">Email Us</p>
+                    <p className="text-xs font-medium text-slate-400">Email Us</p>
                     <a
                       href="mailto:support@resellhub.com"
-                      className="text-sm font-semibold text-gray-900 hover:text-green-600 transition block truncate"
+                      className="text-sm font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition block truncate"
                     >
                       support@resellhub.com
                     </a>
                     <button
                       type="button"
                       onClick={handleCopyEmail}
-                      className="inline-flex items-center gap-1 text-xs text-green-600 hover:underline mt-1"
+                      className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 hover:underline mt-1"
                     >
                       <Copy className="w-3 h-3" />
                       {copied ? "Copied!" : "Copy Address"}
@@ -112,42 +112,42 @@ export default function ContactPage() {
 
                 {/* Phone */}
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-400">Call Us</p>
+                    <p className="text-xs font-medium text-slate-400">Call Us</p>
                     <a
                       href="tel:+8801700000000"
-                      className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition block"
+                      className="text-sm font-semibold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition block"
                     >
                       +880 (17) 000-0000
                     </a>
-                    <p className="text-xs text-gray-500 mt-0.5">Mon - Sat, 9am - 8pm</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Mon - Sat, 9am - 8pm</p>
                   </div>
                 </div>
 
                 {/* Location */}
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-400">Headquarters</p>
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-xs font-medium text-slate-400">Headquarters</p>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
                       123 Market Street, Dhaka, Bangladesh
                     </p>
                   </div>
                 </div>
 
                 {/* Response Guarantee */}
-                <div className="flex items-start gap-3 pt-2 border-t border-gray-100">
-                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <div className="flex items-start gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
                     <Clock className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-400">Response Window</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-xs font-medium text-slate-400">Response Window</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">
                       We respond to all verified marketplace inquiries within 24 business hours.
                     </p>
                   </div>
@@ -156,12 +156,12 @@ export default function ContactPage() {
             </div>
 
             {/* Safety Notice */}
-            <div className="rounded-2xl border border-green-200 bg-green-50/70 p-5">
-              <div className="flex items-center gap-2 text-green-800 font-semibold text-sm mb-1">
-                <CheckCircle2 className="w-4 h-4 text-green-600" />
+            <div className="rounded-2xl border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/70 dark:bg-emerald-950/30 p-5 transition-colors">
+              <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-semibold text-sm mb-1">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 Buyer & Seller Protection
               </div>
-              <p className="text-xs text-green-700 leading-relaxed">
+              <p className="text-xs text-emerald-700 dark:text-emerald-400/90 leading-relaxed">
                 Never send direct wire transfers outside the platform. All transactions are securely completed through Stripe Checkout.
               </p>
             </div>
@@ -169,18 +169,18 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900 mb-2">Send an Inquiry</h2>
-              <p className="text-sm text-gray-500 mb-6">
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-6 sm:p-8 shadow-sm transition-colors">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Send an Inquiry</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
                 Fill in the details below. Submitting will prepare your message directly for our support team.
               </p>
 
               {submitted && (
-                <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-4 flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-                  <div className="text-sm text-green-800">
+                <div className="mb-6 rounded-xl border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/40 p-4 flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <div className="text-sm text-emerald-800 dark:text-emerald-300">
                     <p className="font-semibold">Inquiry prepared!</p>
-                    <p className="mt-1 text-xs text-green-700">
+                    <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-400/90">
                       Your default email application has opened with your inquiry formatted for <strong>support@resellhub.com</strong>.
                       You can also email us directly at any time.
                     </p>
@@ -192,7 +192,7 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Name */}
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                       Your Name *
                     </label>
                     <input
@@ -202,13 +202,13 @@ export default function ContactPage() {
                       placeholder="e.g. Rakib Hasan"
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+                      className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
                     />
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                       Email Address *
                     </label>
                     <input
@@ -218,21 +218,21 @@ export default function ContactPage() {
                       placeholder="you@example.com"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+                      className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
                     />
                   </div>
                 </div>
 
                 {/* Inquiry Type / Subject */}
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                     Topic / Category
                   </label>
                   <select
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
-                    className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 bg-white"
+                    className="w-full rounded-xl border border-slate-300 dark:border-slate-700 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600 bg-white dark:bg-slate-800"
                   >
                     <option value="Product Inquiry">Product Inquiry</option>
                     <option value="Order & Delivery Tracking">Order & Delivery Tracking</option>
@@ -246,10 +246,10 @@ export default function ContactPage() {
                 {/* Message */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
-                    <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                       Message *
                     </label>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-slate-400">
                       {formData.message.length} characters (min 10)
                     </span>
                   </div>
@@ -260,7 +260,7 @@ export default function ContactPage() {
                     placeholder="Describe your inquiry in detail, including product title or order ID if relevant..."
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full rounded-xl border border-gray-300 p-3.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 resize-y"
+                    className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600 resize-y"
                   ></textarea>
                 </div>
 
@@ -269,7 +269,7 @@ export default function ContactPage() {
                   <Button
                     type="submit"
                     color="primary"
-                    className="w-full sm:w-auto px-8 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-8 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition flex items-center justify-center gap-2"
                   >
                     <Send className="w-4 h-4" />
                     Dispatch Message via Email

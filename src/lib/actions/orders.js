@@ -45,7 +45,21 @@ export const getOrdersByBuyerInfo = async (buyerInfo) => {
   return res.json();
 };
 
-// delete/cancel an order
+// cancel an order (dedicated soft cancellation route)
+export const cancelOrder = async (orderId) => {
+  const res = await serverFetch(`/api/orders/${orderId}/cancel`, {
+    method: "PATCH",
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.message || `Failed to cancel order (${res.status})`);
+  }
+
+  return data;
+};
+
+// delete an order (hard delete)
 export const deleteOrder = async (orderId) => {
   const res = await serverFetch(`/api/orders/${orderId}`, {
     method: "DELETE",
@@ -74,98 +88,51 @@ export const updateOrderStatus = async (orderId, status) => {
   return data;
 };
 
-// get all orders across platform for admin
-export const getAdminOrders = async () => {
-  try {
-    const usersRes = await serverFetch("/api/admin/users", { cache: "no-store" });
-    if (!usersRes.ok) {
-      throw new Error("Failed to authenticate as admin or fetch users");
-    }
-    const users = await usersRes.json();
-    const userList = Array.isArray(users) ? users : [];
+// get all platform orders for admin via direct indexed endpoint
+export const getAdminOrders = async (params = {}) => {
+  const queryParams = new URLSearchParams();
 
-    // Collect candidate seller & buyer emails from users collection
-    const candidateEmails = new Set();
-    userList.forEach((u) => {
-      if (u.email) candidateEmails.add(u.email);
-    });
-
-    // Also collect sellerInfo from products
-    try {
-      const productsRes = await serverFetch("/api/products", { cache: "no-store" });
-      if (productsRes.ok) {
-        const products = await productsRes.json();
-        if (Array.isArray(products)) {
-          products.forEach((p) => {
-            if (p.sellerInfo) candidateEmails.add(p.sellerInfo);
-          });
-        }
-      }
-    } catch {
-      // Non-critical
-    }
-
-    // Query orders for each candidate seller
-    const orderPromises = Array.from(candidateEmails).map(async (email) => {
-      try {
-        const res = await serverFetch(
-          `/api/seller/orders?sellerInfo=${encodeURIComponent(email)}`,
-          { cache: "no-store" }
-        );
-        if (res.ok) {
-          const data = await res.json();
-          return Array.isArray(data) ? data : [];
-        }
-        return [];
-      } catch {
-        return [];
-      }
-    });
-
-    const settledOrders = await Promise.all(orderPromises);
-    const orderMap = new Map();
-
-    settledOrders.flat().forEach((order) => {
-      const key = order?._id ? String(order._id) : (order?.id ? String(order.id) : null);
-      if (key) {
-        orderMap.set(key, order);
-      }
-    });
-
-    // Also query buyer orders to catch any orders where seller might be external or missing
-    const buyerPromises = Array.from(candidateEmails).map(async (email) => {
-      try {
-        const res = await serverFetch(
-          `/api/buyer/orders?buyerInfo=${encodeURIComponent(email)}`,
-          { cache: "no-store" }
-        );
-        if (res.ok) {
-          const data = await res.json();
-          return Array.isArray(data) ? data : [];
-        }
-        return [];
-      } catch {
-        return [];
-      }
-    });
-
-    const settledBuyerOrders = await Promise.all(buyerPromises);
-    settledBuyerOrders.flat().forEach((order) => {
-      const key = order?._id ? String(order._id) : (order?.id ? String(order.id) : null);
-      if (key) {
-        orderMap.set(key, order);
-      }
-    });
-
-    const allOrders = Array.from(orderMap.values()).sort(
-      (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
-    );
-
-    return allOrders;
-  } catch (error) {
-    console.error("getAdminOrders error:", error);
-    throw new Error(error.message || "Failed to fetch admin orders");
+  if (params.search && typeof params.search === "string" && params.search.trim()) {
+    queryParams.append("search", params.search.trim());
   }
+  if (params.status && params.status !== "all") {
+    queryParams.append("status", params.status);
+  }
+  if (params.paymentStatus && params.paymentStatus !== "all") {
+    queryParams.append("paymentStatus", params.paymentStatus);
+  }
+  if (params.page) {
+    queryParams.append("page", String(params.page));
+  }
+  if (params.limit) {
+    queryParams.append("limit", String(params.limit));
+  }
+
+  const queryString = queryParams.toString();
+  const url = `/api/admin/orders${queryString ? `?${queryString}` : ""}`;
+
+  const res = await serverFetch(url, { cache: "no-store" });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Failed to fetch admin orders (${res.status})`
+    );
+  }
+
+  const data = await res.json();
+  const ordersList = Array.isArray(data) ? data : (data?.orders || []);
+
+  // Attach pagination metadata if available so consumers can access it
+  if (data && typeof data === "object" && !Array.isArray(data)) {
+    ordersList.total = typeof data.total === "number" ? data.total : ordersList.length;
+    ordersList.page = typeof data.page === "number" ? data.page : 1;
+    ordersList.limit = typeof data.limit === "number" ? data.limit : ordersList.length;
+    ordersList.totalPages = typeof data.totalPages === "number" ? data.totalPages : 1;
+    ordersList.orders = ordersList;
+  }
+
+  return ordersList;
 };
 
 

@@ -18,7 +18,7 @@ import {
   Trash2,
   Info,
 } from "lucide-react";
-import { Button } from "@heroui/react";
+import { Button, AlertDialog } from "@heroui/react";
 import toast from "react-hot-toast";
 import { getAdminOrders, updateOrderStatus, deleteOrder } from "@/lib/actions/orders";
 
@@ -175,12 +175,12 @@ export default function AdminOrdersPage() {
   }, [orders]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 transition-colors">
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Manage Orders</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">Manage Orders</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Monitor real orders across the platform, oversee delivery flows, and resolve transaction disputes.
           </p>
         </div>
@@ -199,36 +199,36 @@ export default function AdminOrdersPage() {
 
       {/* Aggregate Stats */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-medium text-gray-500">Total Orders</p>
-          <p className="mt-1 text-2xl font-bold text-gray-900">{stats.total}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Orders</p>
+          <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{stats.total}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-medium text-amber-600">Pending Orders</p>
-          <p className="mt-1 text-2xl font-bold text-amber-700">{stats.pending}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <p className="text-xs font-medium text-amber-600 dark:text-amber-400">Pending Orders</p>
+          <p className="mt-1 text-2xl font-bold text-amber-700 dark:text-amber-400">{stats.pending}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-medium text-green-600">Delivered Orders</p>
-          <p className="mt-1 text-2xl font-bold text-green-700">{stats.delivered}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Delivered Orders</p>
+          <p className="mt-1 text-2xl font-bold text-emerald-700 dark:text-emerald-400">{stats.delivered}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-medium text-blue-600">Paid Volume</p>
-          <p className="mt-1 text-2xl font-bold text-blue-700">৳{stats.paidRevenue.toLocaleString()}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <p className="text-xs font-medium text-blue-600 dark:text-blue-400">Paid Volume</p>
+          <p className="mt-1 text-2xl font-bold text-blue-700 dark:text-blue-400">৳{stats.paidRevenue.toLocaleString()}</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="mb-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
           {/* Search */}
           <div className="relative sm:col-span-6">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="Search by order ID, product, buyer, seller, or transaction..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2.5 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
             />
           </div>
 
@@ -237,7 +237,7 @@ export default function AdminOrdersPage() {
             <select
               value={orderStatusFilter}
               onChange={(e) => setOrderStatusFilter(e.target.value)}
-              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 capitalize"
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600 capitalize"
             >
               <option value="all">All Order Statuses</option>
               {ORDER_STATUS_OPTIONS.map((status) => (
@@ -253,7 +253,7 @@ export default function AdminOrdersPage() {
             <select
               value={paymentStatusFilter}
               onChange={(e) => setPaymentStatusFilter(e.target.value)}
-              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
             >
               <option value="all">All Payment Statuses</option>
               <option value="paid">Paid</option>
@@ -321,10 +321,10 @@ export default function AdminOrdersPage() {
         </div>
       ) : (
         /* Table View */
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-600">
-              <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-700">
+            <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+              <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 <tr>
                   <th className="px-6 py-4">Order / Product</th>
                   <th className="px-6 py-4">Buyer Info</th>
@@ -334,24 +334,24 @@ export default function AdminOrdersPage() {
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredOrders.map((order) => {
                   const isProcessing = actionLoadingId === order._id;
                   const currentStatus = order.orderStatus || "pending";
                   const isPaid = (order.paymentStatus || "").toLowerCase() === "paid";
 
                   return (
-                    <tr key={order._id} className="transition hover:bg-gray-50/70">
+                    <tr key={order._id} className="transition hover:bg-slate-50/70 dark:hover:bg-slate-800/50">
                       {/* Product & Order Details */}
                       <td className="px-6 py-4">
                         <div className="min-w-0">
-                          <p className="font-semibold text-gray-900 truncate max-w-xs">
+                          <p className="font-semibold text-slate-900 dark:text-white truncate max-w-xs">
                             {order.productTitle || "Product Item"}
                           </p>
-                          <p className="text-xs text-gray-400 font-mono mt-0.5 truncate">
+                          <p className="text-xs text-slate-400 dark:text-slate-500 font-mono mt-0.5 truncate">
                             ID: {order._id}
                           </p>
-                          <p className="text-xs text-gray-400 mt-0.5">
+                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                             {order.createdAt
                               ? new Date(order.createdAt).toLocaleDateString()
                               : "Date not recorded"}
@@ -361,26 +361,26 @@ export default function AdminOrdersPage() {
 
                       {/* Buyer */}
                       <td className="px-6 py-4 text-xs">
-                        <div className="flex items-center gap-1.5 font-medium text-gray-800">
-                          <User className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                        <div className="flex items-center gap-1.5 font-medium text-slate-800 dark:text-slate-200">
+                          <User className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                           <span className="truncate max-w-[140px]">
                             {order.buyerName || "Buyer"}
                           </span>
                         </div>
-                        <p className="text-gray-400 truncate max-w-[160px] mt-0.5">
+                        <p className="text-slate-400 dark:text-slate-500 truncate max-w-[160px] mt-0.5">
                           {order.buyerInfo || "N/A"}
                         </p>
                       </td>
 
                       {/* Seller */}
                       <td className="px-6 py-4 text-xs">
-                        <div className="flex items-center gap-1.5 font-medium text-gray-800">
-                          <Store className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                        <div className="flex items-center gap-1.5 font-medium text-slate-800 dark:text-slate-200">
+                          <Store className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                           <span className="truncate max-w-[140px]">
                             {order.sellerName || "Seller"}
                           </span>
                         </div>
-                        <p className="text-gray-400 truncate max-w-[160px] mt-0.5">
+                        <p className="text-slate-400 dark:text-slate-500 truncate max-w-[160px] mt-0.5">
                           {order.sellerInfo || "N/A"}
                         </p>
                       </td>
@@ -388,14 +388,14 @@ export default function AdminOrdersPage() {
                       {/* Amount & Payment Status */}
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1">
-                          <span className="font-bold text-gray-900">
+                          <span className="font-bold text-slate-900 dark:text-white">
                             ৳{Number(order.price || 0).toLocaleString()}
                           </span>
                           <span
                             className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
                               isPaid
-                                ? "bg-emerald-100 text-emerald-700"
-                                : "bg-amber-100 text-amber-700"
+                                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
+                                : "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300"
                             }`}
                           >
                             <CreditCard className="h-3 w-3" />
@@ -408,7 +408,7 @@ export default function AdminOrdersPage() {
                       <td className="px-6 py-4">
                         <span
                           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
-                            ORDER_STATUS_COLORS[currentStatus] || "bg-gray-100 text-gray-700"
+                            ORDER_STATUS_COLORS[currentStatus] || "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
                           }`}
                         >
                           {currentStatus === "delivered" ? (
@@ -432,7 +432,7 @@ export default function AdminOrdersPage() {
                             value={currentStatus}
                             onChange={(e) => handleStatusChange(order._id, e.target.value)}
                             disabled={isProcessing}
-                            className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 capitalize cursor-pointer disabled:opacity-50"
+                            className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1 text-xs text-slate-700 dark:text-slate-200 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600 capitalize cursor-pointer disabled:opacity-50"
                           >
                             {ORDER_STATUS_OPTIONS.map((st) => (
                               <option key={st} value={st}>
@@ -466,41 +466,58 @@ export default function AdminOrdersPage() {
 
       {/* Cancel Order Confirmation Modal */}
       {cancelConfirmOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
-                <Trash2 className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">Cancel & Delete Order</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Are you sure you want to cancel and delete order{" "}
-                  <strong className="font-mono">{cancelConfirmOrder._id}</strong> for{" "}
-                  <strong>{cancelConfirmOrder.productTitle}</strong>?
-                  This action is permanent and removes the order record.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end gap-3">
-              <Button
-                variant="tertiary"
-                onPress={() => setCancelConfirmOrder(null)}
-                isDisabled={actionLoadingId === cancelConfirmOrder._id}
-              >
-                Go Back
-              </Button>
-              <Button
-                variant="danger"
-                onPress={handleCancelOrder}
-                isLoading={actionLoadingId === cancelConfirmOrder._id}
-              >
-                Confirm Cancellation
-              </Button>
-            </div>
-          </div>
-        </div>
+        <AlertDialog>
+          <AlertDialog.Backdrop
+            isOpen={!!cancelConfirmOrder}
+            onOpenChange={(open) => {
+              if (!open) setCancelConfirmOrder(null);
+            }}
+            isDismissable={actionLoadingId !== cancelConfirmOrder._id}
+            isKeyboardDismissDisabled={actionLoadingId === cancelConfirmOrder._id}
+          >
+            <AlertDialog.Container>
+              <AlertDialog.Dialog className="sm:max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white p-6 rounded-2xl shadow-xl">
+                <AlertDialog.Header className="flex items-start gap-3">
+                  <AlertDialog.Icon status="danger" />
+                  <div>
+                    <AlertDialog.Heading className="text-lg font-bold text-slate-900 dark:text-white">
+                      Cancel & Delete Order
+                    </AlertDialog.Heading>
+                  </div>
+                </AlertDialog.Header>
+                <AlertDialog.Body className="mt-3">
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                    Are you sure you want to cancel and delete order{" "}
+                    <strong className="font-mono text-slate-900 dark:text-white">
+                      {cancelConfirmOrder._id}
+                    </strong>{" "}
+                    for{" "}
+                    <strong className="text-slate-900 dark:text-white">
+                      {cancelConfirmOrder.productTitle}
+                    </strong>
+                    ? This action is permanent and removes the order record.
+                  </p>
+                </AlertDialog.Body>
+                <AlertDialog.Footer className="mt-6 flex justify-end gap-3">
+                  <Button
+                    variant="tertiary"
+                    onPress={() => setCancelConfirmOrder(null)}
+                    isDisabled={actionLoadingId === cancelConfirmOrder._id}
+                  >
+                    Go Back
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onPress={handleCancelOrder}
+                    isLoading={actionLoadingId === cancelConfirmOrder._id}
+                  >
+                    Confirm Cancellation
+                  </Button>
+                </AlertDialog.Footer>
+              </AlertDialog.Dialog>
+            </AlertDialog.Container>
+          </AlertDialog.Backdrop>
+        </AlertDialog>
       )}
     </div>
   );

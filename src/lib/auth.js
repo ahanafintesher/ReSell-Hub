@@ -26,11 +26,25 @@ if (process.env.NODE_ENV === "development") {
 const mongoClient = await clientPromise;
 const db = mongoClient.db(process.env.AUTH_DB_NAME || "resell_hub");
 
+const googleClientId = process.env.GOOGLE_CLIENT_ID?.trim();
+const googleClientSecret = (process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_SECRET_KEY)?.trim();
+const hasGoogleAuth = Boolean(googleClientId && googleClientSecret);
+
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL?.trim() || "http://localhost:3000",
   emailAndPassword: {
     enabled: true,
   },
+  ...(hasGoogleAuth
+    ? {
+        socialProviders: {
+          google: {
+            clientId: googleClientId,
+            clientSecret: googleClientSecret,
+          },
+        },
+      }
+    : {}),
   database: mongodbAdapter(db, {
     client: mongoClient,
   }),

@@ -2,7 +2,7 @@
 
 import { useTransition, useRef, useEffect, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Search, Filter, RotateCcw, ChevronLeft, ChevronRight, X, ArrowUpDown, Tag } from "lucide-react";
+import { Search, Filter, RotateCcw, ChevronLeft, ChevronRight, X, ArrowUpDown, Tag, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import ProductsCard from "./ProductsCard";
 
@@ -35,7 +35,10 @@ const SORT_OPTIONS = [
 ];
 
 export default function ProductsFilters({
-  products,
+  products = [],
+  total,
+  totalPages,
+  errorMessage = null,
   currentSearch = "",
   currentCategory = "all",
   currentCondition = "all",
@@ -125,7 +128,18 @@ export default function ProductsFilters({
     currentMaxPrice !== "" ||
     currentSort !== "newest";
 
-  const hasNextPage = products.length >= pageSize;
+  const resolvedTotalPages =
+    typeof totalPages === "number" && totalPages > 0
+      ? totalPages
+      : Math.max(
+          1,
+          Math.ceil((typeof total === "number" ? total : products?.length || 0) / pageSize)
+        );
+
+  const hasNextPage =
+    typeof totalPages === "number"
+      ? currentPage < resolvedTotalPages
+      : (products?.length || 0) >= pageSize;
 
   return (
     <div className="space-y-6">
@@ -306,14 +320,45 @@ export default function ProductsFilters({
       {/* Results Header */}
       <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
         <p>
-          Showing <span className="font-bold text-slate-800 dark:text-slate-200">{products.length}</span>{" "}
+          Showing <span className="font-bold text-slate-800 dark:text-slate-200">{products?.length || 0}</span>
+          {typeof total === "number" && total > 0 ? ` of ${total}` : ""}{" "}
           items on Page {currentPage}
+          {resolvedTotalPages > 1 ? ` of ${resolvedTotalPages}` : ""}
           {hasActiveFilters && " (Filtered)"}
         </p>
       </div>
 
-      {/* Product Grid or Empty State */}
-      {products.length > 0 ? (
+      {/* Error State, Product Grid, or Empty State */}
+      {errorMessage ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="rounded-3xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20 p-8 sm:p-12 text-center shadow-xs"
+        >
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 mb-4">
+            <AlertCircle className="h-7 w-7" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            Unable to load products
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            {errorMessage}
+          </p>
+          <div className="mt-6 flex justify-center gap-3">
+            <button
+              onClick={() => {
+                startTransition(() => {
+                  router.refresh();
+                });
+              }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold text-sm shadow-xs hover:bg-slate-800 dark:hover:bg-slate-100 transition cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Try Again
+            </button>
+          </div>
+        </motion.div>
+      ) : products && products.length > 0 ? (
         <ProductsCard products={products} />
       ) : (
         <motion.div
@@ -356,7 +401,7 @@ export default function ProductsFilters({
         </button>
 
         <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-          Page {currentPage}
+          Page {currentPage} of {resolvedTotalPages}
         </span>
 
         <button

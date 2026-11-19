@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@heroui/react";
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
@@ -18,13 +18,59 @@ import {
 
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getGoogleAuthConfig } from "@/lib/actions/auth-config";
 
-const LoginPage = () => {
+/**
+ * Validates and sanitizes internal redirects to prevent open-redirect vulnerabilities.
+ * Disallows external URLs, protocol-relative (//example.com), and backslash tricks.
+ */
+function getSafeRedirectUrl(target) {
+  if (!target || typeof target !== "string") return "/";
+  const trimmed = target.trim();
+  if (
+    !trimmed.startsWith("/") ||
+    trimmed.startsWith("//") ||
+    trimmed.startsWith("/\\")
+  ) {
+    return "/";
+  }
+
+  try {
+    const parsed = new URL(trimmed, "http://localhost");
+    if (parsed.origin !== "http://localhost") {
+      return "/";
+    }
+    return parsed.pathname + parsed.search + parsed.hash;
+  } catch {
+    return "/";
+  }
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const rawRedirect = searchParams.get("redirect") || "";
+  const safeRedirect = getSafeRedirectUrl(rawRedirect);
+
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleAuthEnabled, setGoogleAuthEnabled] = useState(true);
+
+  React.useEffect(() => {
+    let active = true;
+    getGoogleAuthConfig()
+      .then((cfg) => {
+        if (active) setGoogleAuthEnabled(cfg.isConfigured);
+      })
+      .catch(() => {
+        if (active) setGoogleAuthEnabled(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +83,7 @@ const LoginPage = () => {
     const { data, error } = await authClient.signIn.email({
       email: user.email,
       password: user.password,
-      callbackURL: "/",
+      callbackURL: safeRedirect,
     });
 
     if (error) {
@@ -46,19 +92,31 @@ const LoginPage = () => {
       setLoading(false);
       return;
     }
-// base url changed
+
     if (data) {
       toast.success("Login successful");
-      router.push("/");
+      router.push(safeRedirect);
     }
 
     setLoading(false);
   };
 
   const handleGoogleLogin = async () => {
-    await authClient.signIn.social({
-      provider: "google",
-    });
+    if (!googleAuthEnabled) {
+      toast.error("Google Sign-In is currently unavailable on this deployment.");
+      return;
+    }
+    try {
+      const res = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: safeRedirect,
+      });
+      if (res?.error) {
+        toast.error(res.error.message || "Failed to initiate Google sign-in.");
+      }
+    } catch (err) {
+      toast.error(err.message || "Google sign-in is currently unavailable.");
+    }
   };
 
   return (
@@ -100,7 +158,8 @@ const LoginPage = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-10"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-1 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
               >
                 {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
@@ -129,17 +188,33 @@ const LoginPage = () => {
           <Button
             type="button"
             variant="outline"
-            className="w-full rounded-none"
+            disabled={!googleAuthEnabled}
+            className="w-full rounded-none disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleGoogleLogin}
+            title={
+              !googleAuthEnabled
+                ? "Google authentication is not configured on this server"
+                : undefined
+            }
           >
             <FcGoogle size={20} />
-            Continue with Google
+            {googleAuthEnabled ? "Continue with Google" : "Google Sign-In (Unavailable)"}
           </Button>
+
+          {!googleAuthEnabled && (
+            <p className="text-xs text-amber-600 dark:text-amber-400 text-center">
+              Google authentication is not configured on this server.
+            </p>
+          )}
 
           <p className="text-sm text-center">
             Don&apos;t have an account?{" "}
             <Link
-              href="/auth/register"
+              href={
+                safeRedirect && safeRedirect !== "/"
+                  ? `/auth/register?redirect=${encodeURIComponent(safeRedirect)}`
+                  : "/auth/register"
+              }
               className="text-blue-600 font-medium hover:underline"
             >
               Register
@@ -149,6 +224,23 @@ const LoginPage = () => {
       </Card>
     </div>
   );
-};
+}
 
-export default LoginPage;
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full px-4 py-6 sm:max-w-7xl sm:mx-auto flex justify-center">
+          <Card className="p-4 sm:p-6 w-full max-w-md animate-pulse">
+            <div className="h-7 w-24 bg-slate-200 dark:bg-slate-700 rounded mx-auto mb-6" />
+            <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded mb-4" />
+            <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded mb-6" />
+            <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded" />
+          </Card>
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
+  );
+}
