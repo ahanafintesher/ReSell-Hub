@@ -2,7 +2,7 @@
 import { Playfair_Display } from "next/font/google";
 
 import { useState } from "react";
-import { Button, Avatar, Dropdown, Label } from "@heroui/react";
+import { Avatar, Dropdown, Label } from "@heroui/react";
 import {
   Person,
   Gear,
@@ -57,27 +57,19 @@ function AuthButtons() {
 
   return (
     <div className="flex items-center gap-2">
-      <Button
-        as={Link}
+      <Link
         href="/auth/login"
-        variant="flat"
-        size="sm"
-        radius="full"
-        className="font-semibold"
+        className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition-colors inline-flex items-center justify-center"
       >
         Login
-      </Button>
+      </Link>
 
-      <Button
-        as={Link}
+      <Link
         href="/auth/register"
-        color="primary"
-        size="sm"
-        radius="full"
-        className="font-semibold"
+        className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-xs transition-colors inline-flex items-center justify-center"
       >
         Register
-      </Button>
+      </Link>
     </div>
   );
 }
@@ -230,29 +222,21 @@ export default function Navbar() {
 
           {!isLoggedIn && (
             <div className="mt-3 pt-3 border-t border-divider flex flex-col gap-2">
-              <Button
-                as={Link}
+              <Link
                 href="/auth/login"
-                variant="flat"
-                size="sm"
-                radius="full"
-                className="font-semibold w-full"
+                className="w-full py-2 px-3 text-center text-sm font-semibold rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition-colors inline-flex items-center justify-center"
                 onClick={closeMobile}
               >
                 Login
-              </Button>
+              </Link>
 
-              <Button
-                as={Link}
+              <Link
                 href="/auth/register"
-                color="primary"
-                size="sm"
-                radius="full"
-                className="font-semibold w-full"
+                className="w-full py-2 px-3 text-center text-sm font-semibold rounded-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-xs transition-colors inline-flex items-center justify-center"
                 onClick={closeMobile}
               >
                 Register
-              </Button>
+              </Link>
             </div>
           )}
         </div>
