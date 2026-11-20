@@ -41,3 +41,23 @@ export const deleteProducts = async (id) => {
   return text ? JSON.parse(text) : { success: true };
 };
 
+/**
+ * Moderate a product listing (Admin only)
+ * Backend endpoint: PATCH /api/admin/products/:id/status
+ * Supported statuses: "approved" | "rejected" | "pending" | "available" | "sold"
+ */
+export const moderateProduct = async (id, status) => {
+  const res = await serverFetch(`/api/admin/products/${id}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.message || `Failed to moderate product (${res.status})`);
+  }
+
+  return data;
+};
+
+

@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from '@/components/Theme/ThemeProvider';
+import { CartProvider } from '@/context/CartContext';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -45,15 +46,17 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-full flex flex-col bg-white dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 transition-colors duration-200">
         <ThemeProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              className: "dark:bg-slate-800 dark:text-slate-100 dark:border dark:border-slate-700",
-            }}
-          />
+          <CartProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                className: "dark:bg-slate-800 dark:text-slate-100 dark:border dark:border-slate-700",
+              }}
+            />
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>

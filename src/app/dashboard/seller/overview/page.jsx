@@ -1,16 +1,20 @@
-
 import { headers } from "next/headers";
 import Link from "next/link";
 import {
+  Package,
   ShoppingBag,
+  DollarSign,
   Clock3,
+  ArrowRight,
   Truck,
   PackageCheck,
-  ArrowRight,
+  CheckCircle2,
 } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import { getOrdersBySellerInfo } from "@/lib/actions/orders";
+import { getMyProducts } from "@/lib/actions/myProducts";
+import { getSellerAnalytics } from "@/lib/actions/seller";
 
 const SellerOverViewPage = async () => {
   const session = await auth.api.getSession({
@@ -29,56 +33,99 @@ const SellerOverViewPage = async () => {
     );
   }
 
-  const orders = await getOrdersBySellerInfo(sellerEmail);
+  // Fetch orders, products, and analytics in parallel
+  const [ordersRes, productsRes, analyticsRes] = await Promise.allSettled([
+    getOrdersBySellerInfo(sellerEmail),
+    getMyProducts(sellerEmail),
+    getSellerAnalytics(sellerEmail),
+  ]);
 
-  const sellerOrders = Array.isArray(orders) ? orders : [];
+  const sellerOrders = ordersRes.status === "fulfilled" && Array.isArray(ordersRes.value)
+    ? ordersRes.value
+    : [];
 
-  const totalOrders = sellerOrders.length;
+  const sellerProducts = productsRes.status === "fulfilled" && Array.isArray(productsRes.value)
+    ? productsRes.value
+    : [];
 
-  const pendingOrders = sellerOrders.filter(
-    (order) => order.orderStatus === "pending",
-  ).length;
+  const analytics = analyticsRes.status === "fulfilled" ? analyticsRes.value : null;
 
-  const processingOrders = sellerOrders.filter(
-    (order) => order.orderStatus === "processing",
-  ).length;
+  // Authoritative calculations matching requirements.md lines 436-445
+  const totalProducts =
+    analytics?.inventory?.total != null
+      ? analytics.inventory.total
+      : sellerProducts.length;
 
-  const deliveredOrders = sellerOrders.filter(
-    (order) => order.orderStatus === "delivered",
-  ).length;
+  const totalSales =
+    analytics?.totalSales != null
+      ? analytics.totalSales
+      : sellerOrders.filter(
+          (o) =>
+            o.paymentStatus === "paid" &&
+            o.orderStatus !== "cancelled" &&
+            o.orderStatus !== "rejected"
+        ).length;
+
+  const totalRevenue =
+    analytics?.totalRevenue != null
+      ? analytics.totalRevenue
+      : sellerOrders
+          .filter(
+            (o) =>
+              o.paymentStatus === "paid" &&
+              o.orderStatus !== "cancelled" &&
+              o.orderStatus !== "rejected"
+          )
+          .reduce((sum, o) => sum + (Number(o.price) || 0), 0);
+
+  const pendingOrders =
+    analytics?.pendingOrders != null
+      ? analytics.pendingOrders
+      : sellerOrders.filter((o) => (o.orderStatus || "pending") === "pending").length;
 
   const recentOrders = [...sellerOrders]
     .sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() -
-        new Date(a.createdAt).getTime(),
+        new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
     )
     .slice(0, 5);
 
   const stats = [
     {
-      title: "Total Orders",
-      value: totalOrders,
+      title: "Total Products",
+      value: totalProducts,
+      icon: Package,
+      href: "/dashboard/seller/products/my-products",
+      caption: "Listed in your store catalog",
+      color: "text-blue-600 dark:text-blue-400",
+      bg: "bg-blue-50 dark:bg-blue-950/50",
+    },
+    {
+      title: "Total Sales",
+      value: totalSales,
       icon: ShoppingBag,
       href: "/dashboard/seller/orders",
+      caption: "Completed buyer purchases",
+      color: "text-emerald-600 dark:text-emerald-400",
+      bg: "bg-emerald-50 dark:bg-emerald-950/50",
+    },
+    {
+      title: "Total Revenue",
+      value: `৳${Number(totalRevenue).toLocaleString()}`,
+      icon: DollarSign,
+      href: "/dashboard/seller/analytics",
+      caption: "Earnings from paid orders",
+      color: "text-emerald-700 dark:text-emerald-400",
+      bg: "bg-emerald-50 dark:bg-emerald-950/50",
     },
     {
       title: "Pending Orders",
       value: pendingOrders,
       icon: Clock3,
       href: "/dashboard/seller/orders",
-    },
-    {
-      title: "Processing",
-      value: processingOrders,
-      icon: Truck,
-      href: "/dashboard/seller/orders",
-    },
-    {
-      title: "Delivered",
-      value: deliveredOrders,
-      icon: PackageCheck,
-      href: "/dashboard/seller/orders",
+      caption: "Orders waiting for action",
+      color: "text-amber-600 dark:text-amber-400",
+      bg: "bg-amber-50 dark:bg-amber-950/50",
     },
   ];
 
@@ -89,13 +136,12 @@ const SellerOverViewPage = async () => {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">
           Welcome back, {session.user.name || "Seller"}!
         </h1>
-
         <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
-          Here&apos;s an overview of your store activity.
+          Here&apos;s an authoritative overview of your store performance and sales.
         </p>
       </div>
 
-      {/* Stats */}
+      {/* Required KPI Metric Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
@@ -107,20 +153,24 @@ const SellerOverViewPage = async () => {
               className="group rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-[#131b2e] p-5 shadow-xs transition hover:-translate-y-0.5 hover:shadow-md"
             >
               <div className="flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100 dark:bg-slate-800">
-                  <Icon className="h-5 w-5 text-gray-700 dark:text-slate-300" />
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${stat.bg} ${stat.color}`}>
+                  <Icon className="h-5 w-5" />
                 </div>
 
                 <ArrowRight className="h-4 w-4 text-gray-400 dark:text-slate-500 transition group-hover:translate-x-1 group-hover:text-gray-700 dark:group-hover:text-slate-300" />
               </div>
 
               <div className="mt-5">
-                <p className="text-sm text-gray-500 dark:text-slate-400">
+                <p className="text-sm font-medium text-gray-500 dark:text-slate-400">
                   {stat.title}
                 </p>
 
-                <p className="mt-1 text-3xl font-bold text-gray-900 dark:text-slate-100">
+                <p className="mt-1 text-3xl font-extrabold text-gray-900 dark:text-slate-100">
                   {stat.value}
+                </p>
+
+                <p className="mt-1 text-xs text-gray-400 dark:text-slate-500">
+                  {stat.caption}
                 </p>
               </div>
             </Link>
@@ -133,11 +183,10 @@ const SellerOverViewPage = async () => {
         <div className="flex items-center justify-between border-b border-gray-200 dark:border-slate-800 px-5 py-4">
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
-              Recent Orders
+              Recent Customer Orders
             </h2>
-
             <p className="text-sm text-gray-500 dark:text-slate-400">
-              Your latest customer orders
+              Your latest incoming buyer purchases
             </p>
           </div>
 
@@ -159,11 +208,11 @@ const SellerOverViewPage = async () => {
               >
                 <div className="min-w-0">
                   <h3 className="truncate font-medium text-gray-900 dark:text-slate-100">
-                    {order.productTitle}
+                    {order.productTitle || "Marketplace Product"}
                   </h3>
 
                   <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
-                    Buyer: {order.buyerName || "N/A"}
+                    Buyer: {order.buyerName || order.buyerInfo || "N/A"}
                   </p>
 
                   <p className="mt-1 text-xs text-gray-400 dark:text-slate-500">
@@ -179,7 +228,7 @@ const SellerOverViewPage = async () => {
                   </p>
 
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium border ${
+                    className={`rounded-full px-3 py-1 text-xs font-medium border capitalize ${
                       order.orderStatus === "delivered"
                         ? "bg-green-100 dark:bg-emerald-950/40 text-green-700 dark:text-emerald-300 border-green-200 dark:border-emerald-800/40"
                         : order.orderStatus === "rejected"
@@ -193,30 +242,15 @@ const SellerOverViewPage = async () => {
                                 : "bg-yellow-100 dark:bg-amber-950/40 text-yellow-700 dark:text-amber-300 border-yellow-200 dark:border-amber-800/40"
                     }`}
                   >
-                    {order.orderStatus
-                      ? order.orderStatus.charAt(0).toUpperCase() +
-                        order.orderStatus.slice(1)
-                      : "Pending"}
+                    {order.orderStatus || "Pending"}
                   </span>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="px-5 py-12 text-center">
-            <ShoppingBag className="mx-auto h-10 w-10 text-gray-300 dark:text-slate-600" />
-
-            <p className="mt-3 text-sm text-gray-500 dark:text-slate-400">
-              No customer orders yet.
-            </p>
-
-            <Link
-              href="/dashboard/seller/orders"
-              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 py-2.5 text-sm font-medium text-white transition shadow-xs"
-            >
-              Manage Orders
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+          <div className="py-12 text-center text-sm text-gray-400 dark:text-slate-500">
+            No customer orders recorded yet.
           </div>
         )}
       </div>
@@ -225,4 +259,3 @@ const SellerOverViewPage = async () => {
 };
 
 export default SellerOverViewPage;
-

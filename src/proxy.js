@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 export function proxy(request) {
   const { pathname } = request.nextUrl;
 
-  // Protect /dashboard routes with fast optimistic cookie check
-  if (pathname.startsWith("/dashboard")) {
+  // Protect /dashboard and /checkout routes with optimistic cookie check
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/checkout")) {
     const sessionCookie =
       request.cookies.get("better-auth.session_token") ||
       request.cookies.get("__Secure-better-auth.session_token");
@@ -20,5 +20,5 @@ export function proxy(request) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/checkout/:path*", "/checkout"],
 };

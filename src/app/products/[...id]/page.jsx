@@ -5,6 +5,8 @@ import WishlistButton from "@/components/wishlist/WishlistButon";
 import ReviewSection from "@/components/ReviewSection/ReviewSection";
 import AvgRating from "@/components/ReviewSection/AvgRating";
 import UserReviewSection from "@/components/ReviewSection/UserReviewSection";
+import AddToCartButton from "@/components/ProductsCard/AddToCartButton";
+import ReportProductModal from "@/components/Modals/ReportProductModal";
 import { ShieldCheck, User, AlertCircle, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
@@ -152,7 +154,7 @@ const Page = async ({ params, searchParams }) => {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex gap-4 flex-wrap pt-2">
+            <div className="flex gap-4 flex-wrap items-center pt-2">
               {isSold ? (
                 <div className="w-full sm:w-auto">
                   <Button
@@ -167,19 +169,25 @@ const Page = async ({ params, searchParams }) => {
                   </p>
                 </div>
               ) : (
-                <form action="/api/payments" method="POST">
-                  <input type="hidden" name="productId" value={data._id} />
-                  <Button
-                    type="submit"
-                    className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold px-8 py-3 shadow-md transition-all text-base"
-                    size="lg"
-                  >
-                    Buy Now
-                  </Button>
-                </form>
+                <>
+                  <Link href={`/checkout?productId=${data._id}`}>
+                    <Button
+                      className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold px-8 py-3 shadow-md transition-all text-base"
+                      size="lg"
+                    >
+                      Buy Now
+                    </Button>
+                  </Link>
+                  <AddToCartButton product={data} />
+                </>
               )}
 
               <WishlistButton product={data} />
+            </div>
+
+            {/* Report Listing */}
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
+              <ReportProductModal product={data} />
             </div>
           </div>
         </Card.Header>

@@ -12,11 +12,13 @@ import {
   Bars,
   Xmark,
 } from "@gravity-ui/icons";
+import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import NavLinks from "./Navlinks";
 import { authClient } from "@/lib/auth-client";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/Theme/ThemeToggle";
+import { useCart } from "@/context/CartContext";
 const play = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -135,6 +137,13 @@ function UserMenu({ user }) {
             </Link>
           </Dropdown.Item>
 
+          <Dropdown.Item id="cart" textValue="My Cart">
+            <Link href="/cart" className="flex items-center gap-3 w-full">
+              <ShoppingCart className="w-4 h-4 text-foreground/60 shrink-0" />
+              <Label>My Cart</Label>
+            </Link>
+          </Dropdown.Item>
+
           <Dropdown.Item id="logout" textValue="Logout" variant="danger">
             <span className="flex items-center gap-3 w-full">
               <ArrowRightFromSquare className="w-4 h-4 shrink-0" />
@@ -153,6 +162,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const { data: session, isPending } = authClient.useSession();
+  const { cartCount } = useCart();
 
   const user = session?.user;
   const isLoggedIn = !!user;
@@ -183,8 +193,21 @@ export default function Navbar() {
           <NavLinks />
         </div>
 
-        {/* Right — Theme Toggle, Auth / User */}
+        {/* Right — Cart, Theme Toggle, Auth / User */}
         <div className="flex items-center gap-2.5 shrink-0">
+          <Link
+            href="/cart"
+            className="relative p-2 rounded-full text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none"
+            aria-label={`Shopping Cart with ${cartCount} items`}
+          >
+            <ShoppingCart className="w-5 h-5" />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-600 px-1 text-[10px] font-bold text-white shadow-xs">
+                {cartCount > 99 ? "99+" : cartCount}
+              </span>
+            )}
+          </Link>
+
           <ThemeToggle variant="compact" />
 
           {isLoggedIn ? (

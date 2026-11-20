@@ -18,13 +18,31 @@ export async function POST(request) {
     });
 
     let productId;
+    let quantity = 1;
+    let shippingAddress = '';
+    let buyerPhone = '';
+    let buyerName = '';
+    let notes = '';
+
     const contentType = request.headers.get('content-type') || '';
-    if (contentType.includes('application/json')) {
+    const isJson = contentType.includes('application/json');
+
+    if (isJson) {
       const body = await request.json();
       productId = body.productId;
+      quantity = Math.max(1, parseInt(body.quantity, 10) || 1);
+      shippingAddress = body.shippingAddress || '';
+      buyerPhone = body.buyerPhone || '';
+      buyerName = body.buyerName || '';
+      notes = body.notes || '';
     } else {
       const formData = await request.formData();
       productId = formData.get('productId');
+      quantity = Math.max(1, parseInt(formData.get('quantity'), 10) || 1);
+      shippingAddress = formData.get('shippingAddress') || '';
+      buyerPhone = formData.get('buyerPhone') || '';
+      buyerName = formData.get('buyerName') || '';
+      notes = formData.get('notes') || '';
     }
 
     if (!productId) {
@@ -35,8 +53,14 @@ export async function POST(request) {
     }
 
     if (!userSession?.user) {
+      if (isJson) {
+        return NextResponse.json(
+          { error: 'Authentication required to checkout', redirectUrl: `/auth/login?redirect=${encodeURIComponent(`/checkout?productId=${productId}`)}` },
+          { status: 401 }
+        );
+      }
       return NextResponse.redirect(
-        `${origin}/auth/login?redirect=${encodeURIComponent(`/products/${productId}`)}`,
+        `${origin}/auth/login?redirect=${encodeURIComponent(`/checkout?productId=${productId}`)}`,
         303
       );
     }
@@ -51,13 +75,19 @@ export async function POST(request) {
       if (backendRes.ok) {
         const data = await backendRes.json();
         if (data.url) {
+          if (isJson) {
+            return NextResponse.json({ url: data.url });
+          }
           return NextResponse.redirect(data.url, 303);
         }
       } else {
         const errorData = await backendRes.json().catch(() => ({}));
         if (errorData.message) {
+          if (isJson) {
+            return NextResponse.json({ error: errorData.message }, { status: backendRes.status || 400 });
+          }
           return NextResponse.redirect(
-            `${origin}/products/${productId}?error=${encodeURIComponent(errorData.message)}`,
+            `${origin}/checkout?productId=${productId}&error=${encodeURIComponent(errorData.message)}`,
             303
           );
         }
@@ -73,8 +103,12 @@ export async function POST(request) {
     }
 
     if (product.status === 'sold') {
+      const msg = 'This product has already been sold.';
+      if (isJson) {
+        return NextResponse.json({ error: msg }, { status: 400 });
+      }
       return NextResponse.redirect(
-        `${origin}/products/${productId}?error=${encodeURIComponent('This product has already been sold.')}`,
+        `${origin}/checkout?productId=${productId}&error=${encodeURIComponent(msg)}`,
         303
       );
     }
@@ -98,23 +132,31 @@ export async function POST(request) {
               name: product.title || 'Marketplace Product',
             },
           },
-          quantity: 1,
+          quantity: quantity,
         },
       ],
       metadata: {
         price: String(authoritativePrice),
-        buyerName: userSession.user.name || 'Buyer',
+        buyerName: buyerName || userSession.user.name || 'Buyer',
+        buyerPhone: buyerPhone || '',
+        shippingAddress: shippingAddress || '',
+        notes: notes || '',
         userId: userSession.user.id,
         userEmail: userSession.user.email,
         productId: String(product._id || productId),
         title: product.title || 'Product',
         sellerInfo: product.sellerInfo || 'unknown',
         sellerName: product.sellerName || 'Seller',
+        quantity: String(quantity),
       },
       mode: 'payment',
       success_url: `${origin}/success/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/products/${productId}`,
+      cancel_url: `${origin}/checkout?productId=${productId}&cancelled=true`,
     });
+
+    if (isJson) {
+      return NextResponse.json({ url: session.url });
+    }
 
     return NextResponse.redirect(session.url, 303);
   } catch (err) {
