@@ -189,7 +189,7 @@ export default function Navbar() {
         <Logo />
 
         {/* Center — Nav links */}
-        <div className="hidden md:flex flex-1 justify-center">
+        <div className="hidden lg:flex flex-1 justify-center">
           <NavLinks />
         </div>
 
@@ -220,7 +220,7 @@ export default function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden p-1.5 rounded-md text-foreground/70 hover:text-foreground hover:bg-default-100 transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none"
+            className="lg:hidden p-1.5 rounded-md text-foreground/70 hover:text-foreground hover:bg-default-100 transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
@@ -239,7 +239,7 @@ export default function Navbar() {
       {mobileOpen && (
         <div
           id="mobile-nav"
-          className="md:hidden border-t border-divider bg-background px-4 pb-4 pt-3"
+          className="lg:hidden border-t border-divider bg-background px-4 pb-4 pt-3"
         >
           <NavLinks mobile onNavigate={closeMobile} />
 

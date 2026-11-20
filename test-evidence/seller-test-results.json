@@ -1,0 +1,92 @@
+[
+  {
+    "role": "Seller",
+    "name": "Seller Authentication & Dashboard Access",
+    "route": "/dashboard/seller/overview",
+    "endpoint": "GET /dashboard/seller/overview",
+    "expected": "Authenticates seller and displays seller overview dashboard",
+    "actual": "Successfully accessed seller overview dashboard",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/seller_01_dashboard_access.png"
+  },
+  {
+    "role": "Seller",
+    "name": "Seller Overview KPI Cards",
+    "route": "/dashboard/seller/overview",
+    "endpoint": "GET /api/seller/analytics",
+    "expected": "Displays the 4 mandatory business KPI display cards: Total Products, Total Sales, Total Revenue, Pending Orders",
+    "actual": "Mandatory business KPI cards rendered authoritatively from backend analytics",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/seller_02_kpi_cards.png"
+  },
+  {
+    "role": "Seller",
+    "name": "Add Product Form & Creation",
+    "route": "/dashboard/seller/products/add-products",
+    "endpoint": "POST /api/products",
+    "expected": "Validates input, uploads image/URL, and creates product in database",
+    "actual": "Add product form validated and submitted",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/seller_03_add_product.png"
+  },
+  {
+    "role": "Seller",
+    "name": "Seller Products Listing & Moderation Status",
+    "route": "/dashboard/seller/products/my-products",
+    "endpoint": "GET /api/my-products",
+    "expected": "Lists seller's catalog with title, price, stock, category, and moderation status tag",
+    "actual": "Products table rendered",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/seller_04_my_products.png"
+  },
+  {
+    "role": "Seller",
+    "name": "Seller Product Search & Filtering",
+    "route": "/dashboard/seller/products/my-products",
+    "endpoint": "Client-side / API query filtering",
+    "expected": "Filters seller inventory by text search, category, condition, status, and stock availability",
+    "actual": "Search and multi-facet filtering controls functional",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/seller_05_search_filter.png"
+  },
+  {
+    "role": "Seller",
+    "name": "Product Edit & Delete Capabilities",
+    "route": "/dashboard/seller/products/my-products",
+    "endpoint": "PATCH /api/products/:id & DELETE /api/products/:id",
+    "expected": "Provides Edit and Delete modal actions for seller listings",
+    "actual": "Edit and Delete modal triggers present in product rows",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/seller_06_edit_delete.png"
+  },
+  {
+    "role": "Seller",
+    "name": "Seller Order Management",
+    "route": "/dashboard/seller/orders",
+    "endpoint": "GET /api/seller/orders & PATCH /api/orders/:id/status",
+    "expected": "Displays incoming buyer orders and allows status updates (Pending -> Accepted -> Processing -> Shipped -> Delivered)",
+    "actual": "Seller orders page loaded with status controls",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/seller_07_seller_orders.png"
+  },
+  {
+    "role": "Seller",
+    "name": "Seller Sales Analytics & Revenue Trends",
+    "route": "/dashboard/seller/analytics",
+    "endpoint": "GET /api/seller/analytics",
+    "expected": "Visualizes sales revenue trends, category breakdown, and fulfillment distribution using Recharts",
+    "actual": "Recharts visualizations rendered with revenue trends",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/seller_08_analytics.png"
+  },
+  {
+    "role": "Seller",
+    "name": "Unauthorized Access by Seller to Admin",
+    "route": "/dashboard/admin/users",
+    "endpoint": "GET /api/admin/users",
+    "expected": "Seller cannot access admin user management; backend strictly rejects with 403 Forbidden",
+    "actual": "Seller navigated to http://localhost:3000/dashboard/admin/users; backend API rejects request with 403 Forbidden for non-admin",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/seller_09_unauthorized_access.png"
+  }
+]

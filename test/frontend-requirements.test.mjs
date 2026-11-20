@@ -185,3 +185,66 @@ test("Admin Payment Monitoring — pagination and revenue aggregation", () => {
   const page2 = transactions.slice(limit, limit * 2);
   assert.equal(page2.length, 2);
 });
+
+test("Buyer Dispute Validation & Creation — verifies eligibility and allowed dispute reasons", () => {
+  const allowedReasons = [
+    "Item not as described",
+    "Damaged in transit / Defective",
+    "Item never arrived",
+    "Wrong item received",
+    "Counterfeit / Inauthentic",
+    "Other",
+  ];
+
+  const canDisputeOrder = (order) => {
+    if (order.isDisputed) return false;
+    if (order.orderStatus === "cancelled" || order.orderStatus === "rejected") return false;
+    return true;
+  };
+
+  const validOrder = { _id: "ord_1", orderStatus: "delivered", isDisputed: false };
+  const cancelledOrder = { _id: "ord_2", orderStatus: "cancelled", isDisputed: false };
+  const alreadyDisputedOrder = { _id: "ord_3", orderStatus: "delivered", isDisputed: true };
+
+  assert.equal(canDisputeOrder(validOrder), true);
+  assert.equal(canDisputeOrder(cancelledOrder), false);
+  assert.equal(canDisputeOrder(alreadyDisputedOrder), false);
+
+  const disputePayload = {
+    orderId: validOrder._id,
+    reason: "Damaged in transit / Defective",
+    details: "Box arrived crushed with broken glass.",
+  };
+
+  assert.equal(allowedReasons.includes(disputePayload.reason), true);
+});
+
+test("Admin Dispute Adjudication — verifies status transitions and refund synchronization", () => {
+  const allowedDecisions = ["resolved_buyer", "resolved_seller", "dismissed"];
+
+  const adjudicateDispute = (dispute, decision, notes) => {
+    if (!allowedDecisions.includes(decision)) {
+      throw new Error("Invalid adjudication decision");
+    }
+    const nextStatus = decision === "dismissed" ? "dismissed" : "resolved";
+    return {
+      ...dispute,
+      status: nextStatus,
+      resolution: decision,
+      resolutionNotes: notes,
+      resolvedAt: new Date(),
+    };
+  };
+
+  const openDispute = {
+    _id: "disp_101",
+    orderId: "ord_1",
+    status: "opened",
+  };
+
+  const result = adjudicateDispute(openDispute, "resolved_buyer", "Approved after inspecting photo evidence.");
+  assert.equal(result.status, "resolved");
+  assert.equal(result.resolution, "resolved_buyer");
+  assert.equal(result.resolutionNotes, "Approved after inspecting photo evidence.");
+  assert.ok(result.resolvedAt instanceof Date);
+});

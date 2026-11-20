@@ -1,5 +1,7 @@
 import React from "react";
 import { BuyerDeleteOrderModal } from "../Modals/BuyerDeleteOrderModal";
+import { BuyerDisputeModal } from "../Modals/BuyerDisputeModal";
+import { Scale } from "lucide-react";
 
 const STATUS_LABELS = {
   pending: "Pending",
@@ -20,7 +22,6 @@ const STATUS_COLORS = {
   rejected: "bg-red-100 text-red-700",
   cancelled: "bg-gray-100 text-gray-700",
 };
-
 
 const canCancel = ["accepted", "pending", "processing"];
 const BuyerOrderCard = ({ order }) => {
@@ -45,29 +46,33 @@ const BuyerOrderCard = ({ order }) => {
       </div>
 
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-  <div>
-    <span className="text-gray-500">Seller</span>
-    <p><span>Seller Name: </span>{order.sellerName || "N/A"}</p>
-    <p><span>Seller Email: </span>{order.sellerInfo || "N/A"}</p>
-  </div>
+        <div>
+          <span className="text-gray-500">Seller</span>
+          <p>
+            <span>Seller Name: </span>
+            {order.sellerName || "N/A"}
+          </p>
+          <p>
+            <span>Seller Email: </span>
+            {order.sellerInfo || "N/A"}
+          </p>
+        </div>
 
-  <div className="min-w-0">
-    <span className="text-gray-500">Transaction ID</span>
-    <p className="mt-1 text-xs break-all">
-      {order.paymentId}
-    </p>
-  </div>
+        <div className="min-w-0">
+          <span className="text-gray-500">Transaction ID</span>
+          <p className="mt-1 text-xs break-all">{order.paymentId}</p>
+        </div>
 
-  <div>
-    <span className="text-gray-500">Price</span>
-    <p>৳{order.price}</p>
-  </div>
+        <div>
+          <span className="text-gray-500">Price</span>
+          <p>৳{order.price}</p>
+        </div>
 
-  <div>
-    <span className="text-gray-500">Payment</span>
-    <p>{order.paymentStatus}</p>
-  </div>
-</div>
+        <div>
+          <span className="text-gray-500">Payment</span>
+          <p>{order.paymentStatus}</p>
+        </div>
+      </div>
 
       {order.orderStatus === "rejected" && (
         <p className="mt-3 text-sm text-red-500">
@@ -85,16 +90,26 @@ const BuyerOrderCard = ({ order }) => {
         <p className="mt-3 text-sm text-gray-500">
           This order was cancelled.
           {order.refundStatus === "refunded" && " Payment has been refunded."}
-          {order.refundStatus === "pending_refund" && " Refund is currently being processed."}
+          {order.refundStatus === "pending_refund" &&
+            " Refund is currently being processed."}
         </p>
       )}
-    {
-      canCancel.includes(order.orderStatus) && (
-        <div className="mt-4">
+      <div className="mt-4 flex items-center gap-3 flex-wrap">
+        {canCancel.includes(order.orderStatus) && (
           <BuyerDeleteOrderModal order={order} />
-        </div>
-      )
-    }
+        )}
+        {order.isDisputed ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+            <Scale className="w-3.5 h-3.5" />
+            Disputed ({order.disputeStatus || "opened"})
+          </span>
+        ) : (
+          order.orderStatus !== "cancelled" &&
+          order.orderStatus !== "rejected" && (
+            <BuyerDisputeModal order={order} />
+          )
+        )}
+      </div>
     </div>
   );
 };

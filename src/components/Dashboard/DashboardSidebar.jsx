@@ -23,6 +23,7 @@ import {
   Sparkles,
   CreditCard,
   Flag,
+  Scale,
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -53,6 +54,7 @@ export const navMenu = {
     { icon: UserRoundPen, label: "Manage Users", href: "/dashboard/admin/users" },
     { icon: Package, label: "Manage Products", href: "/dashboard/admin/products" },
     { icon: Flag, label: "Reported Items", href: "/dashboard/admin/reports" },
+    { icon: Scale, label: "Disputes", href: "/dashboard/admin/disputes" },
     { icon: ShoppingBag, label: "Manage Orders", href: "/dashboard/admin/orders" },
     { icon: CreditCard, label: "Payments", href: "/dashboard/admin/payments" },
     { icon: ChartSpline, label: "Analytics", href: "/dashboard/admin/analytics" },

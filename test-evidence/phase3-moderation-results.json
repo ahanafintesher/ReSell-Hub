@@ -1,0 +1,82 @@
+[
+  {
+    "phase": "Phase 3 - Moderation & Payment Monitoring",
+    "name": "Admin Fetch Pending/All Products",
+    "route": "/dashboard/admin/products",
+    "endpoint": "GET /api/products",
+    "expected": "Admin product list fetches and displays marketplace catalog for moderation",
+    "actual": "Rendered 7 listings in admin moderation table",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/p3_01_admin_products.png"
+  },
+  {
+    "phase": "Phase 3 - Moderation & Payment Monitoring",
+    "name": "Product Approval Status Update in Database",
+    "route": "/api/admin/products/:id/status",
+    "endpoint": "PATCH /api/admin/products/:id/status",
+    "expected": "Updates listing to status='available' and moderationStatus='approved'",
+    "actual": "Verified in MongoDB: status='available', moderation='approved'",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/p3_02_product_approved.png"
+  },
+  {
+    "phase": "Phase 3 - Moderation & Payment Monitoring",
+    "name": "Product Rejection Status Update in Database",
+    "route": "/api/admin/products/:id/status",
+    "endpoint": "PATCH /api/admin/products/:id/status",
+    "expected": "Updates listing to moderationStatus='rejected' and hides from public search",
+    "actual": "Verified in MongoDB: moderationStatus='rejected'",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/p3_03_product_rejected.png"
+  },
+  {
+    "phase": "Phase 3 - Moderation & Payment Monitoring",
+    "name": "Public Buyer Catalog Excludes Rejected Products",
+    "route": "/products",
+    "endpoint": "GET /api/products",
+    "expected": "Rejected products are automatically excluded from public marketplace results",
+    "actual": "Confirmed: Rejected product is hidden from public buyer search results",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/p3_04_buyer_catalog_rejected_hidden.png"
+  },
+  {
+    "phase": "Phase 3 - Moderation & Payment Monitoring",
+    "name": "Invalid Product ID & Authorization Guard",
+    "route": "/api/admin/products/:id/status",
+    "endpoint": "PATCH /api/admin/products/:id/status",
+    "expected": "Rejects invalid ObjectId format and unauthenticated requests with 400 or 401",
+    "actual": "Invalid request responded with HTTP status 401",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/p3_05_invalid_id_guard.png"
+  },
+  {
+    "phase": "Phase 3 - Moderation & Payment Monitoring",
+    "name": "Payment Monitoring & KPI Verification",
+    "route": "/dashboard/admin/payments",
+    "endpoint": "GET /api/payments",
+    "expected": "Displays real payment records with transaction IDs, amounts, and statuses",
+    "actual": "Rendered payment audit table with real records (10 rows, 20 total in DB, ৳150 settled revenue)",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/p3_06_payments_monitoring.png"
+  },
+  {
+    "phase": "Phase 3 - Moderation & Payment Monitoring",
+    "name": "Payment Search & Filtering",
+    "route": "/dashboard/admin/payments",
+    "endpoint": "GET /api/payments?search=...&status=...",
+    "expected": "Filters transaction audit log by search keyword and status pill",
+    "actual": "Search filter active and responsive",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/p3_07_payments_filter.png"
+  },
+  {
+    "phase": "Phase 3 - Moderation & Payment Monitoring",
+    "name": "Payment Record Immutability & Modification Guard",
+    "route": "/api/payments/:id",
+    "endpoint": "PATCH /api/payments/:id",
+    "expected": "Payment records cannot be altered via unauthorized HTTP requests (no mutating endpoint exists)",
+    "actual": "Direct modification attempt returned HTTP status 404 (Tampering blocked)",
+    "status": "PASS",
+    "screenshot": "test-evidence/screenshots/p3_08_payment_immutability.png"
+  }
+]

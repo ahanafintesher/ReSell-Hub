@@ -18,6 +18,7 @@ import {
 import { Button } from "@heroui/react";
 import { useSession } from "@/lib/auth-client";
 import { useCart } from "@/context/CartContext";
+import { getSingleProduct } from "@/lib/actions/getSingleProduct";
 import toast from "react-hot-toast";
 
 function CheckoutContent() {
@@ -74,11 +75,7 @@ function CheckoutContent() {
       }
 
       try {
-        const res = await fetch(`/api/products/${directProductId}`);
-        if (!res.ok) {
-          throw new Error("Failed to load product details");
-        }
-        const data = await res.json();
+        const data = await getSingleProduct(directProductId);
         if (isMounted) {
           if (data && data._id) {
             setDirectProduct(data);
@@ -361,6 +358,7 @@ function CheckoutContent() {
                     </label>
                     <input
                       type="text"
+                      name="fullName"
                       placeholder="e.g. Nusrat Jahan"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
@@ -379,6 +377,7 @@ function CheckoutContent() {
                     </label>
                     <input
                       type="email"
+                      name="email"
                       placeholder="e.g. buyer@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -398,6 +397,7 @@ function CheckoutContent() {
                   </label>
                   <input
                     type="tel"
+                    name="phone"
                     placeholder="e.g. +880 1712 345678"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
@@ -416,6 +416,7 @@ function CheckoutContent() {
                   </label>
                   <input
                     type="text"
+                    name="address"
                     placeholder="e.g. House 42, Road 11, Block D, Banani"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
@@ -435,6 +436,7 @@ function CheckoutContent() {
                     </label>
                     <input
                       type="text"
+                      name="city"
                       placeholder="e.g. Dhaka"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
@@ -453,6 +455,7 @@ function CheckoutContent() {
                     </label>
                     <input
                       type="text"
+                      name="postalCode"
                       placeholder="e.g. 1213"
                       value={postalCode}
                       onChange={(e) => setPostalCode(e.target.value)}
