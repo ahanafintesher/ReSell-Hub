@@ -6,12 +6,19 @@ import SuccessStories from "@/components/SuccessStories/SuccessStories";
 import SustainabilitySection from "@/components/SustainabilitySection/SustainabilitySection";
 import TrustedSellersShowcase from "@/components/TopSeller/TopSeller";
 import CallToAction from "@/components/Home/CallToAction";
+import { getFeaturedCategories } from "@/lib/actions/categories";
 
-export default function Home() {
+export default async function Home() {
+  const { data: featuredCategories = [], error: featuredError = null } =
+    await getFeaturedCategories();
+
   return (
     <div className="w-full overflow-hidden">
       <HeroBanner />
-      <PopularCategories />
+      <PopularCategories
+        initialCategories={featuredCategories}
+        initialError={featuredError}
+      />
       <FeaturedProducts />
       <Stats />
       <SuccessStories />

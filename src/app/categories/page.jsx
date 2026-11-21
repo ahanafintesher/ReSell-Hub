@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Sparkles, Home, ChevronRight, Layers } from "lucide-react";
+import { Sparkles, Home, ChevronRight } from "lucide-react";
 import CategoryExplorer from "@/components/Categories/CategoryExplorer";
+import { getAllCategories } from "@/lib/actions/categories";
 
 export const metadata = {
   title: "Explore Categories | ReSell Hub",
@@ -8,7 +9,10 @@ export const metadata = {
     "Browse verified pre-owned products across all marketplace categories on ReSell Hub. Sustainable shopping with trusted community sellers.",
 };
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+  const { data: categories = [], error: categoriesError = null } =
+    await getAllCategories();
+
   return (
     <main className="min-h-screen bg-[#F8FAFC] dark:bg-[#080d1a] transition-colors py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10 sm:space-y-12">
@@ -58,7 +62,10 @@ export default function CategoriesPage() {
         </div>
 
         {/* Interactive Category Search, Filter Chips & Cards Grid */}
-        <CategoryExplorer />
+        <CategoryExplorer
+          initialCategories={categories}
+          initialError={categoriesError}
+        />
       </div>
     </main>
   );
