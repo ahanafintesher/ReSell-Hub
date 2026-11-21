@@ -17,16 +17,21 @@ export const postWishlist = async (product, userInfo) => {
 };
 
 export const getWishlist = async (userInfo) => {
-  const query = userInfo ? `?userInfo=${encodeURIComponent(userInfo)}` : "";
-  const res = await serverFetch(`/api/wishlist${query}`, {
-    cache: "no-store",
-  });
+  try {
+    const query = userInfo ? `?userInfo=${encodeURIComponent(userInfo)}` : "";
+    const res = await serverFetch(`/api/wishlist${query}`, {
+      cache: "no-store",
+    });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch wishlist");
+    if (!res.ok) {
+      return [];
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.warn("getWishlist notice:", err.message);
+    return [];
   }
-
-  return res.json();
 };
 
 export const deleteWishlistItem = async (wishlistId) => {

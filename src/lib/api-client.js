@@ -36,8 +36,18 @@ export async function serverFetch(endpoint, options = {}) {
     // Session token could not be resolved (unauthenticated or background context)
   }
 
-  return fetch(url, {
-    ...options,
-    headers: requestHeaders,
-  });
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await fetch(url, {
+        ...options,
+        headers: requestHeaders,
+      });
+    } catch (err) {
+      if (attempt < 2 && (err.code === "ECONNRESET" || err.message?.includes("fetch failed"))) {
+        await new Promise((r) => setTimeout(r, 250));
+        continue;
+      }
+      throw err;
+    }
+  }
 }

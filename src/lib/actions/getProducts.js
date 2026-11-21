@@ -1,9 +1,27 @@
 'use server';
 
-const baseUrl =
-  process.env.RESELL_SERVER_URL ||
-  process.env.NEXT_PUBLIC_RESELL_SERVER_URL ||
-  "http://localhost:5000";
+const getBaseUrl = () => {
+  return (
+    process.env.RESELL_SERVER_URL ||
+    process.env.NEXT_PUBLIC_RESELL_SERVER_URL ||
+    "http://localhost:5000"
+  ).replace(/\/$/, "");
+};
+
+async function executeFetch(endpoint, options = {}) {
+  try {
+    const mod = await import("../api-client.js");
+    if (mod && typeof mod.serverFetch === "function") {
+      return await mod.serverFetch(endpoint, options);
+    }
+  } catch {
+    // Fallback to direct fetch in standalone node/test environments
+  }
+
+  const baseUrl = getBaseUrl();
+  const url = `${baseUrl}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  return fetch(url, options);
+}
 
 export const getProducts = async ({
   search = "",
@@ -55,11 +73,9 @@ export const getProducts = async ({
   }
 
   const queryString = params.toString();
-  const url = `${baseUrl.replace(/\/$/, "")}/api/products${
-    queryString ? `?${queryString}` : ""
-  }`;
+  const endpoint = `/api/products${queryString ? `?${queryString}` : ""}`;
 
-  const res = await fetch(url, {
+  const res = await executeFetch(endpoint, {
     cache: "no-store",
   });
 
@@ -72,11 +88,9 @@ export const getProducts = async ({
 
 export const getFeaturedProducts = async () => {
   try {
-    const url = `${baseUrl.replace(/\/$/, "")}/api/featured`;
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await executeFetch("/api/products/featured", { cache: "no-store" });
     if (res.ok) {
       const data = await res.json();
-      // If the response is an array of products (has price/title)
       if (Array.isArray(data) && data.length > 0 && (data[0].price !== undefined || data[0].title !== undefined)) {
         return data;
       }
@@ -84,11 +98,11 @@ export const getFeaturedProducts = async () => {
         return data.products;
       }
     }
-    // If /api/featured returned categories or non-product schema, fallback to available products query
+    // Fallback to available products query
     const fallback = await getProducts({ limit: 6, status: "available" });
     return Array.isArray(fallback) ? fallback : (fallback?.products || []);
   } catch (err) {
-    console.warn("Failed to load featured products from /api/featured:", err.message);
+    console.warn("Failed to load featured products from /api/products/featured:", err.message);
     try {
       const fallback = await getProducts({ limit: 6, status: "available" });
       return Array.isArray(fallback) ? fallback : (fallback?.products || []);

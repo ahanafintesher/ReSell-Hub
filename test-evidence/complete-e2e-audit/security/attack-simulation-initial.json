@@ -1,0 +1,52 @@
+{
+  "attack1": {
+    "status": 201,
+    "body": {
+      "acknowledged": true,
+      "insertedId": "6b0166421bdae23c949defc7"
+    },
+    "savedDoc": {
+      "message": "Product not found"
+    }
+  },
+  "attack2": {
+    "status": 201,
+    "body": {
+      "acknowledged": true,
+      "insertedId": "6b0166431bdae23c949defc8"
+    },
+    "savedDoc": {
+      "message": "Product not found"
+    }
+  },
+  "attack4": {
+    "patchStatus": 200,
+    "updatedDoc": {
+      "message": "Product not found"
+    }
+  },
+  "attack5": {
+    "status": 403,
+    "body": {
+      "message": "Forbidden: Requires one of [admin] permissions"
+    }
+  },
+  "attack6": {
+    "status": 401,
+    "body": {
+      "message": "Unauthorized: Missing Authorization header"
+    }
+  },
+  "attack7": {
+    "status": 403,
+    "body": {
+      "message": "Forbidden: You do not own this product"
+    }
+  },
+  "attack8": {
+    "status": 403,
+    "body": {
+      "message": "Forbidden: Requires one of [admin] permissions"
+    }
+  }
+}

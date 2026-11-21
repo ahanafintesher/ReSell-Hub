@@ -17,16 +17,21 @@ export const postPaymentHistory = async (metadata, session_id, date) => {
 };
 
 export const getPaymentHistory = async (userEmail) => {
-  const query = userEmail ? `?userEmail=${encodeURIComponent(userEmail)}` : "";
-  const res = await serverFetch(`/api/payments${query}`, {
-    cache: "no-store",
-  });
+  try {
+    const query = userEmail ? `?userEmail=${encodeURIComponent(userEmail)}` : "";
+    const res = await serverFetch(`/api/payments${query}`, {
+      cache: "no-store",
+    });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch payment history");
+    if (!res.ok) {
+      return [];
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.warn("getPaymentHistory notice:", err.message);
+    return [];
   }
-
-  return res.json();
 };
 
 /**

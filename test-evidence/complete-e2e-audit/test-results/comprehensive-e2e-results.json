@@ -1,0 +1,333 @@
+{
+  "metadata": {
+    "timestamp": "2026-11-21T10:45:20.346Z",
+    "baseUrl": "http://localhost:3000",
+    "backendUrl": "http://localhost:5000",
+    "browserEngine": "Google Chrome 157"
+  },
+  "summary": {
+    "total": 61,
+    "passed": 61,
+    "failed": 0,
+    "blocked": 0
+  },
+  "journeys": {
+    "JourneyA_Public": [
+      {
+        "name": "Navbar and Hero rendered cleanly",
+        "status": "PASS",
+        "heroHeading": "Give Quality Items a Second Life."
+      },
+      {
+        "name": "Featured Listings rendered 18 dynamic products",
+        "status": "PASS"
+      },
+      {
+        "name": "Popular Categories rendered 8 category links",
+        "status": "PASS"
+      },
+      {
+        "name": "Hero CTA navigates to /products catalog",
+        "status": "PASS",
+        "targetUrl": "http://localhost:3000/products"
+      },
+      {
+        "name": "Product Catalog loaded 37 product items",
+        "status": "PASS"
+      },
+      {
+        "name": "Keyword search interaction works",
+        "status": "PASS",
+        "searchUrl": "http://localhost:3000/products?search=Dell"
+      },
+      {
+        "name": "Category selector filter updates URL and filters catalog",
+        "status": "PASS",
+        "currentUrl": "http://localhost:3000/products?search=Dell&category=Electronics"
+      },
+      {
+        "name": "Sort filter interactive",
+        "status": "PASS"
+      },
+      {
+        "name": "ProductsCard 'Buy Now' button links strictly to /products/[id]",
+        "status": "PASS",
+        "href": "/products/6b0174b18eea71b4dac6e418"
+      },
+      {
+        "name": "Authoritative Product Details page loaded with title, Add to Cart, Buy Now, and Report actions",
+        "status": "PASS",
+        "title": "Lifecycle E2E Item 1795257520383",
+        "url": "http://localhost:3000/products/6b0174b18eea71b4dac6e418",
+        "hasDetailsBuyNow": true,
+        "hasReportBtn": true
+      },
+      {
+        "name": "Categories Explorer page renders all 9 backend categories in priority order",
+        "status": "PASS",
+        "categories": [
+          "Electronics",
+          "Audio",
+          "Wearables",
+          "Accessories",
+          "Fashion",
+          "Furniture",
+          "Vehicles",
+          "Mobile Phones",
+          "Others"
+        ]
+      }
+    ],
+    "JourneyB_Buyer": [
+      {
+        "name": "Buyer logged in successfully via Better Auth credentials",
+        "status": "PASS"
+      },
+      {
+        "name": "Buyer session persisted across navigation",
+        "status": "PASS"
+      },
+      {
+        "name": "Item added to cart via Product Details page",
+        "status": "PASS"
+      },
+      {
+        "name": "Shopping cart opened with items",
+        "status": "PASS"
+      },
+      {
+        "name": "Proceed to Checkout navigates to delivery & payment form",
+        "status": "PASS",
+        "url": "http://localhost:3000/checkout"
+      },
+      {
+        "name": "Buyer dashboard Overview accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Buyer dashboard Orders accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Buyer dashboard Wishlist accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Buyer dashboard Payment History accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Buyer dashboard Profile accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Buyer safely blocked from /dashboard/admin/users by server authorization boundary",
+        "status": "PASS",
+        "redirectedTo": "http://localhost:3000/dashboard/buyer/overview"
+      },
+      {
+        "name": "Buyer logged out cleanly and session cleared",
+        "status": "PASS"
+      }
+    ],
+    "JourneyC_Seller": [
+      {
+        "name": "Seller logged in successfully",
+        "status": "PASS"
+      },
+      {
+        "name": "Seller dashboard Overview accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Seller dashboard Add Products accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Seller dashboard My Products accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Seller dashboard Orders accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Seller dashboard Analytics accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Seller Add Product form loads all 9 backend categories dynamically without obsolete options",
+        "status": "PASS",
+        "categories": [
+          "Electronics",
+          "Audio",
+          "Wearables",
+          "Accessories",
+          "Fashion",
+          "Furniture",
+          "Vehicles",
+          "Mobile Phones",
+          "Others"
+        ]
+      },
+      {
+        "name": "Seller logged out cleanly and session cleared",
+        "status": "PASS"
+      }
+    ],
+    "JourneyD_Admin": [
+      {
+        "name": "Admin logged in successfully",
+        "status": "PASS"
+      },
+      {
+        "name": "Admin dashboard Overview accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Admin dashboard Manage Users accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Admin dashboard Manage Products accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Admin dashboard Reports Queue accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Admin dashboard Orders accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Admin dashboard Payments accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Admin dashboard Disputes accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Admin dashboard Analytics accessible",
+        "status": "PASS"
+      },
+      {
+        "name": "Accessible HeroUI AlertDialog opened with title, Cancel, and Confirm buttons",
+        "status": "PASS"
+      },
+      {
+        "name": "AlertDialog dismissed via native Escape key without modifying state",
+        "status": "PASS"
+      },
+      {
+        "name": "AlertDialog dismissed via Cancel button without mutation",
+        "status": "PASS"
+      },
+      {
+        "name": "Admin Analytics rendered 17 interactive charts and platform KPI metrics",
+        "status": "PASS"
+      },
+      {
+        "name": "Admin logged out cleanly and session cleared",
+        "status": "PASS"
+      }
+    ],
+    "JourneyE_Lifecycle": [
+      {
+        "name": "Step 1: Seller created new product with valid data",
+        "status": "PASS",
+        "productId": "6b01767b3c11cf88b2b5090d"
+      },
+      {
+        "name": "Step 2: Backend strictly forced product status='pending' and isPubliclyVisible=false",
+        "status": "pending",
+        "moderationStatus": "pending",
+        "isPubliclyVisible": false
+      },
+      {
+        "name": "Step 3: Public catalog and direct API strictly hide pending product (HTTP 404)",
+        "status": "PASS",
+        "inFeed": false,
+        "directStatus": 404
+      },
+      {
+        "name": "Step 4 & 5: Admin approved product listing",
+        "status": "PASS",
+        "success": true,
+        "acknowledged": true,
+        "modifiedCount": 1,
+        "upsertedId": null,
+        "upsertedCount": 0,
+        "matchedCount": 1
+      },
+      {
+        "name": "Step 6 & 7: Approved product is confirmed available and publicly visible in catalog",
+        "status": "PASS"
+      },
+      {
+        "name": "Step 8: Buyer views approved product details",
+        "status": "PASS"
+      },
+      {
+        "name": "Step 9: Buyer adds product to cart",
+        "status": "PASS"
+      },
+      {
+        "name": "Step 10: Buyer navigates to checkout for lifecycle product",
+        "status": "PASS"
+      },
+      {
+        "name": "Step 11: Stripe Test Checkout session initiated successfully",
+        "status": "PASS",
+        "sessionId": "cs_test_a059cPBDBGEWrdOsTrMkIzkxeiyGNu3SyhD4AnYeCFToFqOZrjePESTyqQ"
+      },
+      {
+        "name": "Step 12 & 13: Order created and confirmed in DB, product marked sold",
+        "status": "PASS"
+      },
+      {
+        "name": "Step 14: Seller views orders queue in seller dashboard",
+        "status": "PASS"
+      },
+      {
+        "name": "Step 15: Admin views orders and payments in admin dashboard",
+        "status": "PASS"
+      },
+      {
+        "name": "Lifecycle test completed successfully, all sessions cleared",
+        "status": "PASS"
+      }
+    ],
+    "Responsive": [
+      {
+        "name": "Zero horizontal overflow across all 9 viewports on all 8 routes (72/72 passed)",
+        "status": "PASS"
+      }
+    ],
+    "Quality": [
+      {
+        "name": "0 browser console errors recorded throughout entire test run",
+        "status": "PASS"
+      },
+      {
+        "name": "0 failed application network requests (0 HTTP 4xx/5xx failures)",
+        "status": "PASS"
+      }
+    ]
+  },
+  "responsive": {
+    "totalChecks": 72,
+    "passed": 72,
+    "failed": 0,
+    "overflows": []
+  },
+  "consoleErrors": [],
+  "networkFailures": [],
+  "performanceMetrics": [
+    {
+      "page": "Home",
+      "durationMs": 3248
+    }
+  ]
+}

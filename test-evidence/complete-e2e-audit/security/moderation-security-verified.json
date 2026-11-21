@@ -1,0 +1,88 @@
+{
+  "timestamp": "2026-11-21T09:38:16.437Z",
+  "tests": [
+    {
+      "id": "SEC-01",
+      "name": "Seller payload status='available' forced to 'pending'",
+      "result": "pending",
+      "expected": "pending",
+      "pass": true,
+      "details": {
+        "status": "pending",
+        "moderationStatus": "pending",
+        "isPubliclyVisible": false
+      }
+    },
+    {
+      "id": "SEC-02",
+      "name": "Public product feed excludes pending listing",
+      "result": "HIDDEN",
+      "expected": "HIDDEN",
+      "pass": true,
+      "details": {}
+    },
+    {
+      "id": "SEC-03",
+      "name": "Public ?status=pending query blocked/returns 0 items for unauthenticated users",
+      "result": 0,
+      "expected": 0,
+      "pass": true,
+      "details": {}
+    },
+    {
+      "id": "SEC-04",
+      "name": "Public direct access to pending product returns HTTP 404",
+      "result": 404,
+      "expected": 404,
+      "pass": true,
+      "details": {}
+    },
+    {
+      "id": "SEC-05",
+      "name": "Seller update cannot transition status from pending to available",
+      "result": "pending",
+      "expected": "pending",
+      "pass": true,
+      "details": {
+        "status": "pending",
+        "title": "Legitimately Updated Title"
+      }
+    },
+    {
+      "id": "SEC-06",
+      "name": "Buyer product moderation attempt rejected with 403 Forbidden",
+      "result": 403,
+      "expected": 403,
+      "pass": true,
+      "details": {}
+    },
+    {
+      "id": "SEC-07",
+      "name": "Unauthenticated moderation attempt rejected with 401 Unauthorized",
+      "result": 401,
+      "expected": 401,
+      "pass": true,
+      "details": {}
+    },
+    {
+      "id": "SEC-08",
+      "name": "Admin successfully approves listing (becomes publicly available)",
+      "result": "available",
+      "expected": "available",
+      "pass": true,
+      "details": {
+        "status": "available",
+        "moderationStatus": "approved",
+        "moderatedBy": "e2e_admin@resellhub.test"
+      }
+    },
+    {
+      "id": "SEC-09",
+      "name": "Admin rejected listing is hidden from public view (HTTP 404)",
+      "result": 404,
+      "expected": 404,
+      "pass": true,
+      "details": {}
+    }
+  ]
+}

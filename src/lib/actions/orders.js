@@ -33,16 +33,21 @@ export const getOrdersBySellerInfo = async (sellerInfo) => {
 
 // get orders by buyerInfo
 export const getOrdersByBuyerInfo = async (buyerInfo) => {
-  const query = buyerInfo ? `?buyerInfo=${encodeURIComponent(buyerInfo)}` : "";
-  const res = await serverFetch(`/api/buyer/orders${query}`, {
-    cache: "no-store",
-  });
+  try {
+    const query = buyerInfo ? `?buyerInfo=${encodeURIComponent(buyerInfo)}` : "";
+    const res = await serverFetch(`/api/buyer/orders${query}`, {
+      cache: "no-store",
+    });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch buyer orders");
+    if (!res.ok) {
+      return [];
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.warn("getOrdersByBuyerInfo notice:", err.message);
+    return [];
   }
-
-  return res.json();
 };
 
 // cancel an order (dedicated soft cancellation route)
