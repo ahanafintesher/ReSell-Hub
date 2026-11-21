@@ -136,22 +136,20 @@ export default function DashboardNavbar() {
             <div className="h-9 w-9 animate-pulse rounded-full bg-slate-200 dark:bg-slate-700" />
           ) : session ? (
             <Dropdown>
-              <DropdownTrigger>
-                <button
-                  type="button"
-                  className="flex items-center gap-2 rounded-full pl-1 pr-3 py-1 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
-                >
-                  <Avatar size="sm" className="h-7 w-7 border border-slate-200 dark:border-slate-700">
-                    <AvatarImage src={avatarSrc} alt={displayName} />
-                    <AvatarFallback className="bg-emerald-600 text-white font-semibold text-xs">
-                      {initials || <User className="h-3.5 w-3.5" />}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="hidden text-xs font-semibold capitalize sm:inline max-w-[120px] truncate">
-                    {displayName}
-                  </span>
-                  <ChevronDown className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
-                </button>
+              <DropdownTrigger
+                className="flex items-center gap-2 rounded-full pl-1 pr-3 py-1 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer bg-transparent"
+                aria-label="User profile menu"
+              >
+                <Avatar size="sm" className="h-7 w-7 border border-slate-200 dark:border-slate-700">
+                  <AvatarImage src={avatarSrc} alt={displayName} />
+                  <AvatarFallback className="bg-emerald-600 text-white font-semibold text-xs">
+                    {initials || <User className="h-3.5 w-3.5" />}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="hidden text-xs font-semibold capitalize sm:inline max-w-[120px] truncate">
+                  {displayName}
+                </span>
+                <ChevronDown className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
               </DropdownTrigger>
 
               <DropdownPopover

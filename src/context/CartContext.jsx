@@ -66,47 +66,40 @@ export function CartProvider({ children }) {
       return;
     }
 
-    setItems((prev) => {
-      const existingIndex = prev.findIndex((item) => item._id === product._id);
-      if (existingIndex > -1) {
-        const existing = prev[existingIndex];
-        const nextQty = existing.quantity + quantity;
-        if (nextQty > availableStock) {
-          toast.error(`Only ${availableStock} item(s) available in stock`);
-          return prev;
-        }
-        const updated = [...prev];
-        updated[existingIndex] = { ...existing, quantity: nextQty };
-        toast.success(`Updated cart quantity (${nextQty})`);
-        return updated;
-      } else {
-        const addQty = Math.min(quantity, availableStock);
-        toast.success("Added to cart!");
-        return [
-          ...prev,
-          {
-            _id: product._id,
-            title: product.title || "Product",
-            price: Number(product.price) || 0,
-            image: product.image || "/placeholder.png",
-            category: product.category || "General",
-            condition: product.condition || "Used",
-            stock: availableStock,
-            sellerInfo: product.sellerInfo || "",
-            sellerName: product.sellerName || "Seller",
-            quantity: addQty,
-          },
-        ];
+    const existingIndex = items.findIndex((item) => item._id === product._id);
+    if (existingIndex > -1) {
+      const existing = items[existingIndex];
+      const nextQty = existing.quantity + quantity;
+      if (nextQty > availableStock) {
+        toast.error(`Only ${availableStock} item(s) available in stock`);
+        return;
       }
-    });
+      const updated = [...items];
+      updated[existingIndex] = { ...existing, quantity: nextQty };
+      setItems(updated);
+      toast.success(`Updated cart quantity (${nextQty})`);
+    } else {
+      const addQty = Math.min(quantity, availableStock);
+      const newItem = {
+        _id: product._id,
+        title: product.title || "Product",
+        price: Number(product.price) || 0,
+        image: product.image || "/placeholder.png",
+        category: product.category || "General",
+        condition: product.condition || "Used",
+        stock: availableStock,
+        sellerInfo: product.sellerInfo || "",
+        sellerName: product.sellerName || "Seller",
+        quantity: addQty,
+      };
+      setItems([...items, newItem]);
+      toast.success("Added to cart!");
+    }
   };
 
   const removeFromCart = (productId) => {
-    setItems((prev) => {
-      const next = prev.filter((item) => item._id !== productId);
-      toast.success("Removed item from cart");
-      return next;
-    });
+    setItems((prev) => prev.filter((item) => item._id !== productId));
+    toast.success("Removed item from cart");
   };
 
   const updateQuantity = (productId, newQty) => {
@@ -116,18 +109,14 @@ export function CartProvider({ children }) {
       return;
     }
 
+    const target = items.find((item) => item._id === productId);
+    const maxStock = target?.stock !== undefined ? Number(target.stock) : 99;
+    if (qty > maxStock) {
+      toast.error(`Maximum available stock is ${maxStock}`);
+    }
+    const capped = Math.min(qty, maxStock);
     setItems((prev) =>
-      prev.map((item) => {
-        if (item._id === productId) {
-          const maxStock = item.stock !== undefined ? Number(item.stock) : 99;
-          const capped = Math.min(qty, maxStock);
-          if (qty > maxStock) {
-            toast.error(`Maximum available stock is ${maxStock}`);
-          }
-          return { ...item, quantity: capped };
-        }
-        return item;
-      })
+      prev.map((item) => (item._id === productId ? { ...item, quantity: capped } : item))
     );
   };
 

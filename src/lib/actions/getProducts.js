@@ -74,12 +74,19 @@ export const getFeaturedProducts = async () => {
   try {
     const url = `${baseUrl.replace(/\/$/, "")}/api/featured`;
     const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) {
-      const fallback = await getProducts({ limit: 6, status: "available" });
-      return Array.isArray(fallback) ? fallback : (fallback?.products || []);
+    if (res.ok) {
+      const data = await res.json();
+      // If the response is an array of products (has price/title)
+      if (Array.isArray(data) && data.length > 0 && (data[0].price !== undefined || data[0].title !== undefined)) {
+        return data;
+      }
+      if (data && Array.isArray(data.products) && data.products.length > 0) {
+        return data.products;
+      }
     }
-    const data = await res.json();
-    return Array.isArray(data) ? data : (data?.products || []);
+    // If /api/featured returned categories or non-product schema, fallback to available products query
+    const fallback = await getProducts({ limit: 6, status: "available" });
+    return Array.isArray(fallback) ? fallback : (fallback?.products || []);
   } catch (err) {
     console.warn("Failed to load featured products from /api/featured:", err.message);
     try {

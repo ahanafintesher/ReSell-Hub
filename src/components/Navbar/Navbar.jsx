@@ -109,24 +109,22 @@ function UserMenu({ user }) {
 
   return (
     <Dropdown>
-      <Dropdown.Trigger>
-        <button
-          className="flex items-center gap-2 rounded-full border-2 border-emerald-600/40 dark:border-emerald-500/40 pl-1 pr-2.5 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
-          aria-label="User menu"
-        >
-          <Avatar className="w-7 h-7 shrink-0">
-            <Avatar.Image alt={user?.name || "User"} src={user?.image || ""} />
-            <Avatar.Fallback className="text-xs font-semibold bg-emerald-600 text-white">
-              {user?.name?.charAt(0)?.toUpperCase() || "U"}
-            </Avatar.Fallback>
-          </Avatar>
+      <Dropdown.Trigger
+        className="flex items-center gap-2 rounded-full border-2 border-emerald-600/40 dark:border-emerald-500/40 pl-1 pr-2.5 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer bg-transparent"
+        aria-label="User menu"
+      >
+        <Avatar className="w-7 h-7 shrink-0">
+          <Avatar.Image alt={user?.name || "User"} src={user?.image || ""} />
+          <Avatar.Fallback className="text-xs font-semibold bg-emerald-600 text-white">
+            {user?.name?.charAt(0)?.toUpperCase() || "U"}
+          </Avatar.Fallback>
+        </Avatar>
 
-          <span className="hidden sm:block text-sm font-medium text-slate-900 dark:text-slate-100 max-w-[90px] truncate">
-            {user?.name || "User"}
-          </span>
+        <span className="hidden sm:block text-sm font-medium text-slate-900 dark:text-slate-100 max-w-[90px] truncate">
+          {user?.name || "User"}
+        </span>
 
-          <ChevronDown className="w-3 h-3 text-slate-500 dark:text-slate-400 shrink-0" />
-        </button>
+        <ChevronDown className="w-3 h-3 text-slate-500 dark:text-slate-400 shrink-0" />
       </Dropdown.Trigger>
 
       <Dropdown.Popover placement="bottom end" className="min-w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-2xl p-1">
@@ -170,10 +168,10 @@ function UserMenu({ user }) {
           </Dropdown.Item>
 
           <Dropdown.Item id="logout" textValue="Logout" variant="danger">
-            <span className="flex items-center gap-3 w-full text-rose-600 dark:text-rose-400 cursor-pointer">
+            <div className="flex items-center gap-3 w-full text-rose-600 dark:text-rose-400 pointer-events-none">
               <ArrowRightFromSquare className="w-4 h-4 shrink-0" />
-              <Label className="cursor-pointer font-medium">Logout</Label>
-            </span>
+              <Label className="font-medium">Logout</Label>
+            </div>
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Popover>
