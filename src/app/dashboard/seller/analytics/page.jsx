@@ -695,52 +695,157 @@ export default function SellerAnalyticsPage() {
                 No orders recorded yet. As customers buy items, detailed item performance will appear here.
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-gray-600 dark:text-slate-300">
-                  <thead className="border-b border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/60 text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-slate-300">
-                    <tr>
-                      <th className="px-4 py-3">Rank & Product</th>
-                      <th className="px-4 py-3">Total Orders</th>
-                      <th className="px-4 py-3">Paid Orders</th>
-                      <th className="px-4 py-3">Earned Revenue</th>
-                      <th className="px-4 py-3 text-right">Avg Item Price</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
-                    {metrics.topProducts.slice(0, 8).map((item, index) => {
-                      const avgPrice =
-                        item.paidOrdersCount > 0
-                          ? Math.round(item.revenue / item.paidOrdersCount)
-                          : 0;
+              <>
+                {/* ── 1. Desktop Table View (lg+) ── */}
+                <div className="hidden lg:block overflow-x-auto">
+                  <table className="w-full text-left text-sm text-gray-600 dark:text-slate-300">
+                    <thead className="border-b border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/60 text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-slate-300">
+                      <tr>
+                        <th className="px-4 py-3">Rank & Product</th>
+                        <th className="px-4 py-3">Total Orders</th>
+                        <th className="px-4 py-3">Paid Orders</th>
+                        <th className="px-4 py-3">Earned Revenue</th>
+                        <th className="px-4 py-3 text-right">Avg Item Price</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
+                      {metrics.topProducts.slice(0, 8).map((item, index) => {
+                        const avgPrice =
+                          item.paidOrdersCount > 0
+                            ? Math.round(item.revenue / item.paidOrdersCount)
+                            : 0;
 
-                      return (
-                        <tr key={item.id + index} className="hover:bg-gray-50/70 dark:hover:bg-slate-800/40">
-                          <td className="px-4 py-3 font-semibold text-gray-900 dark:text-slate-100">
-                            <div className="flex items-center gap-2.5">
-                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/60">
-                                {index + 1}
+                        return (
+                          <tr key={item.id + index} className="hover:bg-gray-50/70 dark:hover:bg-slate-800/40">
+                            <td className="px-4 py-3 font-semibold text-gray-900 dark:text-slate-100">
+                              <div className="flex items-center gap-2.5">
+                                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/60">
+                                  {index + 1}
+                                </span>
+                                <span className="truncate max-w-xs">{item.title}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">{item.ordersCount} orders</td>
+                            <td className="px-4 py-3">
+                              <span className="inline-flex items-center rounded-md bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/40">
+                                {item.paidOrdersCount} paid
                               </span>
-                              <span className="truncate max-w-xs">{item.title}</span>
+                            </td>
+                            <td className="px-4 py-3 font-bold text-gray-900 dark:text-slate-100">
+                              {formatBDT(item.revenue)}
+                            </td>
+                            <td className="px-4 py-3 text-right font-medium text-gray-700 dark:text-slate-300">
+                              {formatBDT(avgPrice)}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* ── 2. Tablet Grid View (sm to lg) ── */}
+                <div className="hidden sm:grid lg:hidden grid-cols-2 gap-4 p-4">
+                  {metrics.topProducts.slice(0, 8).map((item, index) => {
+                    const avgPrice =
+                      item.paidOrdersCount > 0
+                        ? Math.round(item.revenue / item.paidOrdersCount)
+                        : 0;
+
+                    return (
+                      <div
+                        key={item.id + index}
+                        className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 shadow-xs flex flex-col justify-between gap-3"
+                      >
+                        <div className="flex items-start gap-2.5">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/60 mt-0.5">
+                            {index + 1}
+                          </span>
+                          <span className="font-semibold text-sm text-gray-900 dark:text-slate-100 line-clamp-2">
+                            {item.title}
+                          </span>
+                        </div>
+
+                        <div className="space-y-2 pt-2 border-t border-gray-100 dark:border-slate-800 text-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-500 dark:text-slate-400">Order Volume:</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-medium text-gray-700 dark:text-slate-300">
+                                {item.ordersCount} total
+                              </span>
+                              <span className="inline-flex items-center rounded-md bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/40">
+                                {item.paidOrdersCount} paid
+                              </span>
                             </div>
-                          </td>
-                          <td className="px-4 py-3">{item.ordersCount} orders</td>
-                          <td className="px-4 py-3">
-                            <span className="inline-flex items-center rounded-md bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/40">
-                              {item.paidOrdersCount} paid
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-500 dark:text-slate-400">Earned Revenue:</span>
+                            <span className="font-bold text-gray-900 dark:text-slate-100">
+                              {formatBDT(item.revenue)}
                             </span>
-                          </td>
-                          <td className="px-4 py-3 font-bold text-gray-900 dark:text-slate-100">
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-500 dark:text-slate-400">Avg Item Price:</span>
+                            <span className="font-medium text-gray-700 dark:text-slate-300">
+                              {formatBDT(avgPrice)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* ── 3. Mobile Card View (< sm) ── */}
+                <div className="flex sm:hidden flex-col gap-3 p-3">
+                  {metrics.topProducts.slice(0, 8).map((item, index) => {
+                    const avgPrice =
+                      item.paidOrdersCount > 0
+                        ? Math.round(item.revenue / item.paidOrdersCount)
+                        : 0;
+
+                    return (
+                      <div
+                        key={item.id + index}
+                        className="rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-3.5 shadow-xs flex flex-col gap-2.5"
+                      >
+                        <div className="flex items-start gap-2">
+                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/60 mt-0.5">
+                            {index + 1}
+                          </span>
+                          <span className="font-semibold text-xs text-gray-900 dark:text-slate-100 line-clamp-1">
+                            {item.title}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs pt-1.5 border-t border-gray-100 dark:border-slate-800">
+                          <div>
+                            <span className="text-gray-400 block text-[11px]">Orders:</span>
+                            <span className="font-medium text-gray-700 dark:text-slate-300">
+                              {item.ordersCount} ({item.paidOrdersCount} paid)
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-gray-400 block text-[11px]">Avg Price:</span>
+                            <span className="font-medium text-gray-700 dark:text-slate-300">
+                              {formatBDT(avgPrice)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between text-xs pt-1 border-t border-gray-100 dark:border-slate-800">
+                          <span className="text-gray-500 dark:text-slate-400">Revenue:</span>
+                          <span className="font-bold text-emerald-700 dark:text-emerald-400">
                             {formatBDT(item.revenue)}
-                          </td>
-                          <td className="px-4 py-3 text-right font-medium text-gray-700 dark:text-slate-300">
-                            {formatBDT(avgPrice)}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
         </>

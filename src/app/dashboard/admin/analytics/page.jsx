@@ -679,46 +679,129 @@ export default function AdminAnalyticsPage() {
             No categorized products available in the database.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-600 dark:text-slate-300">
-              <thead className="border-b border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/60 text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-slate-300">
-                <tr>
-                  <th className="px-4 py-3">Category</th>
-                  <th className="px-4 py-3">Listed Items</th>
-                  <th className="px-4 py-3">Inventory Valuation</th>
-                  <th className="px-4 py-3">Catalog Share</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
-                {metrics.categoriesDist.map((cat) => {
-                  return (
-                    <tr key={cat.category} className="hover:bg-gray-50/70 dark:hover:bg-slate-800/40">
-                      <td className="px-4 py-3 font-semibold text-gray-900 dark:text-slate-100">
-                        {cat.category}
-                      </td>
-                      <td className="px-4 py-3">{cat.count} items</td>
-                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-slate-100">
-                        {formatBDT(cat.value)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <div className="h-2 w-24 rounded-full bg-gray-100 dark:bg-slate-800 overflow-hidden">
-                            <div
-                              className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-                              style={{ width: `${cat.percentage}%` }}
-                            />
+          <>
+            {/* ── 1. Desktop Table View (lg+) ── */}
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full text-left text-sm text-gray-600 dark:text-slate-300">
+                <thead className="border-b border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/60 text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-slate-300">
+                  <tr>
+                    <th className="px-4 py-3">Category</th>
+                    <th className="px-4 py-3">Listed Items</th>
+                    <th className="px-4 py-3">Inventory Valuation</th>
+                    <th className="px-4 py-3">Catalog Share</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
+                  {metrics.categoriesDist.map((cat) => {
+                    return (
+                      <tr key={cat.category} className="hover:bg-gray-50/70 dark:hover:bg-slate-800/40">
+                        <td className="px-4 py-3 font-semibold text-gray-900 dark:text-slate-100">
+                          {cat.category}
+                        </td>
+                        <td className="px-4 py-3">{cat.count} items</td>
+                        <td className="px-4 py-3 font-medium text-gray-900 dark:text-slate-100">
+                          {formatBDT(cat.value)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-24 rounded-full bg-gray-100 dark:bg-slate-800 overflow-hidden">
+                              <div
+                                className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                                style={{ width: `${cat.percentage}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-gray-500 dark:text-slate-400">
+                              {cat.percentage}%
+                            </span>
                           </div>
-                          <span className="text-xs text-gray-500 dark:text-slate-400">
-                            {cat.percentage}%
-                          </span>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* ── 2. Tablet Grid View (sm to lg) ── */}
+            <div className="hidden sm:grid lg:hidden grid-cols-2 gap-4 p-4">
+              {metrics.categoriesDist.map((cat) => (
+                <div
+                  key={cat.category}
+                  className="rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 shadow-xs flex flex-col justify-between gap-3"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-semibold text-sm text-gray-900 dark:text-slate-100 truncate">
+                      {cat.category}
+                    </span>
+                    <span className="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/50">
+                      {cat.count} {cat.count === 1 ? "item" : "items"}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 pt-2 border-t border-gray-100 dark:border-slate-800">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-gray-500 dark:text-slate-400">Inventory Valuation:</span>
+                      <span className="font-semibold text-gray-900 dark:text-slate-100">
+                        {formatBDT(cat.value)}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1 pt-1">
+                      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-slate-400">
+                        <span>Catalog Share:</span>
+                        <span className="font-medium text-gray-700 dark:text-slate-300">{cat.percentage}%</span>
+                      </div>
+                      <div className="h-2 w-full rounded-full bg-gray-100 dark:bg-slate-800 overflow-hidden">
+                        <div
+                          className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                          style={{ width: `${cat.percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ── 3. Mobile Card View (< sm) ── */}
+            <div className="flex sm:hidden flex-col gap-3 p-3">
+              {metrics.categoriesDist.map((cat) => (
+                <div
+                  key={cat.category}
+                  className="rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-3.5 shadow-xs flex flex-col gap-2.5"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-bold text-sm text-gray-900 dark:text-slate-100 truncate">
+                      {cat.category}
+                    </span>
+                    <span className="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/40">
+                      {cat.count} {cat.count === 1 ? "item" : "items"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs pt-1 border-t border-gray-100 dark:border-slate-800">
+                    <span className="text-gray-500 dark:text-slate-400">Valuation:</span>
+                    <span className="font-bold text-gray-900 dark:text-slate-100">
+                      {formatBDT(cat.value)}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-slate-400">
+                      <span>Catalog Share:</span>
+                      <span className="font-semibold text-gray-700 dark:text-slate-200">{cat.percentage}%</span>
+                    </div>
+                    <div className="h-1.5 w-full rounded-full bg-gray-100 dark:bg-slate-800 overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                        style={{ width: `${cat.percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 

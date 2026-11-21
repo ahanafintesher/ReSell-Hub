@@ -137,15 +137,19 @@ export default function ProductsCard({ products }) {
                       Sold Out
                     </Button>
                   ) : (
-                    <Button
-                      as={Link}
-                      href={`/checkout?productId=${productId}`}
-                      className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold shadow-xs text-xs px-3.5 py-1.5"
-                      radius="full"
-                      size="sm"
+                    <Link
+                      href={`/products/${productId}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-block"
                     >
-                      Buy Now
-                    </Button>
+                      <Button
+                        className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold shadow-xs text-xs px-3.5 py-1.5"
+                        radius="full"
+                        size="sm"
+                      >
+                        Buy Now
+                      </Button>
+                    </Link>
                   )}
                 </div>
               </Card.Footer>

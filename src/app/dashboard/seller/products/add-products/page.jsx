@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Fieldset,
@@ -13,14 +13,64 @@ import {
   ListBox,
   Button,
 } from "@heroui/react";
+import { RefreshCw } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { createProduct } from "@/lib/actions/product";
+import { getAllCategories } from "@/lib/actions/categories";
 import toast from "react-hot-toast";
 
-export default  function AddProductPage() {
+export default function AddProductPage() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState(null);
+
+  const fetchCategories = async () => {
+    setCategoriesLoading(true);
+    setCategoriesError(null);
+    try {
+      const res = await getAllCategories();
+      if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
+        setCategories(res.data);
+      } else {
+        setCategoriesError(res?.error || "Failed to load categories from server");
+      }
+    } catch (err) {
+      setCategoriesError(err.message || "Failed to load categories from server");
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let ignore = false;
+    async function init() {
+      try {
+        const res = await getAllCategories();
+        if (!ignore) {
+          if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
+            setCategories(res.data);
+          } else {
+            setCategoriesError(res?.error || "Failed to load categories from server");
+          }
+        }
+      } catch (err) {
+        if (!ignore) {
+          setCategoriesError(err.message || "Failed to load categories from server");
+        }
+      } finally {
+        if (!ignore) {
+          setCategoriesLoading(false);
+        }
+      }
+    }
+    init();
+    return () => {
+      ignore = true;
+    };
+  }, []);
   const {data,error} = useSession();
 //   console.log("Session data:", data);
   const sellerInfo = data?.user?.email || "seller";
@@ -251,72 +301,75 @@ console.log("Selected Image:", image);
             </TextField>
 
             {/* Category */}
-            <Select
-              name="category"
-              isInvalid={!!errors.category}
-              className="w-full"
-            >
-              <Label className="text-gray-700 text-sm font-medium mb-2 block">
-                Category
-              </Label>
+            <div className="w-full flex flex-col gap-1">
+              <Select
+                name="category"
+                isInvalid={!!errors.category}
+                isDisabled={categoriesLoading || categories.length === 0}
+                className="w-full"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-gray-700 text-sm font-medium">
+                    Category
+                  </Label>
+                  {categoriesLoading && (
+                    <span className="text-xs text-slate-500 flex items-center gap-1">
+                      <RefreshCw className="h-3 w-3 animate-spin text-emerald-600" />
+                      Loading backend categories...
+                    </span>
+                  )}
+                </div>
 
-              <Select.Trigger className={triggerClasses}>
-                <Select.Value placeholder="Select Category" />
-                <Select.Indicator />
-              </Select.Trigger>
+                <Select.Trigger className={triggerClasses}>
+                  <Select.Value
+                    placeholder={
+                      categoriesLoading
+                        ? "Loading categories from server..."
+                        : categoriesError
+                        ? "Failed to load categories"
+                        : categories.length === 0
+                        ? "No categories available"
+                        : "Select Category"
+                    }
+                  />
+                  <Select.Indicator />
+                </Select.Trigger>
 
-              <Select.Popover className={popoverClasses}>
-                <ListBox>
-                  <ListBox.Item
-                    id="electronics"
-                    textValue="Electronics"
-                    className={listItemClasses}
+                <Select.Popover className={popoverClasses}>
+                  <ListBox>
+                    {categories.map((cat) => (
+                      <ListBox.Item
+                        key={cat._id || cat.name}
+                        id={cat.name}
+                        textValue={cat.name}
+                        className={listItemClasses}
+                      >
+                        {cat.name}
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
+
+              {errors.category && (
+                <FieldError className="text-xs text-danger">
+                  {errors.category}
+                </FieldError>
+              )}
+
+              {categoriesError && (
+                <div className="mt-1 flex items-center justify-between p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700">
+                  <span>{categoriesError}</span>
+                  <button
+                    type="button"
+                    onClick={fetchCategories}
+                    className="underline font-semibold hover:text-rose-900 ml-2 cursor-pointer flex items-center gap-1"
                   >
-                    Electronics
-                  </ListBox.Item>
-
-                  <ListBox.Item
-                    id="fashion"
-                    textValue="Fashion"
-                    className={listItemClasses}
-                  >
-                    Fashion
-                  </ListBox.Item>
-
-                  <ListBox.Item
-                    id="home"
-                    textValue="Home & Living"
-                    className={listItemClasses}
-                  >
-                    Home & Living
-                  </ListBox.Item>
-
-                  <ListBox.Item
-                    id="books"
-                    textValue="Books"
-                    className={listItemClasses}
-                  >
-                    Books
-                  </ListBox.Item>
-
-                  <ListBox.Item
-                    id="sports"
-                    textValue="Sports"
-                    className={listItemClasses}
-                  >
-                    Sports
-                  </ListBox.Item>
-
-                  <ListBox.Item
-                    id="others"
-                    textValue="Others"
-                    className={listItemClasses}
-                  >
-                    Others
-                  </ListBox.Item>
-                </ListBox>
-              </Select.Popover>
-            </Select>
+                    <RefreshCw className="h-3 w-3" /> Retry
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Condition */}
             <Select

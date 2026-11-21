@@ -1,0 +1,1401 @@
+{
+  "navbarPerformance": {
+    "domContentLoadedMs": 491,
+    "navVisibleWaitMs": 415,
+    "primaryNavLinksCount": 2,
+    "primaryNavLinksVisibleMs": 102,
+    "navbarCLS": 0.33021344413757325,
+    "mobileMenuHamburgerVisible": true,
+    "status": "PASS"
+  },
+  "buyNowNavigation": {
+    "buyNowHref": "/products/6b0141242b4c11a27fd06c53",
+    "targetUrl": "http://localhost:3000/products/6b0141242b4c11a27fd06c53",
+    "isDetailsRoute": true,
+    "isNotCheckout": true,
+    "isAddToCartPresent": true,
+    "isBackBtnPresent": true,
+    "status": "PASS"
+  },
+  "categoryIntegration": {
+    "loadedCategories": [
+      "Electronics",
+      "Audio",
+      "Wearables",
+      "Accessories",
+      "Fashion",
+      "Furniture",
+      "Vehicles",
+      "Mobile Phones",
+      "Others"
+    ],
+    "hasAllExpected9": true,
+    "hasObsoleteHardcoded": false,
+    "status": "PASS"
+  },
+  "accessibleBlockDialog": {
+    "dialogOpened": true,
+    "hasCancelButton": true,
+    "hasConfirmBlockButton": true,
+    "dismissesOnEscape": true,
+    "status": "PASS"
+  },
+  "responsiveTables": {},
+  "viewportMatrix": [
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Homepage",
+      "path": "/",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Product Listing",
+      "path": "/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Categories Explorer",
+      "path": "/categories",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Cart",
+      "path": "/cart",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Checkout",
+      "path": "/checkout",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Seller Add Products",
+      "path": "/dashboard/seller/products/add-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Seller My Products",
+      "path": "/dashboard/seller/products/my-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Seller Analytics",
+      "path": "/dashboard/seller/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Admin Users",
+      "path": "/dashboard/admin/users",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Admin Products",
+      "path": "/dashboard/admin/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Admin Reports",
+      "path": "/dashboard/admin/reports",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Admin Orders",
+      "path": "/dashboard/admin/orders",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Admin Payments",
+      "path": "/dashboard/admin/payments",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Admin Disputes",
+      "path": "/dashboard/admin/disputes",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Small_Mobile_320x568",
+      "width": 320,
+      "height": 568,
+      "category": "Small Mobile",
+      "page": "Admin Analytics",
+      "path": "/dashboard/admin/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Homepage",
+      "path": "/",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Product Listing",
+      "path": "/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Categories Explorer",
+      "path": "/categories",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Cart",
+      "path": "/cart",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Checkout",
+      "path": "/checkout",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Seller Add Products",
+      "path": "/dashboard/seller/products/add-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Seller My Products",
+      "path": "/dashboard/seller/products/my-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Seller Analytics",
+      "path": "/dashboard/seller/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Admin Users",
+      "path": "/dashboard/admin/users",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Admin Products",
+      "path": "/dashboard/admin/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Admin Reports",
+      "path": "/dashboard/admin/reports",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Admin Orders",
+      "path": "/dashboard/admin/orders",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Admin Payments",
+      "path": "/dashboard/admin/payments",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Admin Disputes",
+      "path": "/dashboard/admin/disputes",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_375x812",
+      "width": 375,
+      "height": 812,
+      "category": "Mobile",
+      "page": "Admin Analytics",
+      "path": "/dashboard/admin/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Homepage",
+      "path": "/",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Product Listing",
+      "path": "/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Categories Explorer",
+      "path": "/categories",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Cart",
+      "path": "/cart",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Checkout",
+      "path": "/checkout",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Seller Add Products",
+      "path": "/dashboard/seller/products/add-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Seller My Products",
+      "path": "/dashboard/seller/products/my-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Seller Analytics",
+      "path": "/dashboard/seller/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Admin Users",
+      "path": "/dashboard/admin/users",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Admin Products",
+      "path": "/dashboard/admin/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Admin Reports",
+      "path": "/dashboard/admin/reports",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Admin Orders",
+      "path": "/dashboard/admin/orders",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Admin Payments",
+      "path": "/dashboard/admin/payments",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Admin Disputes",
+      "path": "/dashboard/admin/disputes",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "category": "Mobile",
+      "page": "Admin Analytics",
+      "path": "/dashboard/admin/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Homepage",
+      "path": "/",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Product Listing",
+      "path": "/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Categories Explorer",
+      "path": "/categories",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Cart",
+      "path": "/cart",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Checkout",
+      "path": "/checkout",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Seller Add Products",
+      "path": "/dashboard/seller/products/add-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Seller My Products",
+      "path": "/dashboard/seller/products/my-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Seller Analytics",
+      "path": "/dashboard/seller/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Admin Users",
+      "path": "/dashboard/admin/users",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Admin Products",
+      "path": "/dashboard/admin/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Admin Reports",
+      "path": "/dashboard/admin/reports",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Admin Orders",
+      "path": "/dashboard/admin/orders",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Admin Payments",
+      "path": "/dashboard/admin/payments",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Admin Disputes",
+      "path": "/dashboard/admin/disputes",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Mobile_430x932",
+      "width": 430,
+      "height": 932,
+      "category": "Large Mobile",
+      "page": "Admin Analytics",
+      "path": "/dashboard/admin/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Homepage",
+      "path": "/",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Product Listing",
+      "path": "/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Categories Explorer",
+      "path": "/categories",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Cart",
+      "path": "/cart",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Checkout",
+      "path": "/checkout",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Seller Add Products",
+      "path": "/dashboard/seller/products/add-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Seller My Products",
+      "path": "/dashboard/seller/products/my-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Seller Analytics",
+      "path": "/dashboard/seller/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Admin Users",
+      "path": "/dashboard/admin/users",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Admin Products",
+      "path": "/dashboard/admin/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Admin Reports",
+      "path": "/dashboard/admin/reports",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Admin Orders",
+      "path": "/dashboard/admin/orders",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Admin Payments",
+      "path": "/dashboard/admin/payments",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Admin Disputes",
+      "path": "/dashboard/admin/disputes",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Tablet_768x1024",
+      "width": 768,
+      "height": 1024,
+      "category": "Tablet",
+      "page": "Admin Analytics",
+      "path": "/dashboard/admin/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Homepage",
+      "path": "/",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Product Listing",
+      "path": "/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Categories Explorer",
+      "path": "/categories",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Cart",
+      "path": "/cart",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Checkout",
+      "path": "/checkout",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Seller Add Products",
+      "path": "/dashboard/seller/products/add-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Seller My Products",
+      "path": "/dashboard/seller/products/my-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Seller Analytics",
+      "path": "/dashboard/seller/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Admin Users",
+      "path": "/dashboard/admin/users",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Admin Products",
+      "path": "/dashboard/admin/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Admin Reports",
+      "path": "/dashboard/admin/reports",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Admin Orders",
+      "path": "/dashboard/admin/orders",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Admin Payments",
+      "path": "/dashboard/admin/payments",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Admin Disputes",
+      "path": "/dashboard/admin/disputes",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Laptop_1024x768",
+      "width": 1024,
+      "height": 768,
+      "category": "Laptop",
+      "page": "Admin Analytics",
+      "path": "/dashboard/admin/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Homepage",
+      "path": "/",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Product Listing",
+      "path": "/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Categories Explorer",
+      "path": "/categories",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Cart",
+      "path": "/cart",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Checkout",
+      "path": "/checkout",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Seller Add Products",
+      "path": "/dashboard/seller/products/add-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Seller My Products",
+      "path": "/dashboard/seller/products/my-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Seller Analytics",
+      "path": "/dashboard/seller/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Admin Users",
+      "path": "/dashboard/admin/users",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Admin Products",
+      "path": "/dashboard/admin/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Admin Reports",
+      "path": "/dashboard/admin/reports",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Admin Orders",
+      "path": "/dashboard/admin/orders",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Admin Payments",
+      "path": "/dashboard/admin/payments",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Admin Disputes",
+      "path": "/dashboard/admin/disputes",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "category": "Desktop",
+      "page": "Admin Analytics",
+      "path": "/dashboard/admin/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Homepage",
+      "path": "/",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Product Listing",
+      "path": "/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Categories Explorer",
+      "path": "/categories",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Cart",
+      "path": "/cart",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Checkout",
+      "path": "/checkout",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Seller Add Products",
+      "path": "/dashboard/seller/products/add-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Seller My Products",
+      "path": "/dashboard/seller/products/my-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Seller Analytics",
+      "path": "/dashboard/seller/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Admin Users",
+      "path": "/dashboard/admin/users",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Admin Products",
+      "path": "/dashboard/admin/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Admin Reports",
+      "path": "/dashboard/admin/reports",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Admin Orders",
+      "path": "/dashboard/admin/orders",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Admin Payments",
+      "path": "/dashboard/admin/payments",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Admin Disputes",
+      "path": "/dashboard/admin/disputes",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Large_Desktop_1440x900",
+      "width": 1440,
+      "height": 900,
+      "category": "Large Desktop",
+      "page": "Admin Analytics",
+      "path": "/dashboard/admin/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Homepage",
+      "path": "/",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Product Listing",
+      "path": "/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Categories Explorer",
+      "path": "/categories",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Cart",
+      "path": "/cart",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Checkout",
+      "path": "/checkout",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Seller Add Products",
+      "path": "/dashboard/seller/products/add-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Seller My Products",
+      "path": "/dashboard/seller/products/my-products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Seller Analytics",
+      "path": "/dashboard/seller/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Admin Users",
+      "path": "/dashboard/admin/users",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Admin Products",
+      "path": "/dashboard/admin/products",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Admin Reports",
+      "path": "/dashboard/admin/reports",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Admin Orders",
+      "path": "/dashboard/admin/orders",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Admin Payments",
+      "path": "/dashboard/admin/payments",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Admin Disputes",
+      "path": "/dashboard/admin/disputes",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    },
+    {
+      "viewport": "Wide_Desktop_1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "category": "Wide Desktop",
+      "page": "Admin Analytics",
+      "path": "/dashboard/admin/analytics",
+      "hasHorizontalOverflow": false,
+      "status": "PASS"
+    }
+  ],
+  "summary": {
+    "totalChecks": 0,
+    "passed": 0,
+    "failed": 0
+  }
+}

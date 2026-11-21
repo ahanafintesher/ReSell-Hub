@@ -19,7 +19,7 @@ import {
   XCircle,
   AlertTriangle,
 } from "lucide-react";
-import { Avatar, Button } from "@heroui/react";
+import { Avatar, Button, AlertDialog } from "@heroui/react";
 import toast from "react-hot-toast";
 import { getAdminUsers, updateUserStatus, deleteUser } from "@/lib/actions/user";
 
@@ -661,112 +661,126 @@ export default function AdminUsersPage() {
         </>
       )}
 
-      {/* ── User Blocking Confirmation Modal (Phase 3) ── */}
+      {/* ── Accessible User Blocking Confirmation AlertDialog (Phase 4) ── */}
       {blockConfirmUser && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
-          onClick={() => {
-            if (actionLoadingId !== blockConfirmUser._id) setBlockConfirmUser(null);
-          }}
-        >
-          <div
-            className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-2xl text-left animate-in fade-in zoom-in-95"
-            onClick={(e) => e.stopPropagation()}
+        <AlertDialog>
+          <AlertDialog.Backdrop
+            isOpen={!!blockConfirmUser}
+            onOpenChange={(open) => {
+              if (!open && actionLoadingId !== blockConfirmUser._id) {
+                setBlockConfirmUser(null);
+              }
+            }}
+            isDismissable={actionLoadingId !== blockConfirmUser._id}
+            isKeyboardDismissDisabled={actionLoadingId === blockConfirmUser._id}
           >
-            <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400">
-                <AlertTriangle className="h-6 w-6" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                  Confirm User Account Suspension
-                </h3>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                  Are you sure you want to block{" "}
-                  <strong className="text-slate-900 dark:text-white font-semibold">
-                    {blockConfirmUser.name || blockConfirmUser.email}
-                  </strong>
-                  ?
-                </p>
-                <div className="mt-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/50 p-3 text-xs text-amber-900 dark:text-amber-200">
-                  <p className="font-semibold mb-1">Consequences of blocking:</p>
-                  <ul className="list-disc pl-4 space-y-0.5 text-amber-800 dark:text-amber-300">
-                    <li>Immediate revocation of active login sessions.</li>
-                    <li>Inability to list products, checkout, or message sellers.</li>
-                    <li>Public listings associated with this account may be hidden.</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <Button
-                variant="flat"
-                color="default"
-                onPress={() => setBlockConfirmUser(null)}
-                isDisabled={actionLoadingId === blockConfirmUser._id}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="bg-amber-600 hover:bg-amber-700 text-white font-semibold"
-                onPress={handleConfirmBlock}
-                isLoading={actionLoadingId === blockConfirmUser._id}
-              >
-                Confirm Block
-              </Button>
-            </div>
-          </div>
-        </div>
+            <AlertDialog.Container>
+              <AlertDialog.Dialog className="sm:max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white p-6 rounded-2xl shadow-xl">
+                <AlertDialog.Header className="flex items-start gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400">
+                    <AlertTriangle className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <AlertDialog.Heading className="text-lg font-bold text-slate-900 dark:text-white">
+                      Confirm User Account Suspension
+                    </AlertDialog.Heading>
+                  </div>
+                </AlertDialog.Header>
+                <AlertDialog.Body className="mt-3">
+                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Are you sure you want to block{" "}
+                    <strong className="text-slate-900 dark:text-white font-semibold">
+                      {blockConfirmUser.name || blockConfirmUser.email}
+                    </strong>
+                    ?
+                  </p>
+                  <div className="mt-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/50 p-3 text-xs text-amber-900 dark:text-amber-200">
+                    <p className="font-semibold mb-1">Consequences of blocking:</p>
+                    <ul className="list-disc pl-4 space-y-0.5 text-amber-800 dark:text-amber-300">
+                      <li>Immediate revocation of active login sessions.</li>
+                      <li>Inability to list products, checkout, or message sellers.</li>
+                      <li>Public listings associated with this account may be hidden.</li>
+                    </ul>
+                  </div>
+                </AlertDialog.Body>
+                <AlertDialog.Footer className="mt-6 flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <Button
+                    variant="flat"
+                    color="default"
+                    onPress={() => setBlockConfirmUser(null)}
+                    isDisabled={actionLoadingId === blockConfirmUser._id}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-amber-600 hover:bg-amber-700 text-white font-semibold"
+                    onPress={handleConfirmBlock}
+                    isLoading={actionLoadingId === blockConfirmUser._id}
+                  >
+                    Confirm Block
+                  </Button>
+                </AlertDialog.Footer>
+              </AlertDialog.Dialog>
+            </AlertDialog.Container>
+          </AlertDialog.Backdrop>
+        </AlertDialog>
       )}
 
-      {/* ── User Delete Confirmation Modal ── */}
+      {/* ── Accessible User Delete Confirmation AlertDialog ── */}
       {deleteConfirmUser && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
-          onClick={() => {
-            if (actionLoadingId !== deleteConfirmUser._id) setDeleteConfirmUser(null);
-          }}
-        >
-          <div
-            className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-2xl text-left animate-in fade-in zoom-in-95"
-            onClick={(e) => e.stopPropagation()}
+        <AlertDialog>
+          <AlertDialog.Backdrop
+            isOpen={!!deleteConfirmUser}
+            onOpenChange={(open) => {
+              if (!open && actionLoadingId !== deleteConfirmUser._id) {
+                setDeleteConfirmUser(null);
+              }
+            }}
+            isDismissable={actionLoadingId !== deleteConfirmUser._id}
+            isKeyboardDismissDisabled={actionLoadingId === deleteConfirmUser._id}
           >
-            <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400">
-                <Trash2 className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Delete User Account</h3>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                  Are you sure you want to permanently delete{" "}
-                  <strong className="text-slate-900 dark:text-white font-semibold">
-                    {deleteConfirmUser.name || deleteConfirmUser.email}
-                  </strong>
-                  ? All account records, active listings, and associated data will be removed. This action cannot be reversed.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <Button
-                variant="flat"
-                color="default"
-                onPress={() => setDeleteConfirmUser(null)}
-                isDisabled={actionLoadingId === deleteConfirmUser._id}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="bg-rose-600 hover:bg-rose-700 text-white font-semibold"
-                onPress={handleDeleteUser}
-                isLoading={actionLoadingId === deleteConfirmUser._id}
-              >
-                Confirm Delete
-              </Button>
-            </div>
-          </div>
-        </div>
+            <AlertDialog.Container>
+              <AlertDialog.Dialog className="sm:max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white p-6 rounded-2xl shadow-xl">
+                <AlertDialog.Header className="flex items-start gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400">
+                    <Trash2 className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <AlertDialog.Heading className="text-lg font-bold text-slate-900 dark:text-white">
+                      Delete User Account
+                    </AlertDialog.Heading>
+                  </div>
+                </AlertDialog.Header>
+                <AlertDialog.Body className="mt-3">
+                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Are you sure you want to permanently delete{" "}
+                    <strong className="text-slate-900 dark:text-white font-semibold">
+                      {deleteConfirmUser.name || deleteConfirmUser.email}
+                    </strong>
+                    ? All account records, active listings, and associated data will be removed. This action cannot be reversed.
+                  </p>
+                </AlertDialog.Body>
+                <AlertDialog.Footer className="mt-6 flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <Button
+                    variant="flat"
+                    color="default"
+                    onPress={() => setDeleteConfirmUser(null)}
+                    isDisabled={actionLoadingId === deleteConfirmUser._id}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-rose-600 hover:bg-rose-700 text-white font-semibold"
+                    onPress={handleDeleteUser}
+                    isLoading={actionLoadingId === deleteConfirmUser._id}
+                  >
+                    Confirm Delete
+                  </Button>
+                </AlertDialog.Footer>
+              </AlertDialog.Dialog>
+            </AlertDialog.Container>
+          </AlertDialog.Backdrop>
+        </AlertDialog>
       )}
     </div>
   );
