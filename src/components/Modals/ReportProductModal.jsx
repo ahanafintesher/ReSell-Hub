@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Modal,
-  Button,
-  Select,
-  Textarea,
-  Input,
-} from "@heroui/react";
+import { Button } from "@heroui/react";
 import { Flag, AlertTriangle, Loader2 } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { reportProduct } from "@/lib/actions/reports";
@@ -23,7 +17,11 @@ const REPORT_REASONS = [
   "Other Policy Violation",
 ];
 
-export default function ReportProductModal({ product }) {
+export default function ReportProductModal({
+  product,
+  variant = "text",
+  className = "",
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [description, setDescription] = useState("");
@@ -31,15 +29,35 @@ export default function ReportProductModal({ product }) {
 
   const { data: session } = useSession();
 
-  const handleOpen = () => {
+  const handleOpen = (e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+
     if (!session?.user) {
       toast.error("Please log in to report a product listing");
       return;
     }
+
+    const sellerEmail =
+      typeof product?.sellerInfo === "string"
+        ? product.sellerInfo
+        : product?.sellerInfo?.email;
+
+    if (
+      sellerEmail &&
+      session?.user?.email &&
+      sellerEmail.trim().toLowerCase() ===
+        session.user.email.trim().toLowerCase()
+    ) {
+      toast.error("You cannot report your own product listing");
+      return;
+    }
+
     setIsOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (e) => {
+    e?.stopPropagation?.();
     if (isSubmitting) return;
     setIsOpen(false);
     setReason("");
@@ -48,6 +66,7 @@ export default function ReportProductModal({ product }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (!reason) {
       toast.error("Please select a reason for reporting");
@@ -56,7 +75,7 @@ export default function ReportProductModal({ product }) {
 
     try {
       setIsSubmitting(true);
-      await reportProduct(product._id, {
+      await reportProduct(product._id || product.id, {
         reason,
         description,
       });
@@ -65,7 +84,10 @@ export default function ReportProductModal({ product }) {
       handleClose();
     } catch (err) {
       console.error("Report product error:", err);
-      toast.error(err.message || "Failed to submit report. You may have already reported this item.");
+      toast.error(
+        err.message ||
+          "Failed to submit report. You may have already reported this item.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -73,21 +95,42 @@ export default function ReportProductModal({ product }) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={handleOpen}
-        className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
-        aria-label="Report this listing"
-      >
-        <Flag className="h-3.5 w-3.5" />
-        <span>Report this listing</span>
-      </button>
+      {variant === "icon" ? (
+        <button
+          type="button"
+          onClick={handleOpen}
+          className={`p-1.5 rounded-full text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer ${className}`}
+          title="Report this listing"
+          aria-label="Report this listing"
+        >
+          <Flag className="h-3.5 w-3.5" />
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={handleOpen}
+          className={`inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer ${className}`}
+          aria-label="Report this listing"
+        >
+          <Flag className="h-3.5 w-3.5" />
+          <span>Report this listing</span>
+        </button>
+      )}
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xl animate-in fade-in zoom-in-95">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isSubmitting) handleClose(e);
+          }}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xl animate-in fade-in zoom-in-95 text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shrink-0">
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
@@ -95,7 +138,7 @@ export default function ReportProductModal({ product }) {
                   Report Listing
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[280px]">
-                  {product?.title || "Product Listing"}
+                  {product?.title || product?.name || "Product Listing"}
                 </p>
               </div>
             </div>
@@ -147,7 +190,9 @@ export default function ReportProductModal({ product }) {
                   type="submit"
                   className="bg-rose-600 hover:bg-rose-700 text-white font-semibold"
                   isDisabled={isSubmitting || !reason}
-                  startContent={isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                  startContent={
+                    isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />
+                  }
                 >
                   {isSubmitting ? "Submitting..." : "Submit Report"}
                 </Button>

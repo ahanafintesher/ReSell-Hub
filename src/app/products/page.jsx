@@ -28,6 +28,7 @@ export default async function ProductsPage({ searchParams }) {
       search,
       category,
       condition,
+      status: "available",
       minPrice,
       maxPrice,
       sort,
@@ -35,12 +36,20 @@ export default async function ProductsPage({ searchParams }) {
       limit,
     });
 
+    const isPubliclyAvailable = (p) =>
+      p &&
+      p.status !== "pending" &&
+      p.status !== "rejected" &&
+      p.moderationStatus !== "rejected" &&
+      p.moderationStatus !== "pending";
+
     if (Array.isArray(res)) {
-      products = res;
-      total = res.length;
+      products = res.filter(isPubliclyAvailable);
+      total = products.length;
       totalPages = Math.ceil(total / limit) || 1;
     } else if (res && typeof res === "object") {
-      products = Array.isArray(res.products) ? res.products : [];
+      const rawProducts = Array.isArray(res.products) ? res.products : [];
+      products = rawProducts.filter(isPubliclyAvailable);
       total = typeof res.total === "number" ? res.total : products.length;
       totalPages =
         typeof res.totalPages === "number"

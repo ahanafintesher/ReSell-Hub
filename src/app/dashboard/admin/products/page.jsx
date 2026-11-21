@@ -407,222 +407,494 @@ export default function AdminProductsPage() {
         </div>
       ) : (
         /* Table View */
-        <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
-              <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                <tr>
-                  <th className="px-6 py-4">Product</th>
-                  <th className="px-6 py-4">Category & Condition</th>
-                  <th className="px-6 py-4">Price & Stock</th>
-                  <th className="px-6 py-4">Seller Info</th>
-                  <th className="px-6 py-4">Moderation / Status</th>
-                  <th className="px-6 py-4 text-right">Moderation Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {filteredProducts.map((product) => {
-                  const isProcessing = actionLoadingId === product._id;
-                  const isHidden = (product.status || "available") === "hidden";
-                  const isPending =
-                    product.status === "pending" ||
-                    product.moderationStatus === "pending";
-                  const isRejected =
-                    product.status === "rejected" ||
-                    product.moderationStatus === "rejected";
-                  const isApproved =
-                    (product.moderationStatus === "approved" ||
-                      product.status === "available") &&
-                    !isRejected &&
-                    !isPending;
+        <>
+          {/* ── 1. Desktop Table View (lg+) ── */}
+          <div className="hidden lg:block overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  <tr>
+                    <th className="px-6 py-4">Product</th>
+                    <th className="px-6 py-4">Category & Condition</th>
+                    <th className="px-6 py-4">Price & Stock</th>
+                    <th className="px-6 py-4">Seller Info</th>
+                    <th className="px-6 py-4">Moderation / Status</th>
+                    <th className="px-6 py-4 text-right">Moderation Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {filteredProducts.map((product) => {
+                    const isProcessing = actionLoadingId === product._id;
+                    const isHidden = (product.status || "available") === "hidden";
+                    const isPending =
+                      product.status === "pending" ||
+                      product.moderationStatus === "pending";
+                    const isRejected =
+                      product.status === "rejected" ||
+                      product.moderationStatus === "rejected";
+                    const isApproved =
+                      (product.moderationStatus === "approved" ||
+                        product.status === "available") &&
+                      !isRejected &&
+                      !isPending;
 
-                  return (
-                    <tr key={product._id} className="transition hover:bg-slate-50/70 dark:hover:bg-slate-800/50">
-                      {/* Product Info */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
-                            {product.image ? (
-                              <Image
-                                src={product.image}
-                                alt={product.title || "Product"}
-                                fill
-                                sizes="48px"
-                                className="object-contain p-1"
-                              />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center text-slate-400">
-                                <Package className="h-5 w-5" />
-                              </div>
+                    return (
+                      <tr key={product._id} className="transition hover:bg-slate-50/70 dark:hover:bg-slate-800/50">
+                        {/* Product Info */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                              {product.image ? (
+                                <Image
+                                  src={product.image}
+                                  alt={product.title || "Product"}
+                                  fill
+                                  sizes="48px"
+                                  className="object-contain p-1"
+                                />
+                              ) : (
+                                <div className="flex h-full w-full items-center justify-center text-slate-400">
+                                  <Package className="h-5 w-5" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <Link
+                                href={`/products/${product._id}`}
+                                className="font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition block truncate max-w-xs"
+                              >
+                                {product.title || "Untitled Product"}
+                              </Link>
+                              <p className="text-xs text-slate-400 dark:text-slate-500 font-mono truncate">
+                                ID: {product._id}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Category & Condition */}
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-1">
+                            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300">
+                              <Tag className="h-3 w-3" />
+                              {product.category || "General"}
+                            </span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              Condition: {product.condition || "Used"}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Price & Stock */}
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-slate-900 dark:text-white">
+                              ৳{Number(product.price || 0).toLocaleString()}
+                            </span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              Stock: {product.stock != null ? product.stock : 1}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Seller */}
+                        <td className="px-6 py-4 text-xs text-slate-600 dark:text-slate-300">
+                          <div className="flex items-center gap-1.5 font-medium text-slate-800 dark:text-slate-200">
+                            <Store className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                            <span className="truncate max-w-[150px]">
+                              {product.sellerName || "Seller"}
+                            </span>
+                          </div>
+                          <p className="mt-0.5 text-slate-400 dark:text-slate-500 truncate max-w-[180px]">
+                            {product.sellerInfo || "N/A"}
+                          </p>
+                        </td>
+
+                        {/* Moderation / Status */}
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-1">
+                            {isPending && (
+                              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 px-2.5 py-0.5 text-xs font-semibold">
+                                <Clock className="h-3 w-3" />
+                                Pending Review
+                              </span>
+                            )}
+                            {isRejected && (
+                              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 px-2.5 py-0.5 text-xs font-semibold">
+                                <X className="h-3 w-3" />
+                                Rejected
+                              </span>
+                            )}
+                            {isApproved && (
+                              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 px-2.5 py-0.5 text-xs font-semibold">
+                                <CheckCircle2 className="h-3 w-3" />
+                                Approved
+                              </span>
+                            )}
+                            {isHidden && (
+                              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 px-2.5 py-0.5 text-xs font-medium">
+                                <EyeOff className="h-3 w-3" />
+                                Hidden
+                              </span>
+                            )}
+                            {product.status === "sold" && (
+                              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300 px-2.5 py-0.5 text-xs font-medium">
+                                Sold
+                              </span>
                             )}
                           </div>
-                          <div className="min-w-0">
+                        </td>
+
+                        {/* Actions */}
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                            {/* Approve Action */}
+                            {(!isApproved || isPending || isRejected) && (
+                              <Button
+                                size="sm"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-2.5 h-8 min-w-0 text-xs"
+                                isDisabled={isProcessing}
+                                onPress={() =>
+                                  setModerationConfirm({ product, action: "approved" })
+                                }
+                                title="Approve and publish this product"
+                              >
+                                <Check className="h-3.5 w-3.5 mr-1" />
+                                Approve
+                              </Button>
+                            )}
+
+                            {/* Reject Action */}
+                            {!isRejected && (
+                              <Button
+                                size="sm"
+                                variant="flat"
+                                color="danger"
+                                className="px-2.5 h-8 min-w-0 font-medium text-xs"
+                                isDisabled={isProcessing}
+                                onPress={() =>
+                                  setModerationConfirm({ product, action: "rejected" })
+                                }
+                                title="Reject this product listing"
+                              >
+                                <X className="h-3.5 w-3.5 mr-1" />
+                                Reject
+                              </Button>
+                            )}
+
+                            {/* View Product Details */}
                             <Link
                               href={`/products/${product._id}`}
-                              className="font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition block truncate max-w-xs"
+                              className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition"
+                              title="View public product details"
                             >
-                              {product.title || "Untitled Product"}
+                              <ExternalLink className="h-4 w-4" />
                             </Link>
-                            <p className="text-xs text-slate-400 dark:text-slate-500 font-mono truncate">
-                              ID: {product._id}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
 
-                      {/* Category & Condition */}
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col gap-1">
-                          <span className="inline-flex w-fit items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300">
-                            <Tag className="h-3 w-3" />
-                            {product.category || "General"}
-                          </span>
-                          <span className="text-xs text-slate-500 dark:text-slate-400">
-                            Condition: {product.condition || "Used"}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Price & Stock */}
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col">
-                          <span className="font-bold text-slate-900 dark:text-white">
-                            ৳{Number(product.price || 0).toLocaleString()}
-                          </span>
-                          <span className="text-xs text-slate-500 dark:text-slate-400">
-                            Stock: {product.stock != null ? product.stock : 1}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Seller */}
-                      <td className="px-6 py-4 text-xs text-slate-600 dark:text-slate-300">
-                        <div className="flex items-center gap-1.5 font-medium text-slate-800 dark:text-slate-200">
-                          <Store className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                          <span className="truncate max-w-[150px]">
-                            {product.sellerName || "Seller"}
-                          </span>
-                        </div>
-                        <p className="mt-0.5 text-slate-400 dark:text-slate-500 truncate max-w-[180px]">
-                          {product.sellerInfo || "N/A"}
-                        </p>
-                      </td>
-
-                      {/* Moderation / Status */}
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col gap-1">
-                          {isPending && (
-                            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 px-2.5 py-0.5 text-xs font-semibold">
-                              <Clock className="h-3 w-3" />
-                              Pending Review
-                            </span>
-                          )}
-                          {isRejected && (
-                            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 px-2.5 py-0.5 text-xs font-semibold">
-                              <X className="h-3 w-3" />
-                              Rejected
-                            </span>
-                          )}
-                          {isApproved && (
-                            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 px-2.5 py-0.5 text-xs font-semibold">
-                              <CheckCircle2 className="h-3 w-3" />
-                              Approved
-                            </span>
-                          )}
-                          {isHidden && (
-                            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 px-2.5 py-0.5 text-xs font-medium">
-                              <EyeOff className="h-3 w-3" />
-                              Hidden
-                            </span>
-                          )}
-                          {product.status === "sold" && (
-                            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300 px-2.5 py-0.5 text-xs font-medium">
-                              Sold
-                            </span>
-                          )}
-                        </div>
-                      </td>
-
-                      {/* Actions */}
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5 flex-wrap">
-                          {/* Approve Action */}
-                          {(!isApproved || isPending || isRejected) && (
+                            {/* Toggle Visibility */}
                             <Button
                               size="sm"
-                              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-2.5 h-8 min-w-0"
+                              variant="flat"
+                              color={isHidden ? "success" : "default"}
                               isDisabled={isProcessing}
-                              onPress={() =>
-                                setModerationConfirm({ product, action: "approved" })
-                              }
-                              title="Approve and publish this product"
+                              onPress={() => handleToggleStatus(product)}
+                              className="h-8 w-8 min-w-0 p-0"
+                              title={isHidden ? "Show product to buyers" : "Hide product from buyers"}
                             >
-                              <Check className="h-3.5 w-3.5 mr-1" />
-                              Approve
+                              {isHidden ? <Eye className="h-4 w-4 text-emerald-600" /> : <EyeOff className="h-4 w-4 text-slate-500" />}
                             </Button>
-                          )}
 
-                          {/* Reject Action */}
-                          {!isRejected && (
+                            {/* Delete Product */}
                             <Button
                               size="sm"
                               variant="flat"
                               color="danger"
-                              className="px-2.5 h-8 min-w-0 font-medium"
                               isDisabled={isProcessing}
-                              onPress={() =>
-                                setModerationConfirm({ product, action: "rejected" })
-                              }
-                              title="Reject this product listing"
+                              onPress={() => setDeleteConfirmProduct(product)}
+                              className="h-8 w-8 min-w-0 p-0"
+                              title="Permanently remove listing"
                             >
-                              <X className="h-3.5 w-3.5 mr-1" />
-                              Reject
+                              <Trash2 className="h-4 w-4" />
                             </Button>
-                          )}
-
-                          {/* View Product Details */}
-                          <Link
-                            href={`/products/${product._id}`}
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition"
-                            title="View public product details"
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </Link>
-
-                          {/* Toggle Visibility */}
-                          <Button
-                            size="sm"
-                            variant="flat"
-                            color={isHidden ? "success" : "default"}
-                            isDisabled={isProcessing}
-                            onPress={() => handleToggleStatus(product)}
-                            className="h-8 w-8 min-w-0 p-0"
-                            title={isHidden ? "Show product to buyers" : "Hide product from buyers"}
-                          >
-                            {isHidden ? <Eye className="h-4 w-4 text-emerald-600" /> : <EyeOff className="h-4 w-4 text-slate-500" />}
-                          </Button>
-
-                          {/* Delete Product */}
-                          <Button
-                            size="sm"
-                            variant="flat"
-                            color="danger"
-                            isDisabled={isProcessing}
-                            onPress={() => setDeleteConfirmProduct(product)}
-                            className="h-8 w-8 min-w-0 p-0"
-                            title="Permanently remove listing"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+
+          {/* ── 2. Tablet Grid View (sm to lg) ── */}
+          <div className="hidden sm:grid lg:hidden grid-cols-2 gap-4">
+            {filteredProducts.map((product) => {
+              const isProcessing = actionLoadingId === product._id;
+              const isHidden = (product.status || "available") === "hidden";
+              const isPending =
+                product.status === "pending" ||
+                product.moderationStatus === "pending";
+              const isRejected =
+                product.status === "rejected" ||
+                product.moderationStatus === "rejected";
+              const isApproved =
+                (product.moderationStatus === "approved" ||
+                  product.status === "available") &&
+                !isRejected &&
+                !isPending;
+
+              return (
+                <div
+                  key={product._id}
+                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm flex flex-col justify-between gap-3"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                      {product.image ? (
+                        <Image
+                          src={product.image}
+                          alt={product.title || "Product"}
+                          fill
+                          sizes="56px"
+                          className="object-contain p-1"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-slate-400">
+                          <Package className="h-6 w-6" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                          ৳{Number(product.price || 0).toLocaleString()}
+                        </span>
+                        {isPending && (
+                          <span className="rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 px-2 py-0.5 text-[10px] font-semibold">
+                            Pending
+                          </span>
+                        )}
+                        {isRejected && (
+                          <span className="rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 px-2 py-0.5 text-[10px] font-semibold">
+                            Rejected
+                          </span>
+                        )}
+                        {isApproved && (
+                          <span className="rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 text-[10px] font-semibold">
+                            Approved
+                          </span>
+                        )}
+                      </div>
+                      <Link
+                        href={`/products/${product._id}`}
+                        className="font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 truncate block text-sm mt-0.5"
+                      >
+                        {product.title || "Untitled Product"}
+                      </Link>
+                      <p className="text-[11px] text-slate-400 truncate">
+                        Seller: {product.sellerName || product.sellerInfo || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div>
+                      <span className="text-slate-400 block">Category:</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200 capitalize truncate block">
+                        {product.category || "General"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block">Condition:</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200 capitalize">
+                        {product.condition || "Used"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-1.5">
+                      {(!isApproved || isPending || isRejected) && (
+                        <Button
+                          size="sm"
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs h-7 px-2"
+                          isDisabled={isProcessing}
+                          onPress={() =>
+                            setModerationConfirm({ product, action: "approved" })
+                          }
+                        >
+                          Approve
+                        </Button>
+                      )}
+                      {!isRejected && (
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          color="danger"
+                          className="text-xs h-7 px-2 font-medium"
+                          isDisabled={isProcessing}
+                          onPress={() =>
+                            setModerationConfirm({ product, action: "rejected" })
+                          }
+                        >
+                          Reject
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <Link
+                        href={`/products/${product._id}`}
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        title="View details"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Link>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        color="danger"
+                        isDisabled={isProcessing}
+                        onPress={() => setDeleteConfirmProduct(product)}
+                        className="h-7 w-7 min-w-0 p-0"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ── 3. Mobile Card View (< sm) ── */}
+          <div className="flex sm:hidden flex-col gap-3">
+            {filteredProducts.map((product) => {
+              const isProcessing = actionLoadingId === product._id;
+              const isHidden = (product.status || "available") === "hidden";
+              const isPending =
+                product.status === "pending" ||
+                product.moderationStatus === "pending";
+              const isRejected =
+                product.status === "rejected" ||
+                product.moderationStatus === "rejected";
+              const isApproved =
+                (product.moderationStatus === "approved" ||
+                  product.status === "available") &&
+                !isRejected &&
+                !isPending;
+
+              return (
+                <div
+                  key={product._id}
+                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm"
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                      {product.image ? (
+                        <Image
+                          src={product.image}
+                          alt={product.title || "Product"}
+                          fill
+                          sizes="64px"
+                          className="object-contain p-1"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-slate-400">
+                          <Package className="h-6 w-6" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                          ৳{Number(product.price || 0).toLocaleString()}
+                        </span>
+                        {isPending && (
+                          <span className="rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 px-2 py-0.5 text-[10px] font-semibold">
+                            Pending
+                          </span>
+                        )}
+                        {isRejected && (
+                          <span className="rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 px-2 py-0.5 text-[10px] font-semibold">
+                            Rejected
+                          </span>
+                        )}
+                        {isApproved && (
+                          <span className="rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 text-[10px] font-semibold">
+                            Approved
+                          </span>
+                        )}
+                      </div>
+                      <Link
+                        href={`/products/${product._id}`}
+                        className="font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 truncate block text-sm mt-0.5"
+                      >
+                        {product.title || "Untitled Product"}
+                      </Link>
+                      <p className="text-xs text-slate-400 truncate mt-0.5">
+                        {product.category || "General"} · {product.condition || "Used"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-2">
+                      {(!isApproved || isPending || isRejected) && (
+                        <Button
+                          size="sm"
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs h-8 px-3"
+                          isDisabled={isProcessing}
+                          onPress={() =>
+                            setModerationConfirm({ product, action: "approved" })
+                          }
+                        >
+                          <Check className="h-3.5 w-3.5 mr-1" />
+                          Approve
+                        </Button>
+                      )}
+                      {!isRejected && (
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          color="danger"
+                          className="text-xs h-8 px-3 font-medium"
+                          isDisabled={isProcessing}
+                          onPress={() =>
+                            setModerationConfirm({ product, action: "rejected" })
+                          }
+                        >
+                          <X className="h-3.5 w-3.5 mr-1" />
+                          Reject
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <Link
+                        href={`/products/${product._id}`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        title="View details"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        color="danger"
+                        isDisabled={isProcessing}
+                        onPress={() => setDeleteConfirmProduct(product)}
+                        className="h-8 w-8 min-w-0 p-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       {/* Moderation Confirmation Modal */}

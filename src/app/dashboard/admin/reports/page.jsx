@@ -248,7 +248,8 @@ export default function AdminReportsPage() {
         </div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View (lg+) */}
+          <div className="hidden lg:block overflow-x-auto">
             <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
               <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 <tr>
@@ -353,7 +354,7 @@ export default function AdminReportsPage() {
                             <>
                               <Button
                                 size="sm"
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-2.5 h-8 text-xs"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-2.5 h-8 text-xs cursor-pointer"
                                 isDisabled={isProcessing}
                                 onPress={() =>
                                   setReportActionConfirm({ report, action: "resolved" })
@@ -365,7 +366,7 @@ export default function AdminReportsPage() {
                                 size="sm"
                                 variant="flat"
                                 color="default"
-                                className="h-8 text-xs font-medium"
+                                className="h-8 text-xs font-medium cursor-pointer"
                                 isDisabled={isProcessing}
                                 onPress={() =>
                                   setReportActionConfirm({ report, action: "dismissed" })
@@ -387,6 +388,252 @@ export default function AdminReportsPage() {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Tablet Grid View (sm to lg) */}
+          <div className="hidden sm:grid lg:hidden grid-cols-2 gap-4 p-4">
+            {reports.map((report) => {
+              const isProcessing = actionLoadingId === report._id;
+              const isPending = (report.status || "pending") === "pending";
+              const isResolved = report.status === "resolved";
+              const isDismissed = report.status === "dismissed";
+
+              return (
+                <div
+                  key={report._id}
+                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 shadow-xs flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">
+                          {report.productTitle || "Reported Item"}
+                        </p>
+                        <p className="font-mono text-[11px] text-slate-400 truncate">
+                          ID: {report.productId || report._id}
+                        </p>
+                      </div>
+                      <span
+                        className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${
+                          isResolved
+                            ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+                            : isDismissed
+                              ? "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                              : "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
+                        }`}
+                      >
+                        {isResolved ? (
+                          <CheckCircle2 className="h-3 w-3" />
+                        ) : isDismissed ? (
+                          <XCircle className="h-3 w-3" />
+                        ) : (
+                          <Clock className="h-3 w-3" />
+                        )}
+                        {report.status || "pending"}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 mb-3">
+                      <div>
+                        <span className="text-slate-400 block text-[11px] font-medium">Reason:</span>
+                        <span className="inline-block rounded-md bg-rose-50 dark:bg-rose-950/50 px-2 py-0.5 text-xs font-semibold text-rose-700 dark:text-rose-300">
+                          {report.reason}
+                        </span>
+                        {report.description && (
+                          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                            {report.description}
+                          </p>
+                        )}
+                      </div>
+                      <div className="pt-1 text-[11px]">
+                        <span className="text-slate-400">Reporter: </span>
+                        <span className="font-mono text-slate-800 dark:text-slate-200">
+                          {report.reporterEmail}
+                        </span>
+                      </div>
+                      {report.sellerInfo && (
+                        <div className="text-[11px]">
+                          <span className="text-slate-400">Seller: </span>
+                          <span className="font-mono text-slate-800 dark:text-slate-200">
+                            {report.sellerInfo}
+                          </span>
+                        </div>
+                      )}
+                      <div className="text-[11px] text-slate-400">
+                        Date: {report.createdAt ? new Date(report.createdAt).toLocaleDateString() : "N/A"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                    {report.productId ? (
+                      <Link
+                        href={`/products/${report.productId}`}
+                        className="text-emerald-600 hover:underline inline-flex items-center gap-1 text-xs font-medium"
+                        target="_blank"
+                      >
+                        Inspect <ExternalLink className="h-3 w-3" />
+                      </Link>
+                    ) : <span />}
+
+                    <div className="flex items-center gap-2">
+                      {isPending ? (
+                        <>
+                          <Button
+                            size="sm"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-2.5 h-7 text-xs"
+                            isDisabled={isProcessing}
+                            onPress={() =>
+                              setReportActionConfirm({ report, action: "resolved" })
+                            }
+                          >
+                            Resolve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            color="default"
+                            className="h-7 text-xs font-medium"
+                            isDisabled={isProcessing}
+                            onPress={() =>
+                              setReportActionConfirm({ report, action: "dismissed" })
+                            }
+                          >
+                            Dismiss
+                          </Button>
+                        </>
+                      ) : (
+                        <span className="text-xs text-slate-400 dark:text-slate-500">
+                          Completed
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Mobile Card View (< sm) */}
+          <div className="flex sm:hidden flex-col gap-3 p-3">
+            {reports.map((report) => {
+              const isProcessing = actionLoadingId === report._id;
+              const isPending = (report.status || "pending") === "pending";
+              const isResolved = report.status === "resolved";
+              const isDismissed = report.status === "dismissed";
+
+              return (
+                <div
+                  key={report._id}
+                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 shadow-xs"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">
+                        {report.productTitle || "Reported Item"}
+                      </p>
+                      <p className="font-mono text-[11px] text-slate-400 truncate">
+                        ID: {report.productId || report._id}
+                      </p>
+                    </div>
+                    <span
+                      className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${
+                        isResolved
+                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+                          : isDismissed
+                            ? "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                            : "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
+                      }`}
+                    >
+                      {isResolved ? (
+                        <CheckCircle2 className="h-3 w-3" />
+                      ) : isDismissed ? (
+                        <XCircle className="h-3 w-3" />
+                      ) : (
+                        <Clock className="h-3 w-3" />
+                      )}
+                      {report.status || "pending"}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 mb-3">
+                    <div>
+                      <span className="text-slate-400 block text-[11px] font-medium">Reason:</span>
+                      <span className="inline-block rounded-md bg-rose-50 dark:bg-rose-950/50 px-2 py-0.5 text-xs font-semibold text-rose-700 dark:text-rose-300">
+                        {report.reason}
+                      </span>
+                      {report.description && (
+                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-3">
+                          {report.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="pt-1 text-[11px]">
+                      <span className="text-slate-400">Reporter: </span>
+                      <span className="font-mono text-slate-800 dark:text-slate-200">
+                        {report.reporterEmail}
+                      </span>
+                    </div>
+                    {report.sellerInfo && (
+                      <div className="text-[11px]">
+                        <span className="text-slate-400">Seller: </span>
+                        <span className="font-mono text-slate-800 dark:text-slate-200">
+                          {report.sellerInfo}
+                        </span>
+                      </div>
+                    )}
+                    <div className="text-[11px] text-slate-400">
+                      Date: {report.createdAt ? new Date(report.createdAt).toLocaleDateString() : "N/A"}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                    {report.productId ? (
+                      <Link
+                        href={`/products/${report.productId}`}
+                        className="text-emerald-600 hover:underline inline-flex items-center gap-1 text-xs font-medium"
+                        target="_blank"
+                      >
+                        Inspect <ExternalLink className="h-3 w-3" />
+                      </Link>
+                    ) : <span />}
+
+                    <div className="flex items-center gap-2">
+                      {isPending ? (
+                        <>
+                          <Button
+                            size="sm"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-2.5 h-8 text-xs"
+                            isDisabled={isProcessing}
+                            onPress={() =>
+                              setReportActionConfirm({ report, action: "resolved" })
+                            }
+                          >
+                            Resolve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            color="default"
+                            className="h-8 text-xs font-medium"
+                            isDisabled={isProcessing}
+                            onPress={() =>
+                              setReportActionConfirm({ report, action: "dismissed" })
+                            }
+                          >
+                            Dismiss
+                          </Button>
+                        </>
+                      ) : (
+                        <span className="text-xs text-slate-400 dark:text-slate-500">
+                          Completed
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Pagination */}

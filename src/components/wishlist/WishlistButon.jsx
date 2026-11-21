@@ -18,8 +18,12 @@ export default function WishlistButton({
   const { data } = useSession();
   const userInfo = data?.user?.email || null;
 
-  const handlePress = async () => {
-    if (!product || !product._id) {
+  const handlePress = async (e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+
+    const productId = product?._id || product?.id;
+    if (!product || !productId) {
       toast.error("Product information is not available");
       return;
     }
@@ -67,7 +71,7 @@ export default function WishlistButton({
           isWishlisted
             ? "hover:bg-red-100 dark:hover:bg-red-900/30"
             : "hover:bg-default-100 dark:hover:bg-default-50/10"
-        } active:scale-90 focus-visible:ring-2 focus-visible:ring-red-500/50`}
+        } active:scale-90 focus-visible:ring-2 focus-visible:ring-red-500/50 cursor-pointer`}
       >
         <Heart
           className={`w-5 h-5 transition-all duration-300 ease-in-out ${

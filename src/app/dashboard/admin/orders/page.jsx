@@ -320,9 +320,10 @@ export default function AdminOrdersPage() {
           )}
         </div>
       ) : (
-        /* Table View */
+        /* 3-Tier Responsive Order Views */
         <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View (lg+) */}
+          <div className="hidden lg:block overflow-x-auto">
             <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
               <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 <tr>
@@ -427,7 +428,6 @@ export default function AdminOrdersPage() {
                       {/* Status Management Dropdown & Actions */}
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {/* Status Select */}
                           <select
                             value={currentStatus}
                             onChange={(e) => handleStatusChange(order._id, e.target.value)}
@@ -441,13 +441,12 @@ export default function AdminOrdersPage() {
                             ))}
                           </select>
 
-                          {/* Cancel / Delete Order */}
                           <Button
                             size="sm"
                             variant="danger"
                             isDisabled={isProcessing}
                             onPress={() => setCancelConfirmOrder(order)}
-                            className="font-medium"
+                            className="font-medium cursor-pointer"
                             aria-label={`Cancel order ${order._id}`}
                             title="Cancel / Delete order"
                           >
@@ -460,6 +459,219 @@ export default function AdminOrdersPage() {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Tablet Grid View (sm to lg) */}
+          <div className="hidden sm:grid lg:hidden grid-cols-2 gap-4 p-4">
+            {filteredOrders.map((order) => {
+              const isProcessing = actionLoadingId === order._id;
+              const currentStatus = order.orderStatus || "pending";
+              const isPaid = (order.paymentStatus || "").toLowerCase() === "paid";
+
+              return (
+                <div
+                  key={order._id}
+                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 shadow-xs flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">
+                          {order.productTitle || "Product Item"}
+                        </p>
+                        <p className="font-mono text-[11px] text-slate-400 truncate">
+                          ID: {order._id}
+                        </p>
+                      </div>
+                      <span
+                        className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${
+                          ORDER_STATUS_COLORS[currentStatus] || "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                        }`}
+                      >
+                        {currentStatus === "delivered" ? (
+                          <PackageCheck className="h-3 w-3" />
+                        ) : currentStatus === "shipped" ? (
+                          <Truck className="h-3 w-3" />
+                        ) : currentStatus === "rejected" ? (
+                          <XCircle className="h-3 w-3" />
+                        ) : (
+                          <Clock className="h-3 w-3" />
+                        )}
+                        {currentStatus}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 mb-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400 text-[11px]">Amount:</span>
+                        <span className="font-bold text-slate-900 dark:text-white">
+                          ৳{Number(order.price || 0).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-400 text-[11px]">Payment:</span>
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-1.5 py-0.2 text-[10px] font-semibold ${
+                            isPaid
+                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
+                              : "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300"
+                          }`}
+                        >
+                          <CreditCard className="h-2.5 w-2.5" />
+                          {isPaid ? "Paid" : "Payment Pending"}
+                        </span>
+                      </div>
+                      <div className="text-[11px] pt-1">
+                        <span className="text-slate-400">Buyer: </span>
+                        <span className="font-medium text-slate-800 dark:text-slate-200">
+                          {order.buyerName || "Buyer"} ({order.buyerInfo || "N/A"})
+                        </span>
+                      </div>
+                      <div className="text-[11px]">
+                        <span className="text-slate-400">Seller: </span>
+                        <span className="font-medium text-slate-800 dark:text-slate-200">
+                          {order.sellerName || "Seller"} ({order.sellerInfo || "N/A"})
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-400">
+                        Date: {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "N/A"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                    <select
+                      value={currentStatus}
+                      onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                      disabled={isProcessing}
+                      className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1 text-xs text-slate-700 dark:text-slate-200 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600 capitalize cursor-pointer disabled:opacity-50"
+                    >
+                      {ORDER_STATUS_OPTIONS.map((st) => (
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
+                      ))}
+                    </select>
+
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      isDisabled={isProcessing}
+                      onPress={() => setCancelConfirmOrder(order)}
+                      className="font-medium h-7 text-xs cursor-pointer"
+                      title="Cancel order"
+                    >
+                      <Trash2 className="h-3 w-3 mr-1" /> Cancel
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Mobile Card View (< sm) */}
+          <div className="flex sm:hidden flex-col gap-3 p-3">
+            {filteredOrders.map((order) => {
+              const isProcessing = actionLoadingId === order._id;
+              const currentStatus = order.orderStatus || "pending";
+              const isPaid = (order.paymentStatus || "").toLowerCase() === "paid";
+
+              return (
+                <div
+                  key={order._id}
+                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 shadow-xs"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">
+                        {order.productTitle || "Product Item"}
+                      </p>
+                      <p className="font-mono text-[11px] text-slate-400 truncate">
+                        ID: {order._id}
+                      </p>
+                    </div>
+                    <span
+                      className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${
+                        ORDER_STATUS_COLORS[currentStatus] || "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      {currentStatus === "delivered" ? (
+                        <PackageCheck className="h-3 w-3" />
+                      ) : currentStatus === "shipped" ? (
+                        <Truck className="h-3 w-3" />
+                      ) : currentStatus === "rejected" ? (
+                        <XCircle className="h-3 w-3" />
+                      ) : (
+                        <Clock className="h-3 w-3" />
+                      )}
+                      {currentStatus}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 mb-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-400 text-[11px]">Amount:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">
+                        ৳{Number(order.price || 0).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-400 text-[11px]">Payment:</span>
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                          isPaid
+                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
+                            : "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300"
+                        }`}
+                      >
+                        <CreditCard className="h-2.5 w-2.5" />
+                        {isPaid ? "Paid" : "Payment Pending"}
+                      </span>
+                    </div>
+                    <div className="text-[11px] pt-1">
+                      <span className="text-slate-400">Buyer: </span>
+                      <span className="font-medium text-slate-800 dark:text-slate-200">
+                        {order.buyerName || "Buyer"} ({order.buyerInfo || "N/A"})
+                      </span>
+                    </div>
+                    <div className="text-[11px]">
+                      <span className="text-slate-400">Seller: </span>
+                      <span className="font-medium text-slate-800 dark:text-slate-200">
+                        {order.sellerName || "Seller"} ({order.sellerInfo || "N/A"})
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400">
+                      Date: {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "N/A"}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                    <select
+                      value={currentStatus}
+                      onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                      disabled={isProcessing}
+                      className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600 capitalize cursor-pointer disabled:opacity-50"
+                    >
+                      {ORDER_STATUS_OPTIONS.map((st) => (
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
+                      ))}
+                    </select>
+
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      isDisabled={isProcessing}
+                      onPress={() => setCancelConfirmOrder(order)}
+                      className="font-medium h-8 text-xs cursor-pointer"
+                    >
+                      <Trash2 className="h-3 w-3 mr-1" /> Cancel
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

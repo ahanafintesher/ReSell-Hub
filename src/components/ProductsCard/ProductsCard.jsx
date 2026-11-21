@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
 import WishlistButton from "../wishlist/WishlistButon";
+import ReportProductModal from "../Modals/ReportProductModal";
 
 const categoryPillStyles = {
   audio: "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/50",
@@ -21,6 +22,7 @@ export default function ProductsCard({ products }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product, index) => {
+        const productId = product._id || product.id;
         const formattedPrice = product.price
           ? parseFloat(product.price).toLocaleString("en-US", {
               minimumFractionDigits: 0,
@@ -41,7 +43,7 @@ export default function ProductsCard({ products }) {
 
         return (
           <motion.div
-            key={product._id || product.id}
+            key={productId}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: Math.min(index * 0.05, 0.4) }}
@@ -49,10 +51,11 @@ export default function ProductsCard({ products }) {
             className="h-full"
           >
             <Card className="h-full border border-slate-200 bg-white dark:bg-slate-900/90 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-500/50 hover:shadow-xl transition-all duration-300 flex flex-col justify-between rounded-2xl overflow-hidden">
-              {/* Semantic Link wrapping card header and content */}
+              {/* Card Header and Image wrap to Details */}
               <Link
-                href={`/products/${product._id || product.id}`}
+                href={`/products/${productId}`}
                 className="group block text-left focus:outline-none flex-1"
+                aria-label={`View details for ${product.name || product.title}`}
               >
                 <Card.Header className="pb-0 pt-3 px-4 flex-col items-start">
                   <div className="flex justify-between w-full items-center gap-2">
@@ -88,7 +91,7 @@ export default function ProductsCard({ products }) {
                     {imageSrc ? (
                       <Image
                         src={imageSrc}
-                        alt={product.title || "Product"}
+                        alt={product.title || product.name || "Product"}
                         width={300}
                         height={300}
                         className={`w-full h-full object-cover rounded-xl aspect-square transition-transform duration-300 group-hover:scale-105 ${
@@ -105,13 +108,25 @@ export default function ProductsCard({ products }) {
                 </Card.Content>
               </Link>
 
-              <Card.Footer className="justify-between items-center gap-2 pt-0 px-4 pb-4">
-                <div className="text-xs text-slate-400 font-medium capitalize">
-                  {product.condition || "Used"}
+              {/* Card Footer with Details, Condition, Report, Wishlist, and Buy Now */}
+              <Card.Footer className="flex-col gap-2 pt-0 px-4 pb-4">
+                <div className="flex justify-between items-center w-full">
+                  <div className="text-xs text-slate-400 font-medium capitalize">
+                    {product.condition || "Used"}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <ReportProductModal product={product} variant="icon" />
+                    <WishlistButton product={product} />
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <WishlistButton product={product} />
+                <div className="flex items-center justify-between w-full gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/70">
+                  <Link
+                    href={`/products/${productId}`}
+                    className="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+                  >
+                    View Details
+                  </Link>
 
                   {isSold ? (
                     <Button
@@ -124,7 +139,7 @@ export default function ProductsCard({ products }) {
                   ) : (
                     <Button
                       as={Link}
-                      href={`/products/${product._id || product.id}`}
+                      href={`/checkout?productId=${productId}`}
                       className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold shadow-xs text-xs px-3.5 py-1.5"
                       radius="full"
                       size="sm"

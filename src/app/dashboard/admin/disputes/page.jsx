@@ -413,7 +413,8 @@ export default function AdminDisputesPage() {
         </div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs dark:border-slate-800 dark:bg-slate-900">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View (lg+) */}
+          <div className="hidden lg:block overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
                 <tr>
@@ -512,6 +513,164 @@ export default function AdminDisputesPage() {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Tablet Grid View (sm to lg) */}
+          <div className="hidden sm:grid lg:hidden grid-cols-2 gap-4 p-4">
+            {disputes.map((dispute) => {
+              const cfg = STATUS_CONFIG[dispute.status] || STATUS_CONFIG.opened;
+              const StatusIcon = cfg.icon;
+
+              return (
+                <div
+                  key={dispute._id}
+                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 shadow-xs flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">
+                          {dispute.productTitle || "Untitled Product"}
+                        </p>
+                        <p className="font-mono text-[11px] text-slate-400 truncate">
+                          Order: {String(dispute.orderId).slice(0, 14)}...
+                        </p>
+                      </div>
+                      <span
+                        className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${cfg.badgeClass}`}
+                      >
+                        <StatusIcon className="h-3 w-3" />
+                        {cfg.label}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 mb-3">
+                      <div>
+                        <span className="text-slate-400 block text-[11px] font-medium">Reason:</span>
+                        <p className="font-semibold text-amber-700 dark:text-amber-400">
+                          {dispute.reason}
+                        </p>
+                        {dispute.details && (
+                          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                            {dispute.details}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between pt-1">
+                        <span className="text-slate-400 text-[11px]">Dispute Amount:</span>
+                        <span className="font-bold text-slate-900 dark:text-white">
+                          ৳{dispute.orderPrice != null ? dispute.orderPrice : (dispute.price || 0)}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-500">
+                        Buyer: <span className="font-mono text-slate-800 dark:text-slate-200">{dispute.buyerEmail}</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500">
+                        Seller: <span className="font-mono text-slate-800 dark:text-slate-200">{dispute.sellerEmail || "N/A"}</span>
+                      </div>
+                      <div className="text-[11px] text-slate-400">
+                        Filed: {dispute.createdAt ? new Date(dispute.createdAt).toLocaleDateString() : "N/A"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                    {dispute.status === "opened" ? (
+                      <button
+                        type="button"
+                        onClick={() => handleOpenResolveModal(dispute)}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-amber-700 transition cursor-pointer"
+                      >
+                        <Scale className="h-3.5 w-3.5" />
+                        Resolve Dispute
+                      </button>
+                    ) : (
+                      <span className="text-xs text-slate-400 dark:text-slate-500 italic">
+                        Resolved ({dispute.status.replace("resolved_", "")})
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Mobile Card View (< sm) */}
+          <div className="flex sm:hidden flex-col gap-3 p-3">
+            {disputes.map((dispute) => {
+              const cfg = STATUS_CONFIG[dispute.status] || STATUS_CONFIG.opened;
+              const StatusIcon = cfg.icon;
+
+              return (
+                <div
+                  key={dispute._id}
+                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 shadow-xs"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">
+                        {dispute.productTitle || "Untitled Product"}
+                      </p>
+                      <p className="font-mono text-[11px] text-slate-400 truncate">
+                        Order: {String(dispute.orderId).slice(0, 14)}...
+                      </p>
+                    </div>
+                    <span
+                      className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${cfg.badgeClass}`}
+                    >
+                      <StatusIcon className="h-3 w-3" />
+                      {cfg.label}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 mb-3">
+                    <div>
+                      <span className="text-slate-400 block text-[11px] font-medium">Reason:</span>
+                      <p className="font-semibold text-amber-700 dark:text-amber-400">
+                        {dispute.reason}
+                      </p>
+                      {dispute.details && (
+                        <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 line-clamp-3">
+                          {dispute.details}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-slate-400 text-[11px]">Dispute Amount:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">
+                        ৳{dispute.orderPrice != null ? dispute.orderPrice : (dispute.price || 0)}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-500">
+                      Buyer: <span className="font-mono text-slate-800 dark:text-slate-200">{dispute.buyerEmail}</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500">
+                      Seller: <span className="font-mono text-slate-800 dark:text-slate-200">{dispute.sellerEmail || "N/A"}</span>
+                    </div>
+                    <div className="text-[11px] text-slate-400">
+                      Filed: {dispute.createdAt ? new Date(dispute.createdAt).toLocaleDateString() : "N/A"}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                    {dispute.status === "opened" ? (
+                      <button
+                        type="button"
+                        onClick={() => handleOpenResolveModal(dispute)}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-amber-700 transition cursor-pointer"
+                      >
+                        <Scale className="h-3.5 w-3.5" />
+                        Resolve Dispute
+                      </button>
+                    ) : (
+                      <span className="text-xs text-slate-400 dark:text-slate-500 italic">
+                        Resolved ({dispute.status.replace("resolved_", "")})
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Pagination */}

@@ -29,11 +29,19 @@ function StatusBadge({ status }) {
   const normalized = status?.toLowerCase() || "available";
   const color =
     statusColors[normalized] ?? "bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700";
+  const label =
+    normalized === "pending"
+      ? "Pending Approval"
+      : normalized === "rejected"
+      ? "Rejected"
+      : status || "Available";
+
   return (
     <span
       className={`inline-block text-xs px-2.5 py-0.5 rounded-full font-medium capitalize whitespace-nowrap ${color}`}
+      title={normalized === "pending" ? "Awaiting administrator review before appearing in public catalog" : undefined}
     >
-      {status || "Available"}
+      {label}
     </span>
   );
 }
@@ -260,9 +268,10 @@ export default function MyProductsPage() {
             >
               <option value="all">All Statuses</option>
               <option value="available">Available</option>
+              <option value="pending">Pending Approval</option>
               <option value="hidden">Hidden</option>
               <option value="sold">Sold</option>
-              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
             </select>
           </div>
 

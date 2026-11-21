@@ -100,7 +100,7 @@ console.log("Selected Image:", image);
     const imageUrl = await uploadImageToImgbb(image);
     console.log("Image URL:", imageUrl);
 
-    // Create product object
+    // Create product object with initial pending status
     const productData = {
       title: data.title,
       description: data.description,
@@ -111,20 +111,19 @@ console.log("Selected Image:", image);
       image: imageUrl,
       sellerInfo,
       sellerName,
-      status: "available",
-      isPubliclyVisible: true,
+      status: "pending",
+      moderationStatus: "pending",
+      isPubliclyVisible: false,
       createdAt: new Date(),
     };
 
     const res = await createProduct(productData);
 
     if (res.insertedId) {
-      console.log("Product created:", res.insertedId);
-
       e.target.reset();
       setImage(null);
 
-      toast.success("Product Added Successfully")
+      toast.success("Product submitted successfully! It is now pending admin approval before appearing publicly.");
     } else {
       console.error("Failed to create product:", res);
       toast.error("Failed to create product");
@@ -156,13 +155,25 @@ console.log("Selected Image:", image);
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-10 px-4">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-gray-200 p-8 shadow-lg">
         {/* Header */}
-        <div className="border-b border-gray-200 pb-6 mb-8">
+        <div className="border-b border-gray-200 pb-6 mb-6">
           <h1 className="text-3xl font-bold text-gray-900">
             Add Product
           </h1>
 
           <p className="text-gray-500 text-sm mt-2">
             Create a new product listing for your marketplace.
+          </p>
+        </div>
+
+        {/* Product Approval Workflow Notice */}
+        <div className="mb-8 rounded-xl border border-amber-200 bg-amber-50/80 p-4 text-xs sm:text-sm text-amber-900">
+          <p className="font-semibold flex items-center gap-1.5">
+            <span>ℹ️</span> Listing Approval Workflow
+          </p>
+          <p className="mt-1 text-amber-800 leading-relaxed">
+            All newly submitted products initially receive <strong>Pending</strong> status.
+            Our administrative team reviews listings to ensure marketplace safety. Once approved,
+            your listing will automatically become publicly visible and available for buyers to purchase.
           </p>
         </div>
 

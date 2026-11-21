@@ -17,6 +17,7 @@ import {
   Calendar,
   CheckCircle2,
   XCircle,
+  AlertTriangle,
 } from "lucide-react";
 import { Avatar, Button } from "@heroui/react";
 import toast from "react-hot-toast";
@@ -35,6 +36,7 @@ export default function AdminUsersPage() {
   // In-flight mutations
   const [actionLoadingId, setActionLoadingId] = useState(null);
   const [deleteConfirmUser, setDeleteConfirmUser] = useState(null);
+  const [blockConfirmUser, setBlockConfirmUser] = useState(null);
 
   const loadUsers = async () => {
     try {
@@ -80,28 +82,43 @@ export default function AdminUsersPage() {
     };
   }, []);
 
+  // Unblock user directly (preserving immediate behavior)
+  const handleUnblockUser = async (user) => {
+    try {
+      setActionLoadingId(user._id);
+      await updateUserStatus(user._id, "active");
 
-  const handleStatusToggle = async (user) => {
-    const currentStatus = user.status || "active";
-    const nextStatus = currentStatus === "active" ? "blocked" : "active";
+      setUsers((prev) =>
+        prev.map((u) => (u._id === user._id ? { ...u, status: "active" } : u))
+      );
+
+      toast.success(`User ${user.name || user.email} unblocked successfully`);
+    } catch (err) {
+      console.error("Status update error:", err);
+      toast.error(err.message || "Failed to unblock user");
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  // Block user after confirmation
+  const handleConfirmBlock = async () => {
+    if (!blockConfirmUser) return;
+    const user = blockConfirmUser;
 
     try {
       setActionLoadingId(user._id);
-      await updateUserStatus(user._id, nextStatus);
+      await updateUserStatus(user._id, "blocked");
 
-      // Optimistic state update
       setUsers((prev) =>
-        prev.map((u) => (u._id === user._id ? { ...u, status: nextStatus } : u))
+        prev.map((u) => (u._id === user._id ? { ...u, status: "blocked" } : u))
       );
 
-      toast.success(
-        `User ${user.name || user.email} ${
-          nextStatus === "blocked" ? "blocked" : "unblocked"
-        } successfully`
-      );
+      toast.success(`User ${user.name || user.email} has been blocked`);
+      setBlockConfirmUser(null);
     } catch (err) {
-      console.error("Status update error:", err);
-      toast.error(err.message || "Failed to update user status");
+      console.error("Block user error:", err);
+      toast.error(err.message || "Failed to block user");
     } finally {
       setActionLoadingId(null);
     }
@@ -157,12 +174,12 @@ export default function AdminUsersPage() {
   }, [users]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 transition-colors">
       {/* Page Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Manage Users</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">Manage Users</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Monitor accounts, manage roles, toggle active/blocked status, and review marketplace participants.
           </p>
         </div>
@@ -181,40 +198,40 @@ export default function AdminUsersPage() {
 
       {/* Aggregate Stats */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-medium text-gray-500">Total Users</p>
-          <p className="mt-1 text-2xl font-bold text-gray-900">{stats.total}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Users</p>
+          <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{stats.total}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-medium text-green-600">Active Accounts</p>
-          <p className="mt-1 text-2xl font-bold text-green-700">{stats.active}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Active Accounts</p>
+          <p className="mt-1 text-2xl font-bold text-emerald-700 dark:text-emerald-400">{stats.active}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-medium text-red-600">Blocked</p>
-          <p className="mt-1 text-2xl font-bold text-red-700">{stats.blocked}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <p className="text-xs font-medium text-rose-600 dark:text-rose-400">Blocked</p>
+          <p className="mt-1 text-2xl font-bold text-rose-700 dark:text-rose-400">{stats.blocked}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-medium text-blue-600">Sellers</p>
-          <p className="mt-1 text-2xl font-bold text-blue-700">{stats.sellers}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
+          <p className="text-xs font-medium text-blue-600 dark:text-blue-400">Sellers</p>
+          <p className="mt-1 text-2xl font-bold text-blue-700 dark:text-blue-400">{stats.sellers}</p>
         </div>
-        <div className="col-span-2 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:col-span-1">
-          <p className="text-xs font-medium text-purple-600">Buyers</p>
-          <p className="mt-1 text-2xl font-bold text-purple-700">{stats.buyers}</p>
+        <div className="col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm sm:col-span-1">
+          <p className="text-xs font-medium text-purple-600 dark:text-purple-400">Buyers</p>
+          <p className="mt-1 text-2xl font-bold text-purple-700 dark:text-purple-400">{stats.buyers}</p>
         </div>
       </div>
 
       {/* Controls & Filters */}
-      <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="mb-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
           {/* Search */}
           <div className="relative sm:col-span-6">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="Search by name, email, or user ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2.5 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
             />
           </div>
 
@@ -223,7 +240,7 @@ export default function AdminUsersPage() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
             >
               <option value="all">All Roles</option>
               <option value="buyer">Buyers</option>
@@ -237,7 +254,7 @@ export default function AdminUsersPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600"
+              className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
             >
               <option value="all">All Statuses</option>
               <option value="active">Active</option>
@@ -249,11 +266,11 @@ export default function AdminUsersPage() {
 
       {/* Error State */}
       {error && (
-        <div className="mb-6 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          <AlertCircle className="mt-0.5 h-5 w-5 text-red-600 shrink-0" />
+        <div className="mb-6 flex items-start gap-3 rounded-2xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-4 text-sm text-rose-800 dark:text-rose-300">
+          <AlertCircle className="mt-0.5 h-5 w-5 text-rose-600 shrink-0" />
           <div className="flex-1">
             <p className="font-semibold">Unable to load users</p>
-            <p className="mt-0.5 text-xs text-red-700">{error}</p>
+            <p className="mt-0.5 text-xs text-rose-700 dark:text-rose-400">{error}</p>
           </div>
           <Button size="sm" color="danger" variant="flat" onPress={loadUsers}>
             Retry
@@ -263,18 +280,18 @@ export default function AdminUsersPage() {
 
       {/* Loading Skeleton */}
       {loading ? (
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-600">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 text-center shadow-sm">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600">
             <RefreshCw className="h-6 w-6 animate-spin" />
           </div>
-          <p className="mt-3 text-sm font-medium text-gray-700">Loading user directory...</p>
+          <p className="mt-3 text-sm font-medium text-slate-700 dark:text-slate-300">Loading user directory...</p>
         </div>
       ) : filteredUsers.length === 0 ? (
         /* Empty State */
-        <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-14 text-center">
-          <Users className="mx-auto h-12 w-12 text-gray-300" />
-          <h3 className="mt-3 text-base font-semibold text-gray-900">No users found</h3>
-          <p className="mt-1 text-sm text-gray-500">
+        <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-14 text-center">
+          <Users className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600" />
+          <h3 className="mt-3 text-base font-semibold text-slate-900 dark:text-white">No users found</h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             {searchQuery || roleFilter !== "all" || statusFilter !== "all"
               ? "Try adjusting your search criteria or clearing active filters."
               : "No user records exist in the database yet."}
@@ -295,181 +312,453 @@ export default function AdminUsersPage() {
           )}
         </div>
       ) : (
-        /* Desktop Table View */
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-600">
-              <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-700">
-                <tr>
-                  <th className="px-6 py-4">User</th>
-                  <th className="px-6 py-4">Role</th>
-                  <th className="px-6 py-4">Account Status</th>
-                  <th className="px-6 py-4">Location</th>
-                  <th className="px-6 py-4">Joined Date</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {filteredUsers.map((user) => {
-                  const isBlocked = user.status === "blocked";
-                  const isProcessing = actionLoadingId === user._id;
+        <>
+          {/* ── 1. Desktop Table View (lg+) ── */}
+          <div className="hidden lg:block overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  <tr>
+                    <th className="px-6 py-4">User</th>
+                    <th className="px-6 py-4">Role</th>
+                    <th className="px-6 py-4">Account Status</th>
+                    <th className="px-6 py-4">Location</th>
+                    <th className="px-6 py-4">Joined Date</th>
+                    <th className="px-6 py-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {filteredUsers.map((user) => {
+                    const isBlocked = user.status === "blocked";
+                    const isProcessing = actionLoadingId === user._id;
 
-                  return (
-                    <tr key={user._id} className="transition hover:bg-gray-50/70">
-                      {/* User Info */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <Avatar size="md" className="shrink-0">
-                            <Avatar.Image src={user.image} alt={user.name || "User"} />
-                            <Avatar.Fallback className="bg-green-100 text-green-700 font-bold">
-                              {user.name?.charAt(0)?.toUpperCase() || "U"}
-                            </Avatar.Fallback>
-                          </Avatar>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-gray-900 truncate">
-                              {user.name || "Unnamed User"}
-                            </p>
-                            <p className="text-xs text-gray-500 truncate flex items-center gap-1">
-                              <Mail className="h-3 w-3" />
-                              {user.email}
-                            </p>
+                    return (
+                      <tr key={user._id} className="transition hover:bg-slate-50/70 dark:hover:bg-slate-800/50">
+                        {/* User Info */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <Avatar size="md" className="shrink-0">
+                              <Avatar.Image src={user.image} alt={user.name || "User"} />
+                              <Avatar.Fallback className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold">
+                                {user.name?.charAt(0)?.toUpperCase() || "U"}
+                              </Avatar.Fallback>
+                            </Avatar>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-slate-900 dark:text-white truncate">
+                                {user.name || "Unnamed User"}
+                              </p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 truncate flex items-center gap-1">
+                                <Mail className="h-3 w-3" />
+                                {user.email}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Role Badge */}
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
-                            user.role === "admin"
-                              ? "bg-purple-100 text-purple-700"
-                              : user.role === "seller"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-emerald-100 text-emerald-700"
-                          }`}
-                        >
-                          {user.role === "admin" ? (
-                            <Shield className="h-3 w-3" />
-                          ) : user.role === "seller" ? (
-                            <ShoppingBag className="h-3 w-3" />
-                          ) : (
-                            <User className="h-3 w-3" />
-                          )}
-                          {user.role || "buyer"}
-                        </span>
-                      </td>
+                        {/* Role Badge */}
+                        <td className="px-6 py-4">
+                          <span
+                            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
+                              user.role === "admin"
+                                ? "bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300"
+                                : user.role === "seller"
+                                  ? "bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
+                                  : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
+                            }`}
+                          >
+                            {user.role === "admin" ? (
+                              <Shield className="h-3 w-3" />
+                            ) : user.role === "seller" ? (
+                              <ShoppingBag className="h-3 w-3" />
+                            ) : (
+                              <User className="h-3 w-3" />
+                            )}
+                            {user.role || "buyer"}
+                          </span>
+                        </td>
 
-                      {/* Status Badge */}
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
-                            isBlocked
-                              ? "bg-red-100 text-red-700"
-                              : "bg-green-100 text-green-700"
-                          }`}
-                        >
-                          {isBlocked ? (
-                            <XCircle className="h-3 w-3" />
-                          ) : (
-                            <CheckCircle2 className="h-3 w-3" />
-                          )}
-                          {isBlocked ? "Blocked" : "Active"}
-                        </span>
-                      </td>
-
-                      {/* Location */}
-                      <td className="px-6 py-4 text-xs text-gray-500">
-                        <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3 text-gray-400" />
-                          {user.location || "N/A"}
-                        </span>
-                      </td>
-
-                      {/* Join Date */}
-                      <td className="px-6 py-4 text-xs text-gray-500">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3 text-gray-400" />
-                          {user.createdAt
-                            ? new Date(user.createdAt).toLocaleDateString()
-                            : "N/A"}
-                        </span>
-                      </td>
-
-                      {/* Actions */}
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          {/* Block / Unblock Toggle */}
-                          <Button
-                            size="sm"
-                            variant="flat"
-                            color={isBlocked ? "success" : "warning"}
-                            isDisabled={isProcessing || user.role === "admin"}
-                            onPress={() => handleStatusToggle(user)}
-                            className="font-medium"
+                        {/* Status Badge */}
+                        <td className="px-6 py-4">
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                              isBlocked
+                                ? "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300"
+                                : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
+                            }`}
                           >
                             {isBlocked ? (
-                              <>
+                              <XCircle className="h-3 w-3" />
+                            ) : (
+                              <CheckCircle2 className="h-3 w-3" />
+                            )}
+                            {isBlocked ? "Blocked" : "Active"}
+                          </span>
+                        </td>
+
+                        {/* Location */}
+                        <td className="px-6 py-4 text-xs text-slate-500 dark:text-slate-400">
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3 text-slate-400" />
+                            {user.location || "N/A"}
+                          </span>
+                        </td>
+
+                        {/* Join Date */}
+                        <td className="px-6 py-4 text-xs text-slate-500 dark:text-slate-400">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3 text-slate-400" />
+                            {user.createdAt
+                              ? new Date(user.createdAt).toLocaleDateString()
+                              : "N/A"}
+                          </span>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {/* Block / Unblock Toggle with Modal Confirmation on Block */}
+                            {isBlocked ? (
+                              <Button
+                                size="sm"
+                                variant="flat"
+                                color="success"
+                                isDisabled={isProcessing || user.role === "admin"}
+                                onPress={() => handleUnblockUser(user)}
+                                className="font-medium text-xs h-8"
+                              >
                                 <UserCheck className="h-3.5 w-3.5" />
                                 Unblock
-                              </>
+                              </Button>
                             ) : (
-                              <>
+                              <Button
+                                size="sm"
+                                variant="flat"
+                                color="warning"
+                                isDisabled={isProcessing || user.role === "admin"}
+                                onPress={() => setBlockConfirmUser(user)}
+                                className="font-medium text-xs h-8"
+                              >
                                 <UserX className="h-3.5 w-3.5" />
                                 Block
-                              </>
+                              </Button>
                             )}
-                          </Button>
 
-                          {/* Delete Button */}
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            isDisabled={isProcessing || user.role === "admin"}
-                            onPress={() => setDeleteConfirmUser(user)}
-                            className="font-medium"
-                            aria-label={`Delete ${user.name || user.email}`}
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                            {/* Delete Button */}
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              isDisabled={isProcessing || user.role === "admin"}
+                              onPress={() => setDeleteConfirmUser(user)}
+                              className="font-medium h-8"
+                              aria-label={`Delete ${user.name || user.email}`}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ── 2. Tablet Grid View (sm to lg) ── */}
+          <div className="hidden sm:grid lg:hidden grid-cols-2 gap-4">
+            {filteredUsers.map((user) => {
+              const isBlocked = user.status === "blocked";
+              const isProcessing = actionLoadingId === user._id;
+
+              return (
+                <div
+                  key={user._id}
+                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm flex flex-col justify-between gap-3"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Avatar size="md" className="shrink-0">
+                        <Avatar.Image src={user.image} alt={user.name || "User"} />
+                        <Avatar.Fallback className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold">
+                          {user.name?.charAt(0)?.toUpperCase() || "U"}
+                        </Avatar.Fallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-slate-900 dark:text-white truncate text-sm">
+                          {user.name || "Unnamed User"}
+                        </p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate flex items-center gap-1">
+                          <Mail className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{user.email}</span>
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold shrink-0 ${
+                        isBlocked
+                          ? "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300"
+                          : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
+                      }`}
+                    >
+                      {isBlocked ? "Blocked" : "Active"}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+                    <div>
+                      <span className="text-slate-400 block font-medium">Role:</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200 capitalize">
+                        {user.role || "buyer"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block font-medium">Location:</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200 truncate block">
+                        {user.location || "N/A"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    {isBlocked ? (
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        color="success"
+                        isDisabled={isProcessing || user.role === "admin"}
+                        onPress={() => handleUnblockUser(user)}
+                        className="font-medium text-xs h-8"
+                      >
+                        <UserCheck className="h-3.5 w-3.5" />
+                        Unblock
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        color="warning"
+                        isDisabled={isProcessing || user.role === "admin"}
+                        onPress={() => setBlockConfirmUser(user)}
+                        className="font-medium text-xs h-8"
+                      >
+                        <UserX className="h-3.5 w-3.5" />
+                        Block
+                      </Button>
+                    )}
+
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      isDisabled={isProcessing || user.role === "admin"}
+                      onPress={() => setDeleteConfirmUser(user)}
+                      className="font-medium h-8"
+                      aria-label={`Delete ${user.name || user.email}`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ── 3. Mobile Card View (< sm) ── */}
+          <div className="flex sm:hidden flex-col gap-3">
+            {filteredUsers.map((user) => {
+              const isBlocked = user.status === "blocked";
+              const isProcessing = actionLoadingId === user._id;
+
+              return (
+                <div
+                  key={user._id}
+                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Avatar size="sm" className="shrink-0">
+                        <Avatar.Image src={user.image} alt={user.name || "User"} />
+                        <Avatar.Fallback className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs">
+                          {user.name?.charAt(0)?.toUpperCase() || "U"}
+                        </Avatar.Fallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-slate-900 dark:text-white truncate text-sm">
+                          {user.name || "Unnamed User"}
+                        </p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold shrink-0 ${
+                        isBlocked
+                          ? "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300"
+                          : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
+                      }`}
+                    >
+                      {isBlocked ? "Blocked" : "Active"}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div>
+                      <span className="text-slate-400 block font-medium">Role:</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200 capitalize">
+                        {user.role || "buyer"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block font-medium">Joined:</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200">
+                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    {isBlocked ? (
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        color="success"
+                        isDisabled={isProcessing || user.role === "admin"}
+                        onPress={() => handleUnblockUser(user)}
+                        className="font-medium text-xs h-8 flex-1 sm:flex-initial"
+                      >
+                        <UserCheck className="h-3.5 w-3.5" />
+                        Unblock
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        color="warning"
+                        isDisabled={isProcessing || user.role === "admin"}
+                        onPress={() => setBlockConfirmUser(user)}
+                        className="font-medium text-xs h-8 flex-1 sm:flex-initial"
+                      >
+                        <UserX className="h-3.5 w-3.5" />
+                        Block
+                      </Button>
+                    )}
+
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      isDisabled={isProcessing || user.role === "admin"}
+                      onPress={() => setDeleteConfirmUser(user)}
+                      className="font-medium h-8"
+                      aria-label={`Delete ${user.name || user.email}`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {/* ── User Blocking Confirmation Modal (Phase 3) ── */}
+      {blockConfirmUser && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+          onClick={() => {
+            if (actionLoadingId !== blockConfirmUser._id) setBlockConfirmUser(null);
+          }}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-2xl text-left animate-in fade-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400">
+                <AlertTriangle className="h-6 w-6" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Confirm User Account Suspension
+                </h3>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Are you sure you want to block{" "}
+                  <strong className="text-slate-900 dark:text-white font-semibold">
+                    {blockConfirmUser.name || blockConfirmUser.email}
+                  </strong>
+                  ?
+                </p>
+                <div className="mt-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/50 p-3 text-xs text-amber-900 dark:text-amber-200">
+                  <p className="font-semibold mb-1">Consequences of blocking:</p>
+                  <ul className="list-disc pl-4 space-y-0.5 text-amber-800 dark:text-amber-300">
+                    <li>Immediate revocation of active login sessions.</li>
+                    <li>Inability to list products, checkout, or message sellers.</li>
+                    <li>Public listings associated with this account may be hidden.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <Button
+                variant="flat"
+                color="default"
+                onPress={() => setBlockConfirmUser(null)}
+                isDisabled={actionLoadingId === blockConfirmUser._id}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-amber-600 hover:bg-amber-700 text-white font-semibold"
+                onPress={handleConfirmBlock}
+                isLoading={actionLoadingId === blockConfirmUser._id}
+              >
+                Confirm Block
+              </Button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* ── User Delete Confirmation Modal ── */}
       {deleteConfirmUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+          onClick={() => {
+            if (actionLoadingId !== deleteConfirmUser._id) setDeleteConfirmUser(null);
+          }}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-2xl text-left animate-in fade-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
-                <Trash2 className="h-5 w-5" />
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400">
+                <Trash2 className="h-6 w-6" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Delete User Account</h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Delete User Account</h3>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                   Are you sure you want to permanently delete{" "}
-                  <strong>{deleteConfirmUser.name || deleteConfirmUser.email}</strong>?
-                  This action cannot be undone.
+                  <strong className="text-slate-900 dark:text-white font-semibold">
+                    {deleteConfirmUser.name || deleteConfirmUser.email}
+                  </strong>
+                  ? All account records, active listings, and associated data will be removed. This action cannot be reversed.
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
               <Button
-                variant="tertiary"
+                variant="flat"
+                color="default"
                 onPress={() => setDeleteConfirmUser(null)}
                 isDisabled={actionLoadingId === deleteConfirmUser._id}
               >
                 Cancel
               </Button>
               <Button
-                variant="danger"
+                className="bg-rose-600 hover:bg-rose-700 text-white font-semibold"
                 onPress={handleDeleteUser}
                 isLoading={actionLoadingId === deleteConfirmUser._id}
               >

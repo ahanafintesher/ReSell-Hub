@@ -43,6 +43,8 @@ const Page = async ({ params, searchParams }) => {
   }
 
   const isSold = data.status === "sold";
+  const isPending = data.status === "pending" || data.moderationStatus === "pending";
+  const isRejected = data.status === "rejected" || data.moderationStatus === "rejected";
 
   return (
     <div className="max-w-7xl mx-auto px-5 py-10 space-y-8">
@@ -166,6 +168,32 @@ const Page = async ({ params, searchParams }) => {
                   </Button>
                   <p className="text-xs text-rose-600 dark:text-rose-400 mt-1 font-medium">
                     This item has been purchased and is no longer available.
+                  </p>
+                </div>
+              ) : isPending ? (
+                <div className="w-full sm:w-auto">
+                  <Button
+                    disabled
+                    className="bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-semibold px-8 py-3 cursor-not-allowed text-base border border-amber-300 dark:border-amber-800"
+                    size="lg"
+                  >
+                    Pending Approval
+                  </Button>
+                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 font-medium">
+                    This listing is awaiting administrator moderation and is not yet available for purchase.
+                  </p>
+                </div>
+              ) : isRejected ? (
+                <div className="w-full sm:w-auto">
+                  <Button
+                    disabled
+                    className="bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-semibold px-8 py-3 cursor-not-allowed text-base border border-rose-300 dark:border-rose-800"
+                    size="lg"
+                  >
+                    Listing Rejected
+                  </Button>
+                  <p className="text-xs text-rose-600 dark:text-rose-400 mt-1 font-medium">
+                    This item was rejected by platform moderation and cannot be purchased.
                   </p>
                 </div>
               ) : (

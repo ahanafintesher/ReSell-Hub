@@ -17,8 +17,6 @@ import {
   Car,
   Smartphone,
   Package,
-  PlusCircle,
-  ShieldCheck,
   Tag,
   AlertTriangle,
   RefreshCw,
@@ -418,54 +416,6 @@ export default function CategoryExplorer({
         </AnimatePresence>
       )}
 
-      {/* Bottom Seller CTA matching brand aesthetic */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 p-8 sm:p-10 text-white shadow-xl"
-      >
-        <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-        <div className="absolute -left-16 -bottom-16 w-64 h-64 rounded-full bg-cyan-400/20 blur-2xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-semibold text-emerald-100">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              Circular Commerce Platform
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Have items you no longer use?
-            </h3>
-            <p className="text-sm sm:text-base text-emerald-100 leading-relaxed">
-              Turn your pre-owned electronics, furniture, or fashion into cash
-              in minutes. Join thousands of verified community sellers giving
-              quality items a second life.
-            </p>
-            <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-emerald-100/90 font-medium">
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                Verified Buyer Community
-              </span>
-              <span>·</span>
-              <span>Zero Listing Fees</span>
-              <span>·</span>
-              <span>Secure Stripe Payouts</span>
-            </div>
-          </div>
-
-          <div className="flex-shrink-0">
-            <Link
-              href="/dashboard/seller/products/add-products"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white text-emerald-800 font-bold text-sm sm:text-base shadow-lg hover:bg-emerald-50 transition cursor-pointer"
-            >
-              <PlusCircle className="w-4 h-4" />
-              List Item for Sale
-            </Link>
-          </div>
-        </div>
-      </motion.div>
     </div>
   );
 }
