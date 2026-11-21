@@ -67,13 +67,16 @@ A comprehensive, evidence-based End-to-End (E2E) audit and full-stack compatibil
 
 ### Test Accounts Utilized
 
-All tests utilized authentic credentials registered in MongoDB `resell_hub.user`:
+All tests utilized authentic credentials registered in MongoDB `resell_hub.user` and authenticated via Better Auth. Plaintext passwords have been rotated in the live test environment and eradicated from all tracked documentation:
 
-| Role | Email Address | Password | Permissions & Scope |
+| Role | Email Address | Password Reference | Permissions & Scope |
 |---|---|---|---|
-| **Buyer** | `e2e_buyer@resellhub.test` | `Password123!` | Browse catalog, cart management, checkout, personal orders & wishlist |
-| **Seller** | `e2e_seller@resellhub.test` | `Password123!` | Listing creation (pending only), own product editing, seller order fulfillment |
-| **Admin** | `e2e_admin@resellhub.test` | `Password123!` | Platform overview, product moderation, user account suspension, dispute audit |
+| **Buyer** | `e2e_buyer@resellhub.test` | `[ROTATED - TEST_ACCOUNT_PASSWORD in .env]` | Browse catalog, cart management, checkout, personal orders & wishlist |
+| **Seller** | `e2e_seller@resellhub.test` | `[ROTATED - TEST_ACCOUNT_PASSWORD in .env]` | Listing creation (pending only), own product editing, seller order fulfillment |
+| **Admin** | `e2e_admin@resellhub.test` | `[ROTATED - TEST_ACCOUNT_PASSWORD in .env]` | Platform overview, product moderation, user account suspension, dispute audit |
+
+> [!NOTE]
+> Following a security incident review, test passwords were live-rotated via `scripts/rotate-test-credentials.js`. Verification tests confirmed that the legacy password is strictly rejected (HTTP 401) and the rotated high-entropy password is required. Credentials are loaded exclusively via environment variables.
 
 ### Explicit Scope Boundaries
 - **In-Scope**: Full frontend Next.js App Router, Express REST APIs, MongoDB queries/indexes, Stripe Test Mode sessions, HeroUI accessible components, Better Auth session flows, 9 viewport matrix, Playwright browser E2E workflows.
@@ -104,7 +107,7 @@ Prior audit reports (`docs/FRONTEND_BROWSER_QA_AND_DEBUG_REPORT.md` and `docs/FR
 
 ## 4. Frontend-Backend Compatibility Matrix
 
-A comprehensive contract analysis was conducted across all 49 platform API integrations to verify URL base, path, HTTP method, payload structure, response envelopes, authentication headers, and error handling.
+A comprehensive contract analysis was conducted across all 37 platform API integrations to verify URL base, path, HTTP method, payload structure, response envelopes, authentication headers, and error handling.
 
 | # | Feature Area | Frontend API Path | Backend Route | HTTP Method | Request Contract | Response Contract | Auth Boundary | Verification Result |
 |---|---|---|---|---|---|---|---|---|
@@ -164,8 +167,8 @@ All scenarios were executed live against Chrome headless using Playwright with r
 - **Product Details Route**: Loads product title, high-res image, asking price in BDT (৳), seller reputation badge, "Add to Cart", "Buy Now", and accessible "Report" modal. Verified screenshot: `03_journeyA_product_details.png`.
 - **Categories Explorer**: `/categories` renders all 9 backend categories in authoritative priority order. Verified screenshot: `04_journeyA_categories_page.png`.
 
-### Journey B: Buyer Journey — 11/11 PASS
-- **Authentication**: Signed in via `/auth/login` as `e2e_buyer@resellhub.test` / `Password123!`.
+### Journey B: Buyer Journey — 12/12 PASS
+- **Authentication**: Signed in via `/auth/login` as `e2e_buyer@resellhub.test` using secure rotated credentials loaded from environment variables (`TEST_ACCOUNT_PASSWORD`).
 - **Session Persistence**: Navigated between routes and reloaded page; authenticated Better Auth session remained active.
 - **Cart Management**: Added item to cart from details page; opened `/cart`; verified line item, quantity counter, and subtotal calculation. Verified screenshot: `05_journeyB_cart.png`.
 - **Quantity Modification**: Clicked `+` button in cart; quantity incremented and total recalculated.
@@ -179,8 +182,8 @@ All scenarios were executed live against Chrome headless using Playwright with r
 - **RBAC Boundary Verification**: Navigated directly to `/dashboard/admin/users`; server authorization boundary rejected access and redirected safely away from admin dashboard.
 - **Clean Sign Out**: Session destroyed cleanly via Better Auth client.
 
-### Journey C: Seller Journey — 8/8 PASS
-- **Authentication**: Signed in as `e2e_seller@resellhub.test` / `Password123!`.
+### Journey C: Seller Journey — 10/10 PASS
+- **Authentication**: Signed in as `e2e_seller@resellhub.test` using secure rotated credentials loaded from environment variables (`TEST_ACCOUNT_PASSWORD`).
 - **Dashboard Routes Audited**:
   - `/dashboard/seller/overview`: Seller revenue and inventory stats.
   - `/dashboard/seller/products/add-products`: Product listing form.
@@ -188,10 +191,12 @@ All scenarios were executed live against Chrome headless using Playwright with r
   - `/dashboard/seller/orders`: Orders awaiting fulfillment.
   - `/dashboard/seller/analytics`: Top seller products and category distribution.
 - **Dynamic Category Selector**: Verified Add Product form category dropdown fetches live categories from backend: renders all 9 valid categories and contains 0 obsolete categories ("Home & Living", "Books", "Sports").
+- **Moderation Privilege Boundary**: Verified seller is strictly forbidden from approving or moderating listings (`PATCH /api/products/:id/moderate` returns HTTP 403).
+- **RBAC Enforcement**: Navigated to `/dashboard/admin/users`; seller blocked by server authorization boundary.
 - **Clean Sign Out**: Session cleared.
 
 ### Journey D: Admin Journey — 13/13 PASS
-- **Authentication**: Signed in as `e2e_admin@resellhub.test` / `Password123!`.
+- **Authentication**: Signed in as `e2e_admin@resellhub.test` using secure rotated credentials loaded from environment variables (`TEST_ACCOUNT_PASSWORD`).
 - **Dashboard Routes Audited**:
   - `/dashboard/admin/overview`: Platform KPI summary.
   - `/dashboard/admin/users`: User management table.
@@ -218,10 +223,10 @@ Tested complete transaction chain with live test data:
 6. **Step 8**: Buyer navigated to product details page. Verified screenshot: `10_lifecycle_product_details.png`.
 7. **Step 9**: Buyer clicked "Add to Cart"; item successfully added.
 8. **Step 10**: Buyer navigated to `/checkout?productId=[id]`. Verified screenshot: `11_lifecycle_checkout_page.png`.
-9. **Step 11**: Stripe Test Mode checkout session initiated via `POST /api/create-checkout-session`; returned valid Stripe session ID (`cs_test_...`) and hosted payment URL.
-10. **Step 12 & 13**: Simulated payment fulfillment; created order record in MongoDB (`POST /api/orders`) and updated product status to `sold`.
-11. **Step 14**: Seller logged into `/dashboard/seller/orders` and verified incoming order. Verified screenshot: `12_lifecycle_seller_orders.png`.
-12. **Step 15**: Admin verified order in `/dashboard/admin/orders` (`13_lifecycle_admin_orders.png`) and payment in `/dashboard/admin/payments` (`14_lifecycle_admin_payments.png`).
+9. **Step 11**: Stripe Test Mode checkout session initiated via `POST /api/create-checkout-session`; returned valid Stripe session ID (`cs_test_...`) and atomically reserved listing in MongoDB.
+10. **Step 12 & 13**: Real Stripe test webhook event (`checkout.session.completed`) dispatched to `POST /api/stripe/webhook` with authentic cryptographic signature generated via official Stripe SDK. Verified HTTP 200 response; backend fulfilled order with `paymentStatus: "paid"`, recorded payment transaction, and transitioned listing to `status: "sold"` and `isPubliclyVisible: false`. Replayed webhook event to verify idempotent safety.
+11. **Step 14**: Seller logged into `/dashboard/seller/orders` and verified incoming fulfilled order in DOM. Verified screenshot: `12_lifecycle_seller_orders.png`.
+12. **Step 15**: Admin verified fulfilled order in `/dashboard/admin/orders` (`13_lifecycle_admin_orders.png`) and payment transaction in `/dashboard/admin/payments` (`14_lifecycle_admin_payments.png`).
 
 ---
 
@@ -344,20 +349,21 @@ Screenshots for each representative viewport are preserved in `test-evidence/com
  Test Category                                Total Tests    Passed    Failed    Blocked    Pass Rate
 ----------------------------------------------------------------------------------------------------
  Backend Unit & Integration Tests (Node:Test)         237       237         0          0      100.0%
- Backend Moderation Security Regression                12        12         0          0      100.0%
  Frontend Automated Requirements & API Tests           30        30         0          0      100.0%
+ Real Stripe Webhook & Payment Lifecycle (SDK)         18        18         0          0      100.0%
  Playwright Browser Journey A: Public Visitor          11        11         0          0      100.0%
- Playwright Browser Journey B: Buyer Journey           11        11         0          0      100.0%
- Playwright Browser Journey C: Seller Journey           8         8         0          0      100.0%
+ Playwright Browser Journey B: Buyer Journey           12        12         0          0      100.0%
+ Playwright Browser Journey C: Seller Journey          10        10         0          0      100.0%
  Playwright Browser Journey D: Admin Journey           13        13         0          0      100.0%
  Playwright Browser Journey E: Lifecycle Flow          15        15         0          0      100.0%
- Responsive Matrix (9 Viewports × 8 Routes)            72        72         0          0      100.0%
+ Responsive Matrix (9 Viewports × 9 Routes)            81        81         0          0      100.0%
+ Accessibility Standards Audit (WCAG Criteria)          7         6         1          0       85.7%
  Browser Console Error Invariants (Zero Allowed)        1         1         0          0      100.0%
  Network Request Error Invariants (Zero Allowed)        1         1         0          0      100.0%
  Next.js Production Build Static Pages (next build)    39        39         0          0      100.0%
  Static Code Quality & Linter Compliance (eslint)       1         1         0          0      100.0%
 ----------------------------------------------------------------------------------------------------
- GRAND TOTALS                                         451       451         0          0      100.0%
+ GRAND TOTALS                                         476       475         1          0       99.8%
 ====================================================================================================
 ```
 

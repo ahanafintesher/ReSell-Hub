@@ -6,7 +6,7 @@ const ThemeContext = createContext({
   theme: "system",
   resolvedTheme: "light",
   setTheme: () => {},
-  mounted: false,
+  mounted: true,
 });
 
 const THEME_STORAGE_KEY = "resellhub_theme";

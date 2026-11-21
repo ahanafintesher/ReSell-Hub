@@ -108,10 +108,10 @@ export function NavContent({ navItems = [], onNavigate }) {
   );
 }
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ initialUser }) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
-  const user = session?.user;
+  const user = session?.user || initialUser;
   const role = user?.role || "buyer";
   const menu = navMenu[role] || [];
 
@@ -133,9 +133,12 @@ export default function DashboardSidebar() {
   };
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] lg:flex min-h-screen sticky top-0 h-screen transition-colors duration-200">
+    <aside
+      id="dashboard-sidebar"
+      className="hidden w-64 shrink-0 flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] lg:flex h-dvh max-h-dvh sticky top-0 transition-colors duration-200 z-20"
+    >
       {/* Brand Header */}
-      <div className="p-5 border-b border-slate-100 dark:border-slate-800/80">
+      <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 shrink-0">
         <Link href="/" className="group flex items-center gap-2 select-none">
           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-bold text-sm shadow-xs">
             R
@@ -176,7 +179,7 @@ export default function DashboardSidebar() {
       </div>
 
       {/* Main Navigation */}
-      <div className="flex-1 overflow-y-auto py-2">
+      <div className="flex-1 min-h-0 overflow-y-auto py-2">
         <div className="px-3 py-1">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-2">
             Navigation
@@ -186,7 +189,7 @@ export default function DashboardSidebar() {
       </div>
 
       {/* Bottom Footer Section: Sign Out */}
-      <div className="p-3 border-t border-slate-100 dark:border-slate-800/80 space-y-1">
+      <div className="p-3 border-t border-slate-100 dark:border-slate-800/80 space-y-1 shrink-0">
         <button
           type="button"
           onClick={handleLogout}

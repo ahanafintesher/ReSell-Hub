@@ -2,6 +2,26 @@ import { chromium } from "playwright";
 import fs from "fs";
 import path from "path";
 
+// Auto-load .env for standalone script execution
+const envPath = path.resolve(".env");
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, "utf8");
+  for (const line of envContent.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
+      const idx = trimmed.indexOf("=");
+      const key = trimmed.slice(0, idx).trim();
+      const val = trimmed.slice(idx + 1).trim();
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
+const TEST_SELLER_EMAIL = process.env.TEST_SELLER_EMAIL || "e2e_seller@resellhub.test";
+const TEST_ACCOUNT_PASSWORD = process.env.TEST_ACCOUNT_PASSWORD;
+
 const SCREENSHOT_DIR = path.resolve("test-evidence/screenshots");
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
@@ -55,8 +75,8 @@ async function runSellerTests() {
     const sPass = page.locator('input[name="password"], input[type="password"]').first();
     const sBtn = page.locator('button[type="submit"]:has-text("Login"), button[type="submit"]').first();
 
-    await sEmail.fill("e2e_seller@resellhub.test");
-    await sPass.fill("Password123!");
+    await sEmail.fill(TEST_SELLER_EMAIL);
+    await sPass.fill(TEST_ACCOUNT_PASSWORD);
     await Promise.all([
       page.waitForResponse((r) => r.url().includes("/api/auth/sign-in/email") && r.status() === 200),
       sBtn.click(),

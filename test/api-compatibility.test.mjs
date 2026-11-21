@@ -1,14 +1,56 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import { getAllCategories, getFeaturedCategories } from "../src/lib/actions/categories.js";
 import { getProducts, getFeaturedProducts } from "../src/lib/actions/getProducts.js";
 import { getSingleProduct } from "../src/lib/actions/getSingleProduct.js";
 
+// Load test environment credentials safely from .env if not already present
+const envPath = path.resolve(process.cwd(), ".env");
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, "utf8");
+  for (const line of envContent.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
+      const idx = trimmed.indexOf("=");
+      const key = trimmed.slice(0, idx).trim();
+      const val = trimmed.slice(idx + 1).trim();
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
+const TEST_BUYER_EMAIL = process.env.TEST_BUYER_EMAIL || "e2e_buyer@resellhub.test";
+const TEST_SELLER_EMAIL = process.env.TEST_SELLER_EMAIL || "e2e_seller@resellhub.test";
+const TEST_ADMIN_EMAIL = process.env.TEST_ADMIN_EMAIL || "e2e_admin@resellhub.test";
+const TEST_ACCOUNT_PASSWORD = process.env.TEST_ACCOUNT_PASSWORD;
+
+if (!TEST_ACCOUNT_PASSWORD) {
+  throw new Error("TEST_ACCOUNT_PASSWORD environment variable must be configured in .env for integration tests");
+}
+
 const BASE_URL = "http://localhost:3000";
 const BACKEND_URL = "http://localhost:5000";
 
+async function safeFetch(url, options = {}, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fetch(url, options);
+    } catch (err) {
+      if ((err.code === "ECONNRESET" || err.code === "ECONNREFUSED" || err.message?.includes("fetch failed")) && i < retries - 1) {
+        await new Promise((r) => setTimeout(r, 200 * (i + 1)));
+        continue;
+      }
+      throw err;
+    }
+  }
+}
+
 async function getJWT(email, password) {
-  const loginRes = await fetch(`${BASE_URL}/api/auth/sign-in/email`, {
+  const loginRes = await safeFetch(`${BASE_URL}/api/auth/sign-in/email`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Origin: BASE_URL },
     body: JSON.stringify({ email, password }),
@@ -17,7 +59,7 @@ async function getJWT(email, password) {
     throw new Error(`Login failed for ${email}: ${loginRes.status}`);
   }
   const cookie = loginRes.headers.get("set-cookie");
-  const tokenRes = await fetch(`${BASE_URL}/api/auth/token`, {
+  const tokenRes = await safeFetch(`${BASE_URL}/api/auth/token`, {
     headers: { Cookie: cookie },
   });
   const data = await tokenRes.json();
@@ -91,10 +133,10 @@ test("API Integration: Single Product Details — returns sanitized public info 
 });
 
 test("API Integration: Seller Product Lifecycle — create (pending), update, and delete with clean teardown", async () => {
-  const sellerToken = await getJWT("e2e_seller@resellhub.test", "Password123!");
+  const sellerToken = await getJWT(TEST_SELLER_EMAIL, TEST_ACCOUNT_PASSWORD);
 
   // 1. Create product
-  const createRes = await fetch(`${BACKEND_URL}/api/products`, {
+  const createRes = await safeFetch(`${BACKEND_URL}/api/products`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${sellerToken}`,
@@ -121,7 +163,7 @@ test("API Integration: Seller Product Lifecycle — create (pending), update, an
 
   try {
     // 2. Fetch as seller: verify backend enforced pending moderation
-    const getRes = await fetch(`${BACKEND_URL}/api/products/${productId}`, {
+    const getRes = await safeFetch(`${BACKEND_URL}/api/products/${productId}`, {
       headers: { Authorization: `Bearer ${sellerToken}` },
     });
     assert.equal(getRes.status, 200);
@@ -131,11 +173,11 @@ test("API Integration: Seller Product Lifecycle — create (pending), update, an
     assert.equal(sellerDoc.isPubliclyVisible, false);
 
     // 3. Verify public cannot view pending item
-    const publicRes = await fetch(`${BACKEND_URL}/api/products/${productId}`);
+    const publicRes = await safeFetch(`${BACKEND_URL}/api/products/${productId}`);
     assert.equal(publicRes.status, 404, "Unauthenticated user must receive 404 for pending product");
 
     // 4. Update title as owner seller
-    const updateRes = await fetch(`${BACKEND_URL}/api/products/${productId}`, {
+    const updateRes = await safeFetch(`${BACKEND_URL}/api/products/${productId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${sellerToken}`,
@@ -149,7 +191,7 @@ test("API Integration: Seller Product Lifecycle — create (pending), update, an
     assert.equal(updateRes.status, 200);
 
     // 5. Verify title updated but status remained pending
-    const verifyUpdateRes = await fetch(`${BACKEND_URL}/api/products/${productId}`, {
+    const verifyUpdateRes = await safeFetch(`${BACKEND_URL}/api/products/${productId}`, {
       headers: { Authorization: `Bearer ${sellerToken}` },
     });
     const updatedDoc = await verifyUpdateRes.json();
@@ -158,7 +200,7 @@ test("API Integration: Seller Product Lifecycle — create (pending), update, an
 
   } finally {
     // 6. Safe cleanup
-    const deleteRes = await fetch(`${BACKEND_URL}/api/products/${productId}`, {
+    const deleteRes = await safeFetch(`${BACKEND_URL}/api/products/${productId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${sellerToken}` },
     });
@@ -167,14 +209,14 @@ test("API Integration: Seller Product Lifecycle — create (pending), update, an
 });
 
 test("API Integration: Wishlist Lifecycle — add, list, and delete with user boundary enforcement", async () => {
-  const buyerToken = await getJWT("e2e_buyer@resellhub.test", "Password123!");
+  const buyerToken = await getJWT(TEST_BUYER_EMAIL, TEST_ACCOUNT_PASSWORD);
 
   // List existing products to pick one for wishlist
   const prods = await getProducts({ limit: 1 });
   const testProd = (Array.isArray(prods) ? prods : prods.products)[0];
 
   // 1. Add to wishlist
-  const addRes = await fetch(`${BACKEND_URL}/api/wishlist`, {
+  const addRes = await safeFetch(`${BACKEND_URL}/api/wishlist`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${buyerToken}`,
@@ -182,7 +224,7 @@ test("API Integration: Wishlist Lifecycle — add, list, and delete with user bo
     },
     body: JSON.stringify({
       product: testProd,
-      userInfo: "e2e_buyer@resellhub.test",
+      userInfo: TEST_BUYER_EMAIL,
     }),
   });
 
@@ -190,7 +232,7 @@ test("API Integration: Wishlist Lifecycle — add, list, and delete with user bo
   assert.ok(addRes.status === 201 || addRes.status === 409);
 
   // 2. Retrieve wishlist
-  const listRes = await fetch(`${BACKEND_URL}/api/wishlist`, {
+  const listRes = await safeFetch(`${BACKEND_URL}/api/wishlist`, {
     headers: { Authorization: `Bearer ${buyerToken}` },
   });
   assert.equal(listRes.status, 200);
@@ -200,7 +242,7 @@ test("API Integration: Wishlist Lifecycle — add, list, and delete with user bo
   assert.ok(addedItem, "Added product must be found in buyer wishlist");
 
   // 3. Remove from wishlist
-  const removeRes = await fetch(`${BACKEND_URL}/api/wishlist/${addedItem._id}`, {
+  const removeRes = await safeFetch(`${BACKEND_URL}/api/wishlist/${addedItem._id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${buyerToken}` },
   });
@@ -208,14 +250,14 @@ test("API Integration: Wishlist Lifecycle — add, list, and delete with user bo
 });
 
 test("API Integration: Product Reporting Lifecycle — non-owner report submission and resolution", async () => {
-  const buyerToken = await getJWT("e2e_buyer@resellhub.test", "Password123!");
-  const adminToken = await getJWT("e2e_admin@resellhub.test", "Password123!");
+  const buyerToken = await getJWT(TEST_BUYER_EMAIL, TEST_ACCOUNT_PASSWORD);
+  const adminToken = await getJWT(TEST_ADMIN_EMAIL, TEST_ACCOUNT_PASSWORD);
 
   const prods = await getProducts({ limit: 1 });
   const testProd = (Array.isArray(prods) ? prods : prods.products)[0];
 
   // 1. Submit report as buyer
-  const reportRes = await fetch(`${BACKEND_URL}/api/products/${testProd._id}/report`, {
+  const reportRes = await safeFetch(`${BACKEND_URL}/api/products/${testProd._id}/report`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${buyerToken}`,
@@ -231,7 +273,7 @@ test("API Integration: Product Reporting Lifecycle — non-owner report submissi
   assert.ok(reportRes.status === 201 || reportRes.status === 409);
 
   // 2. Admin retrieves reports
-  const adminReportsRes = await fetch(`${BACKEND_URL}/api/admin/reports`, {
+  const adminReportsRes = await safeFetch(`${BACKEND_URL}/api/admin/reports`, {
     headers: { Authorization: `Bearer ${adminToken}` },
   });
   assert.equal(adminReportsRes.status, 200);

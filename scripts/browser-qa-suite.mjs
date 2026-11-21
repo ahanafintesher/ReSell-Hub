@@ -2,6 +2,32 @@ import { chromium } from "playwright";
 import fs from "fs";
 import path from "path";
 
+// Auto-load .env for standalone script execution
+const envPath = path.resolve(".env");
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, "utf8");
+  for (const line of envContent.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
+      const idx = trimmed.indexOf("=");
+      const key = trimmed.slice(0, idx).trim();
+      const val = trimmed.slice(idx + 1).trim();
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
+const TEST_BUYER_EMAIL = process.env.TEST_BUYER_EMAIL || "e2e_buyer@resellhub.test";
+const TEST_SELLER_EMAIL = process.env.TEST_SELLER_EMAIL || "e2e_seller@resellhub.test";
+const TEST_ADMIN_EMAIL = process.env.TEST_ADMIN_EMAIL || "e2e_admin@resellhub.test";
+const TEST_ACCOUNT_PASSWORD = process.env.TEST_ACCOUNT_PASSWORD;
+
+if (!TEST_ACCOUNT_PASSWORD) {
+  throw new Error("TEST_ACCOUNT_PASSWORD environment variable must be configured in .env");
+}
+
 const BASE_URL = "http://localhost:3000";
 const BACKEND_URL = "http://localhost:5000";
 
@@ -318,8 +344,8 @@ async function main() {
     // -------------------------------------------------------------
     console.log("\n>>> PHASE 5: Buyer Authentication & Dashboard Audit");
     await page.goto(`${BASE_URL}/auth/login`, { waitUntil: "networkidle" });
-    await page.locator('input[type="email"]').first().fill("e2e_buyer@resellhub.test");
-    await page.locator('input[type="password"]').first().fill("Password123!");
+    await page.locator('input[type="email"]').first().fill(TEST_BUYER_EMAIL);
+    await page.locator('input[type="password"]').first().fill(TEST_ACCOUNT_PASSWORD);
     await Promise.all([
       page.waitForResponse((r) => r.url().includes("/api/auth/sign-in/email") && r.status() === 200),
       page.locator('button[type="submit"]').first().click(),
@@ -388,8 +414,8 @@ async function main() {
     // -------------------------------------------------------------
     console.log("\n>>> PHASE 5 & 6: Seller Authentication & Product Creation");
     await page.goto(`${BASE_URL}/auth/login`, { waitUntil: "networkidle" });
-    await page.locator('input[type="email"]').first().fill("e2e_seller@resellhub.test");
-    await page.locator('input[type="password"]').first().fill("Password123!");
+    await page.locator('input[type="email"]').first().fill(TEST_SELLER_EMAIL);
+    await page.locator('input[type="password"]').first().fill(TEST_ACCOUNT_PASSWORD);
     await Promise.all([
       page.waitForResponse((r) => r.url().includes("/api/auth/sign-in/email") && r.status() === 200),
       page.locator('button[type="submit"]').first().click(),
@@ -453,8 +479,8 @@ async function main() {
     // -------------------------------------------------------------
     console.log("\n>>> PHASE 5, 7, 8: Admin Authentication, Moderation & Analytics");
     await page.goto(`${BASE_URL}/auth/login`, { waitUntil: "networkidle" });
-    await page.locator('input[type="email"]').first().fill("e2e_admin@resellhub.test");
-    await page.locator('input[type="password"]').first().fill("Password123!");
+    await page.locator('input[type="email"]').first().fill(TEST_ADMIN_EMAIL);
+    await page.locator('input[type="password"]').first().fill(TEST_ACCOUNT_PASSWORD);
     await Promise.all([
       page.waitForResponse((r) => r.url().includes("/api/auth/sign-in/email") && r.status() === 200),
       page.locator('button[type="submit"]').first().click(),

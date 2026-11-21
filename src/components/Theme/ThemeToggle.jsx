@@ -83,6 +83,7 @@ export default function ThemeToggle({
   return (
     <button
       type="button"
+      suppressHydrationWarning
       onClick={toggleNext}
       className={`relative inline-flex items-center justify-center h-9 w-9 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-colors shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer ${className}`}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode (current: ${theme})`}

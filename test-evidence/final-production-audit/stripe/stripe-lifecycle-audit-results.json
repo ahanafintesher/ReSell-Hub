@@ -1,0 +1,175 @@
+{
+  "total": 18,
+  "passed": 18,
+  "failed": 0,
+  "blocked": 0,
+  "results": [
+    {
+      "testName": "1. Stripe SDK Compatibility & Credentials",
+      "status": "PASS",
+      "details": {
+        "message": "Stripe SDK initialized successfully with test mode credentials"
+      },
+      "timestamp": "2026-11-21T12:08:47.963Z"
+    },
+    {
+      "testName": "3. Checkout Session Creation (API)",
+      "status": "PASS",
+      "details": {
+        "sessionId": "cs_test_a0OYR47NmKUgVW79ZwwUJoe31HC28JjboYY8pXwtL2rfXQHaAoXbS5KJqI",
+        "url": "https://checkout.stripe.com/g/pay/cs_test_a0OYR47NmKUgVW79Zw...",
+        "message": "Stripe Checkout session created with valid session ID and hosted payment URL"
+      },
+      "timestamp": "2026-11-21T12:08:50.281Z"
+    },
+    {
+      "testName": "4. Stripe Cloud Session Verification",
+      "status": "PASS",
+      "details": {
+        "sessionId": "cs_test_a0OYR47NmKUgVW79ZwwUJoe31HC28JjboYY8pXwtL2rfXQHaAoXbS5KJqI",
+        "amount_total": 28000,
+        "currency": "usd",
+        "payment_status": "unpaid",
+        "message": "Stripe test cloud confirmed session exists with exact authoritative amount"
+      },
+      "timestamp": "2026-11-21T12:08:50.827Z"
+    },
+    {
+      "testName": "5. Atomic DB Reservation Guard",
+      "status": "PASS",
+      "details": {
+        "reservationSessionId": "cs_test_a0OYR47NmKUgVW79ZwwUJoe31HC28JjboYY8pXwtL2rfXQHaAoXbS5KJqI",
+        "reservedUntil": "2026-11-21T12:38:49.411Z",
+        "message": "Product atomically reserved in MongoDB for active checkout session"
+      },
+      "timestamp": "2026-11-21T12:08:50.885Z"
+    },
+    {
+      "testName": "6. Server-Side Price Tampering Defense",
+      "status": "PASS",
+      "details": {
+        "message": "Server strictly enforced database authoritative price; ignored client-supplied price manipulation",
+        "amount_total": 28000
+      },
+      "timestamp": "2026-11-21T12:08:51.715Z"
+    },
+    {
+      "testName": "7. Unauthorized Checkout Rejection",
+      "status": "PASS",
+      "details": {
+        "message": "Unauthenticated checkout request rejected with HTTP 401"
+      },
+      "timestamp": "2026-11-21T12:08:51.718Z"
+    },
+    {
+      "testName": "8. Webhook Missing Signature Header",
+      "status": "PASS",
+      "details": {
+        "message": "Rejects webhook request without stripe-signature header with HTTP 400"
+      },
+      "timestamp": "2026-11-21T12:08:51.723Z"
+    },
+    {
+      "testName": "9. Webhook Invalid Signature Rejection",
+      "status": "PASS",
+      "details": {
+        "message": "Rejects webhook request with forged or invalid signature with HTTP 400"
+      },
+      "timestamp": "2026-11-21T12:08:51.727Z"
+    },
+    {
+      "testName": "10. Webhook Wrong Secret Rejection",
+      "status": "PASS",
+      "details": {
+        "message": "Rejects webhook signed with incorrect signing secret with HTTP 400"
+      },
+      "timestamp": "2026-11-21T12:08:51.731Z"
+    },
+    {
+      "testName": "11. Webhook Price Tampering Detection",
+      "status": "PASS",
+      "details": {
+        "message": "Webhook detected price mismatch and rejected payment fulfillment with HTTP 400"
+      },
+      "timestamp": "2026-11-21T12:08:52.049Z"
+    },
+    {
+      "testName": "12. Webhook Event Processing (HTTP 200)",
+      "status": "PASS",
+      "details": {
+        "eventId": "evt_legit_1795262932049",
+        "sessionId": "cs_test_a0OYR47NmKUgVW79ZwwUJoe31HC28JjboYY8pXwtL2rfXQHaAoXbS5KJqI",
+        "received": true,
+        "message": "Webhook processed checkout.session.completed successfully with HTTP 200"
+      },
+      "timestamp": "2026-11-21T12:08:52.663Z"
+    },
+    {
+      "testName": "13. Authoritative Order Creation in DB",
+      "status": "PASS",
+      "details": {
+        "orderId": "6b0189d4d0f76b6cf815fcca",
+        "paymentStatus": "paid",
+        "orderStatus": "pending",
+        "price": 280,
+        "message": "Order created authoritatively with paymentStatus='paid' and orderStatus='pending'"
+      },
+      "timestamp": "2026-11-21T12:08:52.720Z"
+    },
+    {
+      "testName": "14. Authoritative Payment Record in DB",
+      "status": "PASS",
+      "details": {
+        "paymentId": "6b0189d4d0f76b6cf815fccb",
+        "amount": 280,
+        "paymentStatus": "paid",
+        "message": "Payment record created in payments collection with verified paymentStatus='paid'"
+      },
+      "timestamp": "2026-11-21T12:08:52.778Z"
+    },
+    {
+      "testName": "15. Product Sold Lifecycle Transition",
+      "status": "PASS",
+      "details": {
+        "status": "sold",
+        "isPubliclyVisible": false,
+        "message": "Product status transitioned to 'sold', hidden from catalog, reservation cleared"
+      },
+      "timestamp": "2026-11-21T12:08:52.835Z"
+    },
+    {
+      "testName": "16. Webhook Idempotency Guard",
+      "status": "PASS",
+      "details": {
+        "orderCount": 1,
+        "paymentCount": 1,
+        "message": "Duplicate webhook delivery handled idempotently; zero duplicate orders or payments created"
+      },
+      "timestamp": "2026-11-21T12:08:53.066Z"
+    },
+    {
+      "testName": "17. Client Forgery Status Downgrade",
+      "status": "PASS",
+      "details": {
+        "message": "Server rejected unverified order submission with HTTP 400"
+      },
+      "timestamp": "2026-11-21T12:08:53.238Z"
+    },
+    {
+      "testName": "18. Graceful Handling of Unsupported Event Types",
+      "status": "PASS",
+      "details": {
+        "message": "Unhandled event type customer.created acknowledged with HTTP 200 without state mutation"
+      },
+      "timestamp": "2026-11-21T12:08:53.359Z"
+    },
+    {
+      "testName": "19. Session Expiration Releases Reservation",
+      "status": "PASS",
+      "details": {
+        "message": "checkout.session.expired webhook cleanly released product reservation back to marketplace"
+      },
+      "timestamp": "2026-11-21T12:08:53.661Z"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "totalChecks": 7,
+  "passed": 6,
+  "failed": 1,
+  "checks": [
+    {
+      "category": "Responsive Navigation",
+      "check": "Mobile Navigation & Hamburger Menu",
+      "status": "PASS",
+      "details": {
+        "hasMobileMenuBtn": true,
+        "mobileMenuOpened": true,
+        "viewport": "375x812"
+      }
+    },
+    {
+      "category": "Touch Targets",
+      "check": "Mobile Tap Target Dimensions (>= 28px min target)",
+      "status": "FAIL",
+      "details": {
+        "smallTargetsCount": 6,
+        "samples": [
+          {
+            "text": "",
+            "width": 26,
+            "height": 26
+          },
+          {
+            "text": "",
+            "width": 26,
+            "height": 26
+          },
+          {
+            "text": "",
+            "width": 26,
+            "height": 26
+          }
+        ]
+      }
+    },
+    {
+      "category": "Images & Media",
+      "check": "Image Alternative Text Attribute Coverage",
+      "status": "PASS",
+      "details": {
+        "totalImages": 22,
+        "missingAlt": 0,
+        "altCoverage": 100
+      }
+    },
+    {
+      "category": "Forms & Controls",
+      "check": "Form Input Accessible Name / Label Association",
+      "status": "PASS",
+      "details": {
+        "totalInputs": 2,
+        "labeled": 2,
+        "unlabeled": 0
+      }
+    },
+    {
+      "category": "Semantic Controls",
+      "check": "Button Accessible Names (Text, aria-label, or title)",
+      "status": "PASS",
+      "details": {
+        "totalButtons": 42,
+        "accessible": 42,
+        "inaccessible": 0
+      }
+    },
+    {
+      "category": "Keyboard Navigation",
+      "check": "Sequential Focus Traversal via Tab Key",
+      "status": "PASS",
+      "details": {
+        "focusActive": true
+      }
+    },
+    {
+      "category": "Modals & Dialogs",
+      "check": "HeroUI AlertDialog Accessibility & Escape Dismissal",
+      "status": "PASS",
+      "details": {
+        "dialogA11yPassed": true
+      }
+    }
+  ]
+}

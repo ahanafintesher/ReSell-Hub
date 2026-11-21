@@ -15,13 +15,18 @@ const DashboardLayout = async ({ children }) => {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50/60 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 transition-colors duration-200">
-      <DashboardSidebar />
+    <div className="flex h-dvh overflow-hidden bg-slate-50/60 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      <DashboardSidebar initialUser={session.user} />
 
-      <main className="flex-1 min-w-0 flex flex-col">
-        <DashboardNavbar />
-        <div className="flex-1">{children}</div>
-      </main>
+      <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
+        <DashboardNavbar initialUser={session.user} />
+        <main
+          id="dashboard-main-content"
+          className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
+        >
+          {children}
+        </main>
+      </div>
     </div>
   );
 };

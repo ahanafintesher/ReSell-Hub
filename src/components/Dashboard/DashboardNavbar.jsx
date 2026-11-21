@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Playfair_Display } from "next/font/google";
 import {
   Avatar,
@@ -39,10 +40,11 @@ const play = Playfair_Display({
   weight: ["400", "500", "700"],
 });
 
-export default function DashboardNavbar() {
+export default function DashboardNavbar({ initialUser }) {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session, isPending } = authClient.useSession();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
     await authClient.signOut({
@@ -55,7 +57,7 @@ export default function DashboardNavbar() {
     });
   };
 
-  const user = session?.user;
+  const user = session?.user || initialUser;
   const role = user?.role || "buyer";
   const menu = navMenu[role] || [];
   const displayName = user?.name || "Market User";
@@ -77,39 +79,66 @@ export default function DashboardNavbar() {
       : pathParts[pathParts.length - 1] || "Dashboard";
 
   return (
-    <nav className="sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-[#0f172a]/85 backdrop-blur-md px-4 sm:px-6 py-2.5 transition-colors duration-200">
+    <nav className="sticky top-0 z-30 shrink-0 border-b border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-[#0f172a]/85 backdrop-blur-md px-4 sm:px-6 py-2.5 transition-colors duration-200">
       <div className="mx-auto flex items-center justify-between gap-4">
         {/* Left: Mobile Drawer Trigger + Brand / Breadcrumb */}
         <div className="flex items-center gap-3 min-w-0">
           <div className="lg:hidden">
-            <Drawer>
-              <Drawer.Trigger className="inline-flex items-center justify-center p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+            <Drawer isOpen={mobileOpen} onOpenChange={setMobileOpen}>
+              <Drawer.Trigger
+                aria-label="Open navigation menu"
+                className="inline-flex items-center justify-center p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+              >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Open navigation menu</span>
               </Drawer.Trigger>
-              <Drawer.Content className="dark:bg-[#0f172a] dark:text-slate-100 dark:border-slate-800">
-                <Drawer.Header>
-                  <Drawer.Title>
-                    <div className="flex items-center justify-between">
-                      <Link href="/" className="flex items-center gap-2">
-                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-600 text-white font-bold text-xs">
-                          R
-                        </span>
-                        <h2 className={`${play.className} text-emerald-600 dark:text-emerald-400 text-xl font-bold`}>
-                          ReSell Hub
-                        </h2>
-                      </Link>
-                      <ThemeToggle variant="compact" />
-                    </div>
-                    <p className="mt-1 text-xs font-semibold text-slate-500 dark:text-slate-400 capitalize">
-                      {role} Portal
-                    </p>
-                  </Drawer.Title>
-                </Drawer.Header>
-                <Drawer.Body className="p-0">
-                  <NavContent navItems={menu} />
-                </Drawer.Body>
-              </Drawer.Content>
+              <Drawer.Backdrop variant="blur" className="z-50 bg-black/40 backdrop-blur-xs">
+                <Drawer.Content placement="left" className="z-50">
+                  <Drawer.Dialog className="dark:bg-[#0f172a] bg-white dark:text-slate-100 dark:border-slate-800 border-r border-slate-200 p-0 flex flex-col h-full w-72 max-w-[85vw] shadow-2xl">
+                    <Drawer.CloseTrigger
+                      aria-label="Close navigation menu"
+                      className="absolute top-4 right-4 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 p-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+                    />
+                    <Drawer.Header className="p-5 border-b border-slate-100 dark:border-slate-800/80 pr-12 shrink-0">
+                      <Drawer.Heading>
+                        <div className="flex items-center justify-between">
+                          <Link
+                            href="/"
+                            onClick={() => setMobileOpen(false)}
+                            className="flex items-center gap-2 select-none"
+                          >
+                            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-600 text-white font-bold text-xs">
+                              R
+                            </span>
+                            <span className={`${play.className} text-emerald-600 dark:text-emerald-400 text-xl font-bold`}>
+                              ReSell Hub
+                            </span>
+                          </Link>
+                        </div>
+                        <p className="mt-1 text-xs font-semibold text-slate-500 dark:text-slate-400 capitalize">
+                          {role} Portal
+                        </p>
+                      </Drawer.Heading>
+                    </Drawer.Header>
+                    <Drawer.Body className="flex-1 min-h-0 overflow-y-auto p-2">
+                      <NavContent navItems={menu} onNavigate={() => setMobileOpen(false)} />
+                    </Drawer.Body>
+                    <Drawer.Footer className="p-3 border-t border-slate-100 dark:border-slate-800/80 shrink-0">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setMobileOpen(false);
+                          await handleLogout();
+                        }}
+                        className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-rose-500 cursor-pointer"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>Sign Out</span>
+                      </button>
+                    </Drawer.Footer>
+                  </Drawer.Dialog>
+                </Drawer.Content>
+              </Drawer.Backdrop>
             </Drawer>
           </div>
 
@@ -132,9 +161,9 @@ export default function DashboardNavbar() {
         <div className="flex items-center gap-2.5 shrink-0">
           <ThemeToggle variant="compact" />
 
-          {isPending ? (
+          {isPending && !user ? (
             <div className="h-9 w-9 animate-pulse rounded-full bg-slate-200 dark:bg-slate-700" />
-          ) : session ? (
+          ) : user ? (
             <Dropdown>
               <DropdownTrigger
                 className="flex items-center gap-2 rounded-full pl-1 pr-3 py-1 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer bg-transparent"

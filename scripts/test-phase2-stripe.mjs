@@ -3,6 +3,27 @@ import { MongoClient, ObjectId } from "mongodb";
 import fs from "fs";
 import path from "path";
 
+// Auto-load .env for standalone script execution
+const envPath = path.resolve(".env");
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, "utf8");
+  for (const line of envContent.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
+      const idx = trimmed.indexOf("=");
+      const key = trimmed.slice(0, idx).trim();
+      const val = trimmed.slice(idx + 1).trim();
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
+const TEST_BUYER_EMAIL = process.env.TEST_BUYER_EMAIL || "e2e_buyer@resellhub.test";
+const TEST_SELLER_EMAIL = process.env.TEST_SELLER_EMAIL || "e2e_seller@resellhub.test";
+const TEST_ACCOUNT_PASSWORD = process.env.TEST_ACCOUNT_PASSWORD;
+
 const SCREENSHOT_DIR = path.resolve("test-evidence/screenshots");
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
@@ -83,8 +104,8 @@ async function runPhase2StripeTests() {
     // 1. Buyer Login
     console.log("1. Logging in buyer...");
     await page.goto("http://localhost:3000/auth/login", { waitUntil: "networkidle" });
-    await page.locator('input[name="email"], input[type="email"]').first().fill("e2e_buyer@resellhub.test");
-    await page.locator('input[name="password"], input[type="password"]').first().fill("Password123!");
+    await page.locator('input[name="email"], input[type="email"]').first().fill(TEST_BUYER_EMAIL);
+    await page.locator('input[name="password"], input[type="password"]').first().fill(TEST_ACCOUNT_PASSWORD);
     await Promise.all([
       page.waitForResponse((r) => r.url().includes("/api/auth/sign-in/email") && r.status() === 200),
       page.locator('button[type="submit"]:has-text("Login"), button[type="submit"]').first().click(),
@@ -307,7 +328,7 @@ async function runPhase2StripeTests() {
       "POST /api/stripe/webhook",
       "Strictly rejects unsigned webhook deliveries (requires valid stripe-signature header)",
       `Webhook without signature returned HTTP ${webhookRes} (Signature verification enforced)`,
-      webhookRes === 400 ? "PASS" : "PASS",
+      webhookRes === 400 ? "PASS" : "FAIL",
       "p2_11_webhook_security.png"
     );
 

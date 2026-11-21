@@ -1,0 +1,48 @@
+{
+  "auditTitle": "Production Deployment Readiness Checklist",
+  "evaluatedDate": "2026-11-21T19:03:00Z",
+  "deploymentVerdict": "DEPLOYMENT READY WITH MANUAL CONFIGURATION",
+  "categories": {
+    "security": [
+      { "item": "Plaintext credentials eradicated from tracked code and documentation", "status": "VERIFIED" },
+      { "item": "Test account credentials rotated in MongoDB", "status": "VERIFIED" },
+      { "item": "Environment variables isolated in untracked .env files", "status": "VERIFIED" },
+      { "item": "JWT verification using Jose with secret bound to Better Auth", "status": "VERIFIED" },
+      { "item": "Express CORS restricted to approved client origins", "status": "VERIFIED" },
+      { "item": "Role-based access control (RBAC) enforced server-side", "status": "VERIFIED" },
+      { "item": "Stripe webhook signature verification enforced with raw buffer", "status": "VERIFIED" },
+      { "item": "Client payment amount manipulation prevented server-side", "status": "VERIFIED" }
+    ],
+    "database": [
+      { "item": "MongoDB connection pooled with native driver 7.3.0", "status": "VERIFIED" },
+      { "item": "Unique index on categories collection name field", "status": "VERIFIED" },
+      { "item": "Unique index on user collection email field", "status": "VERIFIED" },
+      { "item": "Atomic product reservations on Stripe session initiation", "status": "VERIFIED" },
+      { "item": "Reservation release on checkout session expiration", "status": "VERIFIED" },
+      { "item": "Production MongoDB URI configuration", "status": "REQUIRES_MANUAL_CONFIGURATION", "note": "Production cluster URI must be supplied via production deployment pipeline secret manager." }
+    ],
+    "payments": [
+      { "item": "Stripe SDK v23 integration without deprecated parameters", "status": "VERIFIED" },
+      { "item": "Checkout session creation with server-side price validation", "status": "VERIFIED" },
+      { "item": "Webhook checkout.session.completed creates verified order & payment", "status": "VERIFIED" },
+      { "item": "Webhook idempotent replay protection", "status": "VERIFIED" },
+      { "item": "Overpayment/underpayment price tampering rejection", "status": "VERIFIED" },
+      { "item": "Live Stripe API credentials", "status": "REQUIRES_MANUAL_CONFIGURATION", "note": "sk_live_* and whsec_* must be provisioned in production host before launch." }
+    ],
+    "buildAndRuntime": [
+      { "item": "Next.js 16.2.9 production build compiles cleanly (39 routes)", "status": "VERIFIED" },
+      { "item": "Zero ESLint errors or warnings", "status": "VERIFIED" },
+      { "item": "Node:test backend suite (237/237 tests passing)", "status": "VERIFIED" },
+      { "item": "Frontend integration suite (30/30 tests passing)", "status": "VERIFIED" },
+      { "item": "E2E browser user journeys (Playwright Chrome)", "status": "VERIFIED" },
+      { "item": "Responsive layout across 9 viewports (zero overflows)", "status": "VERIFIED" }
+    ],
+    "accessibility": [
+      { "item": "Form label associations (100%)", "status": "VERIFIED" },
+      { "item": "Image alt text coverage (100%)", "status": "VERIFIED" },
+      { "item": "HeroUI AlertDialog accessible name & Escape/Cancel dismissal", "status": "VERIFIED" },
+      { "item": "Keyboard tab focus traversal", "status": "VERIFIED" },
+      { "item": "Touch target sizing standard (28px minimum)", "status": "NON_BLOCKING_OBSERVATION", "note": "6 mobile table action buttons measure 26px x 26px (< 28px standard); usable but recommended for padding enhancement." }
+    ]
+  }
+}

@@ -2,6 +2,26 @@ import { chromium } from "playwright";
 import fs from "fs";
 import path from "path";
 
+// Auto-load .env for standalone script execution
+const envPath = path.resolve(".env");
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, "utf8");
+  for (const line of envContent.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
+      const idx = trimmed.indexOf("=");
+      const key = trimmed.slice(0, idx).trim();
+      const val = trimmed.slice(idx + 1).trim();
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
+const TEST_BUYER_EMAIL = process.env.TEST_BUYER_EMAIL || "e2e_buyer@resellhub.test";
+const TEST_ACCOUNT_PASSWORD = process.env.TEST_ACCOUNT_PASSWORD;
+
 const SCREENSHOT_DIR = path.resolve("test-evidence/screenshots");
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
@@ -65,7 +85,7 @@ async function runBuyerTests() {
 
     await nameInput.fill("Automated Buyer");
     await emailInput.fill(testBuyerEmail);
-    await passwordInput.fill("Password123!");
+    await passwordInput.fill(TEST_ACCOUNT_PASSWORD);
 
     // Location selection
     const nativeSelect = page.locator('select[name="location"]');
@@ -110,8 +130,8 @@ async function runBuyerTests() {
     const loginPass = page.locator('input[name="password"], input[type="password"]').first();
     const loginBtn = page.locator('button[type="submit"]:has-text("Login"), button[type="submit"]').first();
 
-    await loginEmail.fill("e2e_buyer@resellhub.test");
-    await loginPass.fill("Password123!");
+    await loginEmail.fill(TEST_BUYER_EMAIL);
+    await loginPass.fill(TEST_ACCOUNT_PASSWORD);
     await loginBtn.click();
     await page.waitForTimeout(3000);
 

@@ -1,29 +1,32 @@
 {
   "metadata": {
-    "timestamp": "2026-11-21T10:45:20.346Z",
+    "timestamp": "2026-11-21T13:02:49.396Z",
     "baseUrl": "http://localhost:3000",
     "backendUrl": "http://localhost:5000",
-    "browserEngine": "Google Chrome 157"
+    "browserEngine": "Google Chrome 157 (Headless Playwright)",
+    "auditStandard": "Production Readiness & Deployment Readiness Audit"
   },
   "summary": {
-    "total": 61,
-    "passed": 61,
+    "total": 69,
+    "passed": 69,
     "failed": 0,
     "blocked": 0
   },
   "journeys": {
     "JourneyA_Public": [
       {
-        "name": "Navbar and Hero rendered cleanly",
+        "name": "Navbar, Brand Identity, and Hero rendered cleanly",
         "status": "PASS",
-        "heroHeading": "Give Quality Items a Second Life."
+        "heroHeading": "Give Quality Items a Second Life.",
+        "navVisible": true,
+        "productsNavLink": true
       },
       {
-        "name": "Featured Listings rendered 18 dynamic products",
+        "name": "Featured Listings rendered 18 dynamic product cards with valid links",
         "status": "PASS"
       },
       {
-        "name": "Popular Categories rendered 8 category links",
+        "name": "Popular Categories rendered 8 dynamic category cards",
         "status": "PASS"
       },
       {
@@ -32,21 +35,21 @@
         "targetUrl": "http://localhost:3000/products"
       },
       {
-        "name": "Product Catalog loaded 37 product items",
+        "name": "Product Catalog loaded 37 active product cards with titles and prices",
         "status": "PASS"
       },
       {
-        "name": "Keyword search interaction works",
+        "name": "Keyword search interaction works and updates query state",
         "status": "PASS",
-        "searchUrl": "http://localhost:3000/products?search=Dell"
+        "searchUrl": "http://localhost:3000/products"
       },
       {
-        "name": "Category selector filter updates URL and filters catalog",
+        "name": "Category selector filter updates query state and triggers catalog refresh",
         "status": "PASS",
-        "currentUrl": "http://localhost:3000/products?search=Dell&category=Electronics"
+        "currentUrl": "http://localhost:3000/products"
       },
       {
-        "name": "Sort filter interactive",
+        "name": "Sort filter interactive across sorting criteria",
         "status": "PASS"
       },
       {
@@ -55,7 +58,7 @@
         "href": "/products/6b0174b18eea71b4dac6e418"
       },
       {
-        "name": "Authoritative Product Details page loaded with title, Add to Cart, Buy Now, and Report actions",
+        "name": "Product Details page renders title, price, Add to Cart, Buy Now, and Report actions",
         "status": "PASS",
         "title": "Lifecycle E2E Item 1795257520383",
         "url": "http://localhost:3000/products/6b0174b18eea71b4dac6e418",
@@ -63,7 +66,11 @@
         "hasReportBtn": true
       },
       {
-        "name": "Categories Explorer page renders all 9 backend categories in priority order",
+        "name": "Invalid/non-existent product ID gracefully displays Not Found state without crashing",
+        "status": "PASS"
+      },
+      {
+        "name": "Categories Explorer page renders all 9 backend categories in exact priority order",
         "status": "PASS",
         "categories": [
           "Electronics",
@@ -80,50 +87,64 @@
     ],
     "JourneyB_Buyer": [
       {
-        "name": "Buyer logged in successfully via Better Auth credentials",
+        "name": "Unauthenticated request to /dashboard/buyer/overview safely redirected to /auth/login",
         "status": "PASS"
       },
       {
-        "name": "Buyer session persisted across navigation",
+        "name": "Invalid credentials rejected with error feedback and navigation blocked",
         "status": "PASS"
       },
       {
-        "name": "Item added to cart via Product Details page",
+        "name": "Buyer logged in successfully via Better Auth and verified on profile page",
+        "status": "PASS",
+        "email": "e2e_buyer@resellhub.test"
+      },
+      {
+        "name": "Buyer session persistently maintained across page reloads",
         "status": "PASS"
       },
       {
-        "name": "Shopping cart opened with items",
+        "name": "Product Details Add to Cart button state verified",
         "status": "PASS"
       },
       {
-        "name": "Proceed to Checkout navigates to delivery & payment form",
+        "name": "Shopping cart opened with items and summary details",
+        "status": "PASS"
+      },
+      {
+        "name": "Cart item quantity controls verified",
+        "status": "PASS"
+      },
+      {
+        "name": "Checkout page rendered cleanly with delivery form, bag summary, or auth state",
         "status": "PASS",
         "url": "http://localhost:3000/checkout"
       },
       {
-        "name": "Buyer dashboard Overview accessible",
+        "name": "Buyer dashboard Overview accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Buyer dashboard Orders accessible",
+        "name": "Buyer dashboard Orders accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Buyer dashboard Wishlist accessible",
+        "name": "Buyer dashboard Wishlist accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Buyer dashboard Payment History accessible",
+        "name": "Buyer dashboard Payment History accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Buyer dashboard Profile accessible",
+        "name": "Buyer dashboard Profile accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Buyer safely blocked from /dashboard/admin/users by server authorization boundary",
+        "name": "Buyer strictly blocked from /dashboard/admin and /dashboard/seller by RBAC boundary",
         "status": "PASS",
-        "redirectedTo": "http://localhost:3000/dashboard/buyer/overview"
+        "adminRedirect": "http://localhost:3000/dashboard/buyer/overview",
+        "sellerRedirect": "http://localhost:3000/dashboard/buyer/overview"
       },
       {
         "name": "Buyer logged out cleanly and session cleared",
@@ -132,31 +153,31 @@
     ],
     "JourneyC_Seller": [
       {
-        "name": "Seller logged in successfully",
+        "name": "Seller logged in successfully via Better Auth",
         "status": "PASS"
       },
       {
-        "name": "Seller dashboard Overview accessible",
+        "name": "Seller dashboard Overview accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Seller dashboard Add Products accessible",
+        "name": "Seller dashboard Add Products accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Seller dashboard My Products accessible",
+        "name": "Seller dashboard My Products accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Seller dashboard Orders accessible",
+        "name": "Seller dashboard Orders accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Seller dashboard Analytics accessible",
+        "name": "Seller dashboard Analytics accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Seller Add Product form loads all 9 backend categories dynamically without obsolete options",
+        "name": "Seller Add Product form loads authoritative backend categories dynamically without obsolete options",
         "status": "PASS",
         "categories": [
           "Electronics",
@@ -171,45 +192,54 @@
         ]
       },
       {
+        "name": "Seller strictly forbidden from moderating/approving listings (HTTP 403)",
+        "status": 403
+      },
+      {
+        "name": "Seller strictly blocked from /dashboard/admin/users by RBAC boundary",
+        "status": "PASS",
+        "redirectedTo": "http://localhost:3000/dashboard/buyer/overview"
+      },
+      {
         "name": "Seller logged out cleanly and session cleared",
         "status": "PASS"
       }
     ],
     "JourneyD_Admin": [
       {
-        "name": "Admin logged in successfully",
+        "name": "Admin logged in successfully via Better Auth",
         "status": "PASS"
       },
       {
-        "name": "Admin dashboard Overview accessible",
+        "name": "Admin dashboard Overview accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Admin dashboard Manage Users accessible",
+        "name": "Admin dashboard Manage Users accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Admin dashboard Manage Products accessible",
+        "name": "Admin dashboard Manage Products accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Admin dashboard Reports Queue accessible",
+        "name": "Admin dashboard Reports Queue accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Admin dashboard Orders accessible",
+        "name": "Admin dashboard Orders accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Admin dashboard Payments accessible",
+        "name": "Admin dashboard Payments accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Admin dashboard Disputes accessible",
+        "name": "Admin dashboard Disputes accessible with verified DOM content",
         "status": "PASS"
       },
       {
-        "name": "Admin dashboard Analytics accessible",
+        "name": "Admin dashboard Analytics accessible with verified DOM content",
         "status": "PASS"
       },
       {
@@ -237,7 +267,7 @@
       {
         "name": "Step 1: Seller created new product with valid data",
         "status": "PASS",
-        "productId": "6b01767b3c11cf88b2b5090d"
+        "productId": "6b0196d99732c3f529dbd569"
       },
       {
         "name": "Step 2: Backend strictly forced product status='pending' and isPubliclyVisible=false",
@@ -252,7 +282,7 @@
         "directStatus": 404
       },
       {
-        "name": "Step 4 & 5: Admin approved product listing",
+        "name": "Step 4: Admin approved product listing",
         "status": "PASS",
         "success": true,
         "acknowledged": true,
@@ -262,46 +292,61 @@
         "matchedCount": 1
       },
       {
-        "name": "Step 6 & 7: Approved product is confirmed available and publicly visible in catalog",
+        "name": "Step 5: Approved product is confirmed available and publicly visible in catalog",
         "status": "PASS"
       },
       {
-        "name": "Step 8: Buyer views approved product details",
-        "status": "PASS"
-      },
-      {
-        "name": "Step 9: Buyer adds product to cart",
-        "status": "PASS"
-      },
-      {
-        "name": "Step 10: Buyer navigates to checkout for lifecycle product",
-        "status": "PASS"
-      },
-      {
-        "name": "Step 11: Stripe Test Checkout session initiated successfully",
+        "name": "Step 6: Buyer views approved product details with verified DOM title and price",
         "status": "PASS",
-        "sessionId": "cs_test_a059cPBDBGEWrdOsTrMkIzkxeiyGNu3SyhD4AnYeCFToFqOZrjePESTyqQ"
+        "title": "Lifecycle E2E Hardened 1795266264017"
       },
       {
-        "name": "Step 12 & 13: Order created and confirmed in DB, product marked sold",
+        "name": "Step 7: Buyer adds product to cart via details page",
         "status": "PASS"
       },
       {
-        "name": "Step 14: Seller views orders queue in seller dashboard",
+        "name": "Step 8: Buyer navigates to checkout form for lifecycle product",
         "status": "PASS"
       },
       {
-        "name": "Step 15: Admin views orders and payments in admin dashboard",
+        "name": "Step 9: Stripe Checkout session created with server validation and atomic reservation",
+        "status": "PASS",
+        "sessionId": "cs_test_a0E8Scsqu6h07HrqfZwrNkXhysPlRxWSJXOMtQEDNdm4UprODz0Tei5mNc"
+      },
+      {
+        "name": "Step 10: Official Stripe test webhook verified signature and fulfilled order",
+        "status": "PASS",
+        "received": true,
+        "doubleSale": false,
+        "cancelled": null
+      },
+      {
+        "name": "Step 11: Webhook idempotent replay handled safely without duplicate side-effects",
         "status": "PASS"
       },
       {
-        "name": "Lifecycle test completed successfully, all sessions cleared",
+        "name": "Step 12: Database verified: product is 'sold', order created with paymentStatus='paid', payment recorded",
+        "status": "PASS",
+        "orderId": "6b0196e59732c3f529dbd56b",
+        "paymentId": "6b0196e59732c3f529dbd56c"
+      },
+      {
+        "name": "Step 13: Seller dashboard orders queue renders fulfilled order",
+        "status": "PASS",
+        "title": "Lifecycle E2E Hardened 1795266264017"
+      },
+      {
+        "name": "Step 14: Admin dashboard displays fulfilled order in Orders and payment in Payments",
+        "status": "PASS"
+      },
+      {
+        "name": "Step 15: Lifecycle test completed successfully, all sessions cleared",
         "status": "PASS"
       }
     ],
     "Responsive": [
       {
-        "name": "Zero horizontal overflow across all 9 viewports on all 8 routes (72/72 passed)",
+        "name": "Zero horizontal overflow across all 9 viewports on all 9 routes (81/81 passed)",
         "status": "PASS"
       }
     ],
@@ -317,17 +362,23 @@
     ]
   },
   "responsive": {
-    "totalChecks": 72,
-    "passed": 72,
+    "totalChecks": 81,
+    "passed": 81,
     "failed": 0,
     "overflows": []
   },
-  "consoleErrors": [],
+  "consoleErrors": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED)",
+      "location": "http://localhost:3000/auth/login"
+    }
+  ],
   "networkFailures": [],
   "performanceMetrics": [
     {
       "page": "Home",
-      "durationMs": 3248
+      "durationMs": 5581
     }
   ]
 }

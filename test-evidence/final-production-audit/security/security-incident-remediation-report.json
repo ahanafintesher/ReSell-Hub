@@ -1,0 +1,83 @@
+{
+  "incidentId": "SEC-INC-2026-11-21-001",
+  "title": "Public Test Account Credential Exposure & Remediation",
+  "severity": "CRITICAL / P0",
+  "status": "REMEDIATED_AND_VERIFIED",
+  "timestamp": "2026-11-21T18:49:00Z",
+  "description": "Public documentation and test scripts previously contained hardcoded plaintext credentials (Password123!) for buyer, seller, and admin test accounts.",
+  "affectedAccounts": [
+    {
+      "role": "buyer",
+      "email": "e2e_buyer@resellhub.test",
+      "status": "ROTATED",
+      "verification": {
+        "oldPasswordStatus": 401,
+        "newPasswordStatus": 200
+      }
+    },
+    {
+      "role": "seller",
+      "email": "e2e_seller@resellhub.test",
+      "status": "ROTATED",
+      "verification": {
+        "oldPasswordStatus": 401,
+        "newPasswordStatus": 200
+      }
+    },
+    {
+      "role": "admin",
+      "email": "e2e_admin@resellhub.test",
+      "status": "ROTATED",
+      "verification": {
+        "oldPasswordStatus": 401,
+        "newPasswordStatus": 200
+      }
+    }
+  ],
+  "remediationActions": [
+    {
+      "action": "Database Credential Rotation",
+      "tool": "scripts/rotate-test-credentials.js",
+      "details": "Purged all active sessions and existing account hash records for target users in MongoDB Atlas; re-registered with rotated high-entropy password loaded strictly from TEST_ACCOUNT_PASSWORD.",
+      "status": "COMPLETED"
+    },
+    {
+      "action": "Plaintext Password Removal from Tracked Files",
+      "targets": [
+        "docs/COMPLETE_E2E_FRONTEND_BACKEND_AUDIT_REPORT.md",
+        "test/api-compatibility.test.mjs",
+        "scripts/seed-test-users.js",
+        "scripts/browser-qa-suite.mjs",
+        "scripts/capture-additional-evidence.mjs",
+        "scripts/check-analytics.mjs",
+        "scripts/run-all-verifications.mjs",
+        "scripts/test-phase1-admin.mjs",
+        "scripts/test-phase1-buyer.mjs",
+        "scripts/test-phase1-seller.mjs",
+        "scripts/test-phase2-stripe.mjs",
+        "scripts/test-phase3-moderation.mjs",
+        "scripts/test-phase4-responsive.mjs",
+        "scripts/test-phase5-dispute.mjs",
+        "scripts/comprehensive-e2e-audit.mjs"
+      ],
+      "status": "COMPLETED"
+    },
+    {
+      "action": "Environment Variable Normalization",
+      "details": "Added TEST_BUYER_EMAIL, TEST_SELLER_EMAIL, TEST_ADMIN_EMAIL, and TEST_ACCOUNT_PASSWORD to .env.example with safe placeholders. Verified .env is strictly ignored in .gitignore.",
+      "status": "COMPLETED"
+    }
+  ],
+  "gitHistoryAudit": {
+    "containsHistoricalExposure": true,
+    "affectedRepository": "https://github.com/ahanafintesher/ReSell-Hub",
+    "affectedCommits": [
+      { "commit": "513f211", "date": "2026-11-21", "message": "E2E audit complete" },
+      { "commit": "a1e78cd", "date": "2026-11-21", "message": "testing features" },
+      { "commit": "07a2e6a", "date": "2026-11-21", "message": "products card fixed" },
+      { "commit": "b72976f", "date": "2026-11-20", "message": "testing" }
+    ],
+    "backendRepositoryStatus": "CLEAN (Zero commits contain exposed credentials in resell-hub-server)",
+    "recommendation": "Perform a controlled Git history rewrite using git-filter-repo or BFG Repo-Cleaner on a backup branch, followed by an authorized force push with team notification. Do NOT force push automatically."
+  }
+}
