@@ -15,7 +15,7 @@ if (fs.existsSync(envPath)) {
     if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
       const idx = trimmed.indexOf("=");
       const key = trimmed.slice(0, idx).trim();
-      const val = trimmed.slice(idx + 1).trim();
+      const val = trimmed.slice(idx + 1).trim().replace(/^["']|["']$/g, "");
       if (!process.env[key]) {
         process.env[key] = val;
       }
@@ -49,21 +49,34 @@ async function safeFetch(url, options = {}, retries = 3) {
   }
 }
 
+const jwtCache = new Map();
+
 async function getJWT(email, password) {
-  const loginRes = await safeFetch(`${BASE_URL}/api/auth/sign-in/email`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Origin: BASE_URL },
-    body: JSON.stringify({ email, password }),
-  });
-  if (!loginRes.ok) {
-    throw new Error(`Login failed for ${email}: ${loginRes.status}`);
+  if (jwtCache.has(email)) {
+    return jwtCache.get(email);
   }
-  const cookie = loginRes.headers.get("set-cookie");
-  const tokenRes = await safeFetch(`${BASE_URL}/api/auth/token`, {
-    headers: { Cookie: cookie },
-  });
-  const data = await tokenRes.json();
-  return data.token;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const loginRes = await safeFetch(`${BASE_URL}/api/auth/sign-in/email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Origin: BASE_URL },
+      body: JSON.stringify({ email, password }),
+    });
+    if (loginRes.status === 429) {
+      await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+      continue;
+    }
+    if (!loginRes.ok) {
+      throw new Error(`Login failed for ${email}: ${loginRes.status}`);
+    }
+    const cookie = loginRes.headers.get("set-cookie");
+    const tokenRes = await safeFetch(`${BASE_URL}/api/auth/token`, {
+      headers: { Cookie: cookie },
+    });
+    const data = await tokenRes.json();
+    jwtCache.set(email, data.token);
+    return data.token;
+  }
+  throw new Error(`Exceeded login retry attempts for ${email}`);
 }
 
 test("API Integration: Categories Contract — live backend returns 9 active categories in exact order", async () => {

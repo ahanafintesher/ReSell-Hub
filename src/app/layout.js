@@ -7,6 +7,7 @@ import Footer from "@/components/Footer/Footer";
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from '@/components/Theme/ThemeProvider';
 import { CartProvider } from '@/context/CartContext';
+import BlockedUserListener from "@/components/Auth/BlockedUserListener";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -47,6 +48,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col bg-white dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 transition-colors duration-200">
         <ThemeProvider>
           <CartProvider>
+            <BlockedUserListener />
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />

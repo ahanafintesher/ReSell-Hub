@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test test/categories-api.test.mjs test/frontend-requirements.test.mjs test/api-compatibility.test.mjs",
-    "test:dashboard": "node --env-file=.env --test --test-concurrency=1 test/dashboard-sidebar-scroll-and-responsive.test.mjs"
+    "test": "node --env-file=.env --test --test-concurrency=1 test/categories-api.test.mjs test/frontend-requirements.test.mjs test/api-compatibility.test.mjs",
+    "test:dashboard": "node --env-file=.env --test --test-concurrency=1 test/dashboard-sidebar-scroll-and-responsive.test.mjs",
+    "test:blocked": "node --env-file=.env --test test/blocked-user-frontend-access.test.mjs"
   },
   "dependencies": {
     "@better-auth/mongo-adapter": "^1.6.19",

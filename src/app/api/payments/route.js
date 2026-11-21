@@ -82,6 +82,15 @@ export async function POST(request) {
         }
       } else {
         const errorData = await backendRes.json().catch(() => ({}));
+        if (errorData.code === 'ACCOUNT_BLOCKED') {
+          if (isJson) {
+            return NextResponse.json(
+              { error: errorData.message, code: 'ACCOUNT_BLOCKED', redirectUrl: '/account/blocked' },
+              { status: 403 }
+            );
+          }
+          return NextResponse.redirect(`${origin}/account/blocked`, 303);
+        }
         if (errorData.message) {
           if (isJson) {
             return NextResponse.json({ error: errorData.message }, { status: backendRes.status || 400 });
@@ -93,6 +102,9 @@ export async function POST(request) {
         }
       }
     } catch (backendErr) {
+      if (typeof backendErr?.digest === "string" && backendErr.digest.startsWith("NEXT_REDIRECT")) {
+        throw backendErr;
+      }
       console.warn('Backend create-checkout-session call note:', backendErr.message);
     }
 
@@ -160,6 +172,9 @@ export async function POST(request) {
 
     return NextResponse.redirect(session.url, 303);
   } catch (err) {
+    if (typeof err?.digest === "string" && err.digest.startsWith("NEXT_REDIRECT")) {
+      throw err;
+    }
     console.error('Checkout error:', err);
     return NextResponse.json(
       { error: err.message },

@@ -47,7 +47,12 @@ const ROUTE_CONFIGS = {
   ],
 };
 
+const cookieCache = new Map();
+
 async function getAuthCookies(role) {
+  if (cookieCache.has(role)) {
+    return cookieCache.get(role);
+  }
   const emailMap = {
     buyer: process.env.TEST_BUYER_EMAIL,
     seller: process.env.TEST_SELLER_EMAIL,
@@ -75,6 +80,7 @@ async function getAuthCookies(role) {
       sameSite: "Lax",
     });
   }
+  cookieCache.set(role, cookies);
   return cookies;
 }
 
@@ -99,7 +105,7 @@ test("PHASE 2 & 3: Mobile Hamburger and Drawer Navigation Verification (Zero Run
     await page.goto(`${BASE_URL}/dashboard/buyer/overview`, { waitUntil: "load" });
 
     // 1. Verify hamburger is visible
-    const hamburger = page.locator('button[aria-label="Open navigation menu"]');
+    const hamburger = page.locator('button[aria-label="Open navigation menu"]').first();
     await hamburger.waitFor({ state: "visible" });
     assert.equal(await hamburger.isVisible(), true, "Hamburger button must be visible on mobile");
 

@@ -23,6 +23,9 @@ const Page = async ({ params, searchParams }) => {
       data = await getSingleProduct(productId);
     }
   } catch (err) {
+    if (typeof err?.digest === "string" && err.digest.startsWith("NEXT_REDIRECT")) {
+      throw err;
+    }
     console.error("Failed to load product:", err);
   }
 

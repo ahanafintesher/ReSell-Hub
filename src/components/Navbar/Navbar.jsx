@@ -28,7 +28,7 @@ const play = Playfair_Display({
 // ── Logo ──────────────────────────────────────────────────────────────────────
 function Logo() {
   const pathname = usePathname();
-  if (pathname.includes("dashboard")) {
+  if (pathname.includes("dashboard") || pathname.startsWith("/account/blocked")) {
     return null;
   }
 
@@ -55,7 +55,7 @@ function Logo() {
 // ── Auth buttons ──────────────────────────────────────────────────────────────
 function AuthButtons() {
   const pathname = usePathname();
-  if (pathname.includes("dashboard")) {
+  if (pathname.includes("dashboard") || pathname.startsWith("/account/blocked")) {
     return null;
   }
 
@@ -83,7 +83,7 @@ function UserMenu({ user }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (pathname.includes("dashboard")) {
+  if (pathname.includes("dashboard") || pathname.startsWith("/account/blocked")) {
     return null;
   }
 
@@ -198,7 +198,7 @@ export default function Navbar() {
     setMobileOpen(false);
   }
 
-  if (pathname.includes("dashboard")) {
+  if (pathname.includes("dashboard") || pathname.startsWith("/account/blocked")) {
     return null;
   }
 

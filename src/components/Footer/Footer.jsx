@@ -19,7 +19,7 @@ const play = Playfair_Display({
 });
 const Footer = () => {
 const pathname = usePathname();
-if(pathname.includes('dashboard')){
+if(pathname.includes('dashboard') || pathname.startsWith('/account/blocked')){
   return null;
 }
 

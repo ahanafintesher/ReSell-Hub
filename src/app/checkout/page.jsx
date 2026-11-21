@@ -84,6 +84,13 @@ function CheckoutContent() {
           }
         }
       } catch (err) {
+        if (
+          (typeof err?.digest === "string" && err.digest.startsWith("NEXT_REDIRECT")) ||
+          err?.message?.includes("/account/blocked")
+        ) {
+          window.location.href = "/account/blocked";
+          return;
+        }
         if (isMounted) {
           console.warn("Direct product fetch notice:", err.message);
           // Fallback: search for item in cart
@@ -207,6 +214,10 @@ function CheckoutContent() {
       const data = await res.json();
 
       if (!res.ok) {
+        if (res.status === 403 && (data.code === "ACCOUNT_BLOCKED" || data.redirectUrl === "/account/blocked")) {
+          window.location.href = "/account/blocked";
+          return;
+        }
         throw new Error(data.error || data.message || "Failed to initialize payment session");
       }
 

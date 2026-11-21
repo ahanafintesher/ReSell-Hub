@@ -4,6 +4,7 @@ import React from "react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { serverFetch } from "@/lib/api-client";
 
 const DashboardLayout = async ({ children }) => {
   const session = await auth.api.getSession({
@@ -12,6 +13,16 @@ const DashboardLayout = async ({ children }) => {
 
   if (!session?.user) {
     redirect("/auth/login");
+  }
+
+  // Authoritative backend status verification for all dashboard routes
+  // Catches blocked users and stale sessions before sidebar or dashboard content render
+  const profileRes = await serverFetch("/api/users/profile");
+  if (profileRes?.status === 403) {
+    const errorData = await profileRes.json().catch(() => ({}));
+    if (errorData?.code === "ACCOUNT_BLOCKED") {
+      redirect("/account/blocked");
+    }
   }
 
   return (
@@ -31,4 +42,4 @@ const DashboardLayout = async ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default DashboardLayout;
